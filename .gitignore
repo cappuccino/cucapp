@@ -3,7 +3,7 @@
 *Objective-J*
 *Foundation*
 *.xCodeSupport*
-*Build/*
+*lib/Build/*
 *webapp/app.html
 *webapp/index.html
 *webapp/Browser.environment/*
