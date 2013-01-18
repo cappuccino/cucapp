@@ -7,6 +7,7 @@
  */
 
 @import <Foundation/Foundation.j>
+
 @import <AppKit/CPApplication.j>
 
 @import "HelperCategories.j"
@@ -201,23 +202,23 @@ function dumpGuiObject(obj)
 {
     requesting = YES;
 
-    var request = [[CPURLRequest alloc] initWithURL: "/cucumber"];
+    var request = [[CPURLRequest alloc] initWithURL:@"/cucumber"];
 
-    [request setHTTPMethod: "GET"];
+    [request setHTTPMethod:@"GET"];
 
-    [CPURLConnection connectionWithRequest: request delegate: self];
+    [CPURLConnection connectionWithRequest:request delegate:self];
 }
 
 - (void)startResponse:(id)result withError:(CPString)error
 {
     requesting = NO;
 
-    var request = [[CPURLRequest alloc] initWithURL: "/cucumber"];
+    var request = [[CPURLRequest alloc] initWithURL:@"/cucumber"];
 
-    [request setHTTPMethod: "POST"];
-    [request setHTTPBody: [CPString JSONFromObject: { result: result, error: error}]];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[CPString JSONFromObject:{result: result, error: error}]];
 
-    [CPURLConnection connectionWithRequest: request delegate: self];
+    [CPURLConnection connectionWithRequest:request delegate:self];
 }
 
 
@@ -252,10 +253,10 @@ function dumpGuiObject(obj)
                 {
                     var msg = CPSelectorFromString(request.name + ":");
 
-                    if ([self respondsToSelector: msg])
-                        result = [self performSelector: msg withObject: request.params];
-                    else if ([[CPApp delegate] respondsToSelector: msg])
-                        result = [[CPApp delegate] performSelector: msg withObject: request.params];
+                    if ([self respondsToSelector:msg])
+                        result = [self performSelector:msg withObject:request.params];
+                    else if ([[CPApp delegate] respondsToSelector:msg])
+                        result = [[CPApp delegate] performSelector:msg withObject:request.params];
                     else
                     {
                         error = "Unhandled message: "+request.name;
@@ -269,7 +270,7 @@ function dumpGuiObject(obj)
             error = e.message;
         }
 
-        [self startResponse: result withError: error];
+        [self startResponse:result withError:error];
 
     }
     else
@@ -352,6 +353,19 @@ function dumpGuiObject(obj)
     return "NO";
 }
 
+- (id)objectValueFor:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return "__CUKE_ERROR__";
+
+    if ([obj respondsToSelector:@selector(objectValue)])
+        return @"" + [obj objectValue];
+
+    return nil;
+}
+
 - (CPString)selectFrom:(CPArray)params
 {
     var obj = cucumber_objects[params[1]];
@@ -371,38 +385,53 @@ function dumpGuiObject(obj)
             {
                 var data = [[obj dataSource] tableView:obj objectValueForTableColumn:column row:j];
 
-                [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:j] byExtendingSelection:NO];
-
-                if ([CPString stringWithFormat:@"%@", data] === params[0])
+                if (@"" + data === params[0])
+                {
+                    [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:j] byExtendingSelection:NO];
                     return "OK";
+                }
             }
         }
     }
 
     if ([[obj dataSource] respondsToSelector:@selector(outlineView:numberOfChildrenOfItem:)])
+    {
         if ([self searchForObjectValue:params[0] inItemsInOutlineView:obj forItem:nil])
             return "OK";
+    }
 
     return "DATA NOT FOUND";
 }
 
 - (BOOL)searchForObjectValue:(id)value inItemsInOutlineView:(CPOutlineView)obj forItem:(id)item
 {
-    for (var i = 0; i < [[obj dataSource] outlineView:obj numberOfChildrenOfItem:item]; i++)
+    var columns = [obj tableColumns];
+
+    for (var k = 0; k < [columns count]; k++)
     {
-        var child = [[obj dataSource] outlineView:obj child:i ofItem:item],
-            testValue = [[obj dataSource] outlineView:obj objectValueForTableColumn:nil byItem:child];
-
-        if (testValue === value)
-            return YES;
-
-        if ([self searchForObjectValue:value inItemsInOutlineView:obj forItem:child])
+        for (var i = 0; i < [[obj dataSource] outlineView:obj numberOfChildrenOfItem:item]; i++)
         {
-            var index = [obj rowForItem:value];
+            var child = [[obj dataSource] outlineView:obj child:i ofItem:item],
+                testValue = [[obj dataSource] outlineView:obj objectValueForTableColumn:columns[k] byItem:child];
 
-            [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+            if (@"" + testValue === value)
+                return YES;
 
-            return YES;
+            if ([self searchForObjectValue:value inItemsInOutlineView:obj forItem:child])
+            {
+                for (var j = 0; j < [[obj dataSource] outlineView:obj numberOfChildrenOfItem:child]; j++)
+                {
+                    var subChild = [[obj dataSource] outlineView:obj child:j ofItem:child];
+
+                    if (@"" + subChild === value)
+                    {
+                        var index = [obj rowForItem:subChild];
+                        [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+
+                        return YES;
+                    }
+                }
+            }
         }
     }
 
@@ -440,19 +469,6 @@ function dumpGuiObject(obj)
         return [obj stringValue];
 
     return "__CUKE_ERROR__";
-}
-
-- (id)objectValueFor:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return "__CUKE_ERROR__";
-
-    if ([obj respondsToSelector:@selector(objectValue)])
-        return [CPString stringWithFormat: "%@", [obj objectValue]];
-
-    return nil;
 }
 
 - (CPString)doubleClick:(CPArray)params
@@ -549,18 +565,3 @@ function dumpGuiObject(obj)
 
 
 [Cucumber startCucumber];
-
-
-@implementation CPObject (ClassName)
-
-- (CPString)className
-{
-    return CPStringFromClass([self class]);
-}
-
-+ (CPString)className
-{
-    return CPStringFromClass(self);
-}
-
-@end

@@ -1,4 +1,13 @@
-@import <Foundation/CPObject.j>
+/*
+ * Cucumber.j
+ * Cucumber test Framework
+ *
+ * Created by Daniel Parnell on April 26, 2010.
+ * Copyright 2010, Automagic Software Pty Ltd All rights reserved.
+ */
+
+
+@import <Foundation/Foundation.j>
 @import <AppKit/CPResponder.j>
 
 var CPResponderNextResponderKey = @"CPResponderNextResponderKey",
@@ -20,7 +29,6 @@ var CPResponderNextResponderKey = @"CPResponderNextResponderKey",
 }
 
 @end
-
 
 
 @implementation CPResponder (CuCapp)
