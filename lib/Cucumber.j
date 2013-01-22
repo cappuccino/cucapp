@@ -7,10 +7,11 @@
  */
 
 @import <Foundation/Foundation.j>
-
 @import <AppKit/CPApplication.j>
 
 @import "HelperCategories.j"
+
+@global __PRETTY_FUNCTION__
 
 cucumber_instance = nil;
 cucumber_objects = nil;
@@ -30,35 +31,35 @@ function dumpGuiObject(obj)
     if (!obj)
         return '';
 
-    var resultingXML = "<"+[obj className]+">";
-    resultingXML += "<id>"+addCucumberObject(obj)+"</id>";
+    var resultingXML = "<" + [obj className] + ">";
+    resultingXML += "<id>" + addCucumberObject(obj) + "</id>";
 
     if ([obj respondsToSelector:@selector(text)])
-        resultingXML += "<text><![CDATA["+[obj text]+"]]></text>";
+        resultingXML += "<text><![CDATA[" + [obj text] + "]]></text>";
 
     if ([obj respondsToSelector:@selector(title)])
-        resultingXML += "<title><![CDATA["+[obj title]+"]]></title>";
+        resultingXML += "<title><![CDATA[" + [obj title] + "]]></title>";
 
     if ([obj respondsToSelector:@selector(placeholderString)])
-        resultingXML += "<placeholderString><![CDATA["+[obj placeholderString]+"]]></placeholderString>";
+        resultingXML += "<placeholderString><![CDATA[" + [obj placeholderString] + "]]></placeholderString>";
 
     if ([obj respondsToSelector:@selector(tag)])
-        resultingXML += "<tag><![CDATA["+[obj tag]+"]]></tag>";
+        resultingXML += "<tag><![CDATA[" + [obj tag] + "]]></tag>";
 
     if ([obj respondsToSelector:@selector(title)])
-        resultingXML += "<title><![CDATA["+[obj title]+"]]></title>";
+        resultingXML += "<title><![CDATA[" + [obj title] + "]]></title>";
 
     if ([obj respondsToSelector:@selector(cucappIdentifier)])
-        resultingXML += "<cucappIdentifier><![CDATA["+[obj cucappIdentifier]+"]]></cucappIdentifier>";
+        resultingXML += "<cucappIdentifier><![CDATA[" + [obj cucappIdentifier] + "]]></cucappIdentifier>";
 
     if ([obj respondsToSelector:@selector(isKeyWindow)] && [obj isKeyWindow])
         resultingXML += "<keyWindow>YES</keyWindow>";
 
     if ([obj respondsToSelector:@selector(objectValue)])
-        resultingXML += "<objectValue><![CDATA["+[CPString stringWithFormat: "%@", [obj objectValue]]+"]]></objectValue>";
+        resultingXML += "<objectValue><![CDATA[" + [CPString stringWithFormat: "%@", [obj objectValue]] + "]]></objectValue>";
 
     if ([obj respondsToSelector:@selector(identifier)])
-        resultingXML += "<identifier><![CDATA["+[obj identifier]+"]]></identifier>";
+        resultingXML += "<identifier><![CDATA[" + [obj identifier] + "]]></identifier>";
 
     if ([obj respondsToSelector:@selector(isKeyWindow)])
     {
@@ -75,10 +76,10 @@ function dumpGuiObject(obj)
         if (frame)
         {
             resultingXML += "<frame>";
-            resultingXML += "<x>"+frame.origin.x+"</x>";
-            resultingXML += "<y>"+frame.origin.y+"</y>";
-            resultingXML += "<width>"+frame.size.width+"</width>";
-            resultingXML += "<height>"+frame.size.height+"</height>";
+            resultingXML += "<x>" + frame.origin.x + "</x>";
+            resultingXML += "<y>" + frame.origin.y + "</y>";
+            resultingXML += "<width>" + frame.size.width + "</width>";
+            resultingXML += "<height>" + frame.size.height + "</height>";
             resultingXML += "</frame>";
         }
     }
@@ -155,7 +156,7 @@ function dumpGuiObject(obj)
         resultingXML += "</contentView>";
     }
 
-    resultingXML += "</"+[obj className]+">";
+    resultingXML += "</" + [obj className] + ">";
 
     return resultingXML;
 }

@@ -8,7 +8,12 @@
 
 
 @import <Foundation/Foundation.j>
+@import <AppKit/CPApplication.j>
 @import <AppKit/CPResponder.j>
+
+
+@global addCucumberObject
+@global dumpGuiObject
 
 var CPResponderNextResponderKey = @"CPResponderNextResponderKey",
     CPResponderMenuKey = @"CPResponderMenuKey";
