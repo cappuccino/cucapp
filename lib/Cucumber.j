@@ -46,8 +46,8 @@ function dumpGuiObject(obj)
     if ([obj respondsToSelector:@selector(tag)])
         resultingXML += "<tag><![CDATA[" + [obj tag] + "]]></tag>";
 
-    if ([obj respondsToSelector:@selector(title)])
-        resultingXML += "<title><![CDATA[" + [obj title] + "]]></title>";
+    if ([obj respondsToSelector:@selector(label)])
+        resultingXML += "<label><![CDATA[" + [obj label] + "]]></label>";
 
     if ([obj respondsToSelector:@selector(cucappIdentifier)])
         resultingXML += "<cucappIdentifier><![CDATA[" + [obj cucappIdentifier] + "]]></cucappIdentifier>";
