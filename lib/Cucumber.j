@@ -367,6 +367,23 @@ function dumpGuiObject(obj)
     return nil;
 }
 
+- (id)valueForKeyPathFor:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+		return "__CUKE_ERROR__";
+
+    try 
+    {
+       return [obj valueForKeyPath:params[1]];
+    }
+    catch (e)
+    {
+        return "__CUKE_ERROR__";
+    }
+}
+
 - (CPString)selectFrom:(CPArray)params
 {
     var obj = cucumber_objects[params[1]];

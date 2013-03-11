@@ -137,6 +137,13 @@ print "results is: "+ result
       result
     end
 
+
+    def value_for_keypath_for(xpath, keypath)
+	result = command "valueForKeyPathFor", id_for_element(xpath), keypath
+	raise "Could not find keypath #{keypath} for element #{xpath}" if result == "__CUKE_ERROR__"
+	result
+    end
+
     def double_click(value, xpath)
       result = command 'doubleClick', id_for_element(xpath)
 
