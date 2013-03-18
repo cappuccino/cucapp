@@ -5,9 +5,7 @@ module Driver
     attr_reader :total
     
     def initialize()
-#      @url = "https://qacnaserver7.cnaqa.com:8443"
-#      @url = "https://mvdclnx20:8443"
-      @url = "https://variable_ip:8443"
+      @url = "https://135.227.208.110:8443"
     end
     
     def setTotal(total)
