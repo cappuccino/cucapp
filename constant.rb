@@ -1,8 +1,8 @@
 module Constant
     class Constant
-	attr_reader :default_site
+	attr_reader :default_url
 	def initialize()
-	    @default_site="mvdclnx20"
+	    @default_url="https://mvdclnx20:8443"
 	end
     end
 end

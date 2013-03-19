@@ -3,7 +3,6 @@ module Driver
     
     attr_reader :url
     attr_reader :total
-    attr_reader :site
     
     def initialize()
     end
@@ -20,8 +19,8 @@ module Driver
       return @url
     end
 
-    def setURL(site)
-	@url = "https://#{site}:8443"
+    def setURL(url)
+	@url = "#{url}"
     end 
   end
 end
