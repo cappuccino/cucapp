@@ -136,7 +136,6 @@ module Encumber
       result
     end
 
-
     def value_for_keypath_for(xpath, keypath)
 	result = command "valueForKeyPathFor", id_for_element(xpath), keypath
 	raise "Could not find keypath #{keypath} for element #{xpath}" if result == "__CUKE_ERROR__"
