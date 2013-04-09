@@ -131,7 +131,6 @@ module Encumber
 
     def object_value_for(xpath)
       result = command "objectValueFor", id_for_element(xpath)
-print "results is: "+ result
       raise "Could not find objectValue for element #{xpath}" if result == "__CUKE_ERROR__"
 
       result
