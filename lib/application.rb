@@ -1,5 +1,6 @@
 require 'encumber'
 require 'driver'
+require 'NUEncumber'
 class Cucapp
   class ExpectationFailed < RuntimeError
   end
@@ -9,7 +10,7 @@ class Cucapp
   attr_reader :driver
 
   def initialize
-    @gui = Encumber::GUI.new
+    @gui = VSDGUI.new
     @gui.launch
     @driver = Driver::WebDriver.new
   end
