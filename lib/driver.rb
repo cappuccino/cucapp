@@ -24,6 +24,16 @@ module Driver
     def setURL(url)
 	@url = "#{url}"
     end 
+
+    def loadVM()
+      puts "Starting to load VMs from JMeter...."
+      dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
+      Dir.chdir("#{dir}") do
+	output = `jmeter  -nt ALU/CNA_GUI_VM_FT.jmx&`
+	puts output
+      end
+
+    end
     
   end
 end
