@@ -3,11 +3,14 @@ require 'nokogiri'
 require 'server'
 require 'launchy'
 require 'encumber'
+require 'logger'
 
 class VSDGUI < Encumber::GUI
+  attr_reader :logger
+
   def initialize(timeout_in_seconds=10)
-  @timeout     = timeout_in_seconds
-  @wait_element_timeout_in_loop = 5
+    @timeout     = timeout_in_seconds
+    @wait_element_timeout_in_loop = 5
   end
 
   def wait_for xpath

@@ -1,3 +1,5 @@
+require 'logger'
+
 module Driver
   class WebDriver
     
@@ -18,9 +20,10 @@ module Driver
     def getURL()
       return @url
     end
-
+    
     def setURL(url)
 	@url = "#{url}"
     end 
+    
   end
 end
