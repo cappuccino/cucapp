@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'logger'
 require 'mysql'
-require 'mysql_api'
+#require 'mysql_api'
 require 'active_record'
 
 module Driver
