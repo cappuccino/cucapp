@@ -2,11 +2,8 @@ require 'rubygems'
 require 'logger'
 require 'mysql'
 #require 'mysql_api'
-require 'active_record'
 
 module Driver
-class DB < ActiveRecord::Base
-end
   class WebDriver
     
     attr_reader :url
