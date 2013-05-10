@@ -62,5 +62,17 @@ module Driver
       return @dbResult 
     end
 
+    def getTotalNumIdentifier(entity)
+      if (entity == "enterprise")
+	return "field_total_NUEnterprisesViewController"  
+      elsif (entity == "domain")
+	return "field_total_NUDomainsViewController"
+      elsif (entify == "zone")
+	return "field_total_NUZonesViewController"
+      elsif (entify == "subnet")
+	return "field_total_NUSubnetsViewController"
+      end
+    end
+
   end    
 end
