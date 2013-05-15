@@ -35,11 +35,11 @@ module Driver
       return host
     end
 
-    def loadVM()
-      puts "Starting to load VMs from JMeter......\nIt may take a while......"
+    def loadVM(vmloop, enterprise, domain, zone, subnet)
+      puts "Starting to load #{vmloop} VMs to enterprise #{enterprise} under subnet #{subnet} from JMeter......\nIt may take a while......"
       dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
       Dir.chdir("#{dir}") do
-	output = `jmeter  -nt ALU/CNA_GUI_VM_FT.jmx&`
+	output = `jmeter  -nt ALU/CNA_GUI_VM_LOADING.jmx -Denterprise_name=#{enterprise} -Ddomain_name=#{domain} -Dzone_name=#{zone} -Dsubnet_name=#{subnet} -Dvmloop=#{vmloop}&`
       end
     end
 
