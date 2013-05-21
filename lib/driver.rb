@@ -67,12 +67,60 @@ module Driver
 	return "field_total_NUEnterprisesViewController"  
       elsif (entity == "domain")
 	return "field_total_NUDomainsViewController"
-      elsif (entify == "zone")
+      elsif (entity == "zone")
 	return "field_total_NUZonesViewController"
-      elsif (entify == "subnet")
+      elsif (entity == "subnet")
 	return "field_total_NUSubnetsViewController"
       end
     end
 
+    def sendMsg(msg, destination)
+      puts "send message to #{destination}...."
+
+s = TCPsocket.new(destination, 2000)
+s.send('Hello World',0)
+s.close
+
+    end
+
+    def waitMsg(msg, sender)
+      puts "wait message from #{sender}.."
+
+portnumber = 2000
+socketServer = TCPServer.open(portnumber)
+
+while true
+Thread.new(socketServer.accept) do |connection|
+puts "Accepting connection from: #{connection.peeraddr[2]}"
+
+begin
+while connection
+incomingData = connection.gets("\0")
+if incomingData != nil
+incomingData = incomingData.chomp
+end
+
+puts "Incoming: #{incomingData}"
+
+if incomingData == "DISCONNECT\0"
+puts "Received: DISCONNECT, closed connection"
+connection.close
+break
+else
+connection.puts "#{incomingData}"
+connection.flush
+end
+end
+rescue Exception => e
+# Displays Error Message
+#       puts "#{ e } (#{ e.class })"
+#           ensure
+#                 connection.close
+#                       puts "ensure: Closing"
+                           end
+                             end
+                             end
+
+    end
   end    
 end
