@@ -77,10 +77,9 @@ module Driver
     def sendMsg(msg, destination)
       puts "send message to #{destination}...."
 
-s = TCPsocket.new(destination, 2000)
-s.send('Hello World',0)
-s.close
-
+      s = TCPsocket.new(destination, 2000)
+      s.send(msg,0)
+      s.close
     end
 
     def waitMsg(msg, sender)
