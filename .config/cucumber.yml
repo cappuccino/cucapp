@@ -1,0 +1,23 @@
+# config/cucumber.yml
+##YAML Template
+---
+html_report: --format progress --format html --out=features/logs/features_report.html  
+#xml_report: --format progress --format xml --out=feature_report.xml  
+bvt: --tags @bvt
+default:  --no-source --format pretty 
+slow:  --no-source --format pretty --tags @slow --tags ~@not_ready
+fast:  --no-source --format pretty --tags @fast --tags ~@not_ready
+
+test: --tags @test
+before: --tags @before
+enterprise: --tags @enterprise
+login: --tags @login
+domain: --tags @domain
+user: --tags @user
+group: --tags @group
+zone: --tags @zone
+subnet: --tags @subnet
+vm: --tags @vm
+toolbar: --tag @toolbar
+menu: --tag @menu
+dashboard: --tag @dashboard
