@@ -21,3 +21,4 @@ vm: --tags @vm
 toolbar: --tag @toolbar
 menu: --tag @menu
 dashboard: --tag @dashboard
+event: --tag @event
