@@ -8,7 +8,7 @@ require 'logger'
 class VSDGUI < Encumber::GUI
   attr_reader :logger
 
-  def initialize(timeout_in_seconds=10)
+  def initialize(timeout_in_seconds=30)
     @timeout     = timeout_in_seconds
     @wait_element_timeout_in_loop = 5
   end
