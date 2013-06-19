@@ -7,6 +7,7 @@ bvt: --tags @bvt
 default:  --no-source --format pretty 
 slow:  --no-source --format pretty --tags @slow --tags ~@not_ready
 fast:  --no-source --format pretty --tags @fast --tags ~@not_ready
+negative: --tag @negative
 
 test: --tags @test
 before: --tags @before
