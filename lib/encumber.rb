@@ -80,6 +80,12 @@ def id_for_element(xpath)
   elements.first.inner_text.to_i
 end
 
+def if_element_exist(xpath)
+  elements = dom_for_gui.search(xpath+"/id")
+  return false if elements.empty?
+  return true
+end
+
 def performRemoteAction(action, xpath)
   result = command action, id_for_element(xpath)
 
