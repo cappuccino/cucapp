@@ -23,3 +23,4 @@ toolbar: --tag @toolbar
 menu: --tag @menu
 dashboard: --tag @dashboard
 event: --tag @event
+acl: --tag @acl
