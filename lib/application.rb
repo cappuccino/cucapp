@@ -10,11 +10,13 @@ class Cucapp
   attr_reader :warning_text
   attr_reader :gui
   attr_reader :driver
+  attr_reader :port
   attr_accessor :logger
   def initialize
-    @gui = VSDGUI.new
-    @gui.launch
     @driver = Driver::WebDriver.new
+    @port = Driver::WebDriver.getPort
+    @gui = VSDGUI.new(30, port)
+    @gui.launch
   end
 
   def reset()

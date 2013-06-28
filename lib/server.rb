@@ -1,4 +1,5 @@
 require 'thin'
+require 'driver'
 
 module Encumber
   build_dir = Dir.glob('Build/*.build').first
@@ -98,18 +99,24 @@ END_OF_JS
 
   File.open(File.join(APP_DIRECTORY, 'cucumber.html'), 'w') {|f| f.write(html) }
 
-  Thread.new{
+  class MyThread < Thread
+    
+  end
+  
+  MyThread.new{
     EM.run {
       cucumber = Rack::URLMap.new(
         '/cucumber' => CucumberAdapter.new,
         '/Cucumber/Bundle' => Rack::Directory.new(CUCUMBER_BUNDLE_DIR),
         '/' => Rack::Directory.new(APP_DIRECTORY)
       )
-
-      Thin::Server.start('0.0.0.0', 3000) {
-#	puts "Starting server"
+      port = Driver::WebDriver.getPort
+  
+      Thin::Server.start('0.0.0.0', port) {
+	puts "Starting server"
         run(cucumber)
-#        puts "RESTARTING main thread"
+        puts "RESTARTING main thread"
+	#Driver::WebDriver.updatePort
         Encumber::MAIN_THREAD.wakeup
       }
     }

@@ -9,8 +9,10 @@ module Driver
     attr_reader :url
     attr_reader :total
     attr_reader :dbResult
+    @@port = 3000 
 
     def initialize()
+       
     end
 
     def setTotal(total)
@@ -26,7 +28,15 @@ module Driver
     end
 
     def setURL(url)
-  @url = "#{url}"
+      @url = "#{url}"
+    end
+
+    def self.getPort
+      @@port
+    end
+
+    def self.updatePort
+      @@port += 1
     end
 
     def getHost()
