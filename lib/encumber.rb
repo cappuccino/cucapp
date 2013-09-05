@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'json'
 require 'nokogiri'
 require 'server'
@@ -77,6 +78,12 @@ def id_for_element(xpath)
   elements = dom_for_gui.search(xpath+"/id")
   raise "element not found: #{xpath}" if elements.empty?
   elements.first.inner_text.to_i
+end
+
+def if_element_exist(xpath)
+  elements = dom_for_gui.search(xpath+"/id")
+  return false if elements.empty?
+  return true
 end
 
 def performRemoteAction(action, xpath)
@@ -186,6 +193,43 @@ end
 def tap_and_wait xpath
   press xpath
   sleep 1
+end
+
+
+def select_node_from(nodeIdentifier, treeViewPath)
+  result = command 'selectNodeFrom', nodeIdentifier, id_for_element(treeViewPath)
+
+  raise "Could not select #{nodeIdentifier} in #{treeViewPath}" + result if result != "OK"
+end
+
+def deselect_node_from(nodeIdentifier, treeViewPath)
+  result = command 'deselectNodeFrom', nodeIdentifier, id_for_element(treeViewPath)
+
+  raise "Could not deselect #{nodeIdentifier} in #{treeViewPath}" + result if result != "OK"
+end
+
+def select_connectors_from(biPartitePath, originConnectorIdentifier, destinationConnectorIdentifier)
+  result = command 'selectConnectorsFrom', id_for_element(xpath), originConnectorIdentifier, destinationConnectorIdentifier
+
+  raise "Could not select #{originConnectorIdentifier} with #{destinationConnectorIdentifier} in #{biPartitePath}" + result if result != "OK"
+end
+
+def deselect_connectors_from(biPartitePath, originConnectorIdentifier, destinationConnectorIdentifier)
+  result = command 'deselectConnectorsFrom', id_for_element(xpath), originConnectorIdentifier, destinationConnectorIdentifier
+
+  raise "Could not deselect #{originConnectorIdentifier} with #{destinationConnectorIdentifier} in #{biPartitePath}" + result if result != "OK"
+end
+
+def connect_connectors_from(biPartitePath, originConnectorIdentifier, destinationConnectorIdentifier)
+  result = command 'connectConnectorsFrom', id_for_element(biPartitePath), originConnectorIdentifier, destinationConnectorIdentifier
+
+  raise "Could not connect #{originConnectorIdentifier} with #{destinationConnectorIdentifier} in #{biPartitePath}" + result if result != "OK"
+end
+
+def disconnect_connectors_from(biPartitePath, originConnectorIdentifier, destinationConnectorIdentifier)
+  result = command 'disconnectConnectorsFrom', id_for_element(biPartitePath), originConnectorIdentifier, destinationConnectorIdentifier
+
+  raise "Could not connect #{originConnectorIdentifier} with #{destinationConnectorIdentifier} in #{biPartitePath}" + result if result != "OK"
 end
 
 end

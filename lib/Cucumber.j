@@ -374,7 +374,7 @@ function dumpGuiObject(obj)
     if (!obj)
 		return "__CUKE_ERROR__";
 
-    try 
+    try
     {
        return [obj valueForKeyPath:params[1]];
     }
@@ -581,5 +581,273 @@ function dumpGuiObject(obj)
 
 @end
 
+
+@implementation Cucumber (GraphCappuccino)
+
+/*! The first param has to be the identifier of the node, the second of the treeView
+    @return @"TREEVIEW NOT FOUND" or @"OK" or "NODE NOT FOUND"
+*/
+- (CPString)selectNodeFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[1]];
+
+    if (!obj)
+        return @"TREEVIEW NOT FOUND";
+
+    var treeNodes = [obj treeNodes];
+
+    for (var i = [treeNodes count] - 1; i >= 0; i--)
+    {
+        var treeNode = treeNodes[i];
+
+        if (params[0] === [[treeNode view] cucappIdentifier])
+        {
+            [obj _selectNode:treeNode];
+            return @"OK";
+        }
+    }
+
+    return @"NODE NOT FOUND"
+}
+
+/*! The first param has to be the identifier of the node, the second of the treeView
+    @return @"TREEVIEW NOT FOUND" or @"OK" or "NODE NOT FOUND"
+*/
+- (CPString)deselectNodeFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[1]];
+
+    if (!obj)
+        return @"TREEVIEW NOT FOUND";
+
+    var treeNodes = [obj treeNodes];
+
+    for (var i = [treeNodes count] - 1; i >= 0; i--)
+    {
+        var treeNode = treeNodes[i];
+
+        if (params[0] === [[treeNode view] cucappIdentifier])
+        {
+            [obj _deselectNode:treeNode];
+            return @"OK";
+        }
+    }
+
+    return @"NODE NOT FOUND"
+}
+
+/*! The first param has to be the identifier of the BIPARTITEGRAPHVIEW, the second the origin connector, the third the destination connector
+    @return @"BIPARTITEGRAPHVIEW NOT FOUND", @"ORIGIN CONNECTOR NOT FOUND", @"DESTINATION CONNECTOR NOT FOUND", @"OK"
+*/
+- (CPString)selectConnectorsFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return @"BIPARTITEGRAPHVIEW NOT FOUND";
+
+    var key,
+        origin = obj._originConnectorsRegistry,
+        originKeys = [origin keyEnumeartor],
+        destination = obj._destinationConnectorsRegistry,
+        destinationKeys = [destination keyEnumeartor],
+        originConnector,
+        destinationConnector;
+
+    while (key = [originKeys nextObject])
+    {
+        var connector = [origin objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[1])
+        {
+            originConnector = connector;
+            break;
+        }
+    }
+
+    if (!originConnector)
+        return @"ORIGIN CONNECTOR NOT FOUND";
+
+
+    while (key = [destinationKeys nextObject])
+    {
+        var connector = [destination objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[2])
+        {
+            destinationConnector = connector;
+            break;
+        }
+    }
+
+    if (!destinationConnector)
+        return @"DESTINATION CONNECTOR NOT FOUND";
+
+    var wires = [originConnector wiresForConnector:destinationConnector];
+
+    [wires[0] setSelected:YES];
+
+    return @"OK";
+}
+
+/*! The first param has to be the identifier of the BIPARTITEGRAPHVIEW, the second the origin connector, the third the destination connector
+    @return @"BIPARTITEGRAPHVIEW NOT FOUND", @"ORIGIN CONNECTOR NOT FOUND", @"DESTINATION CONNECTOR NOT FOUND", @"OK"
+*/
+- (CPString)deselectConnectorsFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return @"BIPARTITEGRAPHVIEW NOT FOUND";
+
+    var key,
+        origin = obj._originConnectorsRegistry,
+        originKeys = [origin keyEnumeartor],
+        destination = obj._destinationConnectorsRegistry,
+        destinationKeys = [destination keyEnumeartor],
+        originConnector,
+        destinationConnector;
+
+    while (key = [originKeys nextObject])
+    {
+        var connector = [origin objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[1])
+        {
+            originConnector = connector;
+            break;
+        }
+    }
+
+    if (!originConnector)
+        return @"ORIGIN CONNECTOR NOT FOUND";
+
+
+    while (key = [destinationKeys nextObject])
+    {
+        var connector = [destination objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[2])
+        {
+            destinationConnector = connector;
+            break;
+        }
+    }
+
+    if (!destinationConnector)
+        return @"DESTINATION CONNECTOR NOT FOUND";
+
+    var wires = [originConnector wiresForConnector:destinationConnector];
+
+    [wires[0] setSelected:NO];
+
+    return @"OK";
+}
+
+/*! The first param has to be the identifier of the BIPARTITEGRAPHVIEW, the second the origin connector, the third the destination connector
+    @return @"BIPARTITEGRAPHVIEW NOT FOUND", @"ORIGIN CONNECTOR NOT FOUND", @"DESTINATION CONNECTOR NOT FOUND", @"OK"
+*/
+- (CPString)connectConnectorsFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return @"BIPARTITEGRAPHVIEW NOT FOUND";
+
+    var key,
+        origin = obj._originConnectorsRegistry,
+        originKeys = [origin keyEnumeartor],
+        destination = obj._destinationConnectorsRegistry,
+        destinationKeys = [destination keyEnumeartor],
+        originConnector,
+        destinationConnector;
+
+    while (key = [originKeys nextObject])
+    {
+        var connector = [origin objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[1])
+        {
+            originConnector = connector;
+            break;
+        }
+    }
+
+    if (!originConnector)
+        return @"ORIGIN CONNECTOR NOT FOUND";
+
+
+    while (key = [destinationKeys nextObject])
+    {
+        var connector = [destination objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[2])
+        {
+            destinationConnector = connector;
+            break;
+        }
+    }
+
+    if (!destinationConnector)
+        return @"DESTINATION CONNECTOR NOT FOUND";
+
+    [obj _connectConnector:originConnector toObject:destinationConnector];
+
+    return @"OK"
+}
+
+/*! The first param has to be the identifier of the BIPARTITEGRAPHVIEW, the second the origin connector, the third the destination connector
+    @return @"BIPARTITEGRAPHVIEW NOT FOUND", @"ORIGIN CONNECTOR NOT FOUND", @"DESTINATION CONNECTOR NOT FOUND", @"OK"
+*/
+- (CPString)disconnectConnectorsFrom:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return @"BIPARTITEGRAPHVIEW NOT FOUND";
+
+    var key,
+        origin = obj._originConnectorsRegistry,
+        originKeys = [origin keyEnumeartor],
+        destination = obj._destinationConnectorsRegistry,
+        destinationKeys = [destination keyEnumeartor],
+        originConnector,
+        destinationConnector;
+
+    while (key = [originKeys nextObject])
+    {
+        var connector = [origin objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[1])
+        {
+            originConnector = connector;
+            break;
+        }
+    }
+
+    if (!originConnector)
+        return @"ORIGIN CONNECTOR NOT FOUND";
+
+
+    while (key = [destinationKeys nextObject])
+    {
+        var connector = [destination objectForKey:key];
+
+        if ([[connector view] cucappIdentifier] === params[2])
+        {
+            destinationConnector = connector;
+            break;
+        }
+    }
+
+    if (!destinationConnector)
+        return @"DESTINATION CONNECTOR NOT FOUND";
+
+    [obj _disconnectConnector:originConnector toObject:destinationConnector];
+
+    return @"OK"
+}
+
+@end
 
 [Cucumber startCucumber];
