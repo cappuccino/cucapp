@@ -791,7 +791,8 @@ function dumpGuiObject(obj)
     if (!destinationConnector)
         return @"DESTINATION CONNECTOR NOT FOUND";
 
-    [obj _connectConnector:originConnector toObject:destinationConnector];
+
+    [originConnector connectToConnector:destinationConnector];
 
     return @"OK"
 }
@@ -843,7 +844,8 @@ function dumpGuiObject(obj)
     if (!destinationConnector)
         return @"DESTINATION CONNECTOR NOT FOUND";
 
-    [obj _disconnectConnector:originConnector toObject:destinationConnector];
+    [originConnector disconnectConnector:destinationConnector];
+    //[obj _disconnectConnector:originConnector toObject:destinationConnector];
 
     return @"OK"
 }
