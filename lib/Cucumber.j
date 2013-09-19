@@ -579,6 +579,11 @@ function dumpGuiObject(obj)
     launched = YES;
 }
 
+@end
+
+
+@implementation Cucumber (GraphCappuccino)
+
 /*! The first param has to be the identifier of the node, the second of the treeView
     @return @"TREEVIEW NOT FOUND" or @"OK" or "NODE NOT FOUND"
 */
@@ -604,11 +609,6 @@ function dumpGuiObject(obj)
 
     return @"NODE NOT FOUND"
 }
-
-@end
-
-
-@implementation Cucumber (GraphCappuccino)
 
 /*! The first param has to be the identifier of the node, the second of the treeView
     @return @"TREEVIEW NOT FOUND" or @"OK" or "NODE NOT FOUND"
