@@ -53,6 +53,14 @@ module Driver
       end
     end
 
+    def removeAllEnterprises(cna_server)
+      puts "Starting to remove all the enterprises......"
+      dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
+      Dir.chdir("#{dir}") do
+  output = `jmeter  -nt ALU/CNA_QE_GUI_RemoveAllEnterprises.jmx -Dcna_server=#{cna_server}&`
+      end
+    end
+
     def loadLicense(cna_server)
       puts "Starting to load license......"
       dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
