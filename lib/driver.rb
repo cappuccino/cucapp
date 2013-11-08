@@ -45,6 +45,12 @@ module Driver
       return host
     end
 
+    def getHostName()
+      hostName = @url.gsub /^http(s?):\/\//, ''
+      hostName = hostName[0..hostName.index('.')-1]
+      return hostName
+    end
+
     def loadVM(vmloop, enterprise, domain, zone, subnet)
       puts "Starting to load #{vmloop} VMs to enterprise #{enterprise} under subnet #{subnet} from JMeter......\nIt may take a while......"
       dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
@@ -53,11 +59,12 @@ module Driver
       end
     end
 
-    def loadLicense(cna_server)
-      puts "Starting to load license......"
+    def loadLicense()
+      hostName = getHostName()
+      puts "Starting to load license to #{hostName} ......"
       dir = "/Users/Shared/Jenkins/Home/SharedWorkspace/jmeter/CNA_JMETER/bin"
       Dir.chdir("#{dir}") do
-  output = `jmeter  -nt ALU/CNA_QE_GUI_Get_License.jmx -Dcna_server=#{cna_server}&`
+	output = `jmeter  -nt ALU/CNA_QE_GUI_Get_License.jmx -Dcna_server=#{hostName}&`
       end
     end
 
