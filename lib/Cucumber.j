@@ -602,7 +602,7 @@ function dumpGuiObject(obj)
 
         if (params[0] === [[treeNode view] cucappIdentifier])
         {
-            [obj _selectNode:treeNode];
+            [obj _selectNode:treeNode callUserDelegate:YES];
             return @"OK";
         }
     }
@@ -628,7 +628,7 @@ function dumpGuiObject(obj)
 
         if (params[0] === [[treeNode view] cucappIdentifier])
         {
-            [obj _deselectNode:treeNode];
+            [obj _deselectNode:treeNode callUserDelegate:YES];
             return @"OK";
         }
     }
