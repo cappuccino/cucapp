@@ -25,3 +25,4 @@ dashboard: --tag @dashboard
 event: --tag @event
 acl: --tag @acl
 permission: --tag @permission
+vport: --tag @vport
