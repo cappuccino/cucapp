@@ -8,9 +8,11 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/CPApplication.j>
+@import <AppKit/CPToolbarItem.j>
 
 @import "HelperCategories.j"
 
+@global CPApp
 @global __PRETTY_FUNCTION__
 
 cucumber_instance = nil;
@@ -314,7 +316,11 @@ function dumpGuiObject(obj)
     if (!obj)
         return "NOT FOUND";
 
-    [obj performClick: self];
+    if ([obj isKindOfClass:[CPToolbarItem class]])
+        [[obj target] performSelector:[obj action] withObject:obj];
+    else
+        [obj performClick: self];
+
     return "OK";
 }
 
@@ -602,7 +608,7 @@ function dumpGuiObject(obj)
 
         if (params[0] === [[treeNode view] cucappIdentifier])
         {
-            [obj _selectNode:treeNode callUserDelegate:YES];
+            [obj _selectNode:treeNode];
             return @"OK";
         }
     }
@@ -628,7 +634,7 @@ function dumpGuiObject(obj)
 
         if (params[0] === [[treeNode view] cucappIdentifier])
         {
-            [obj _deselectNode:treeNode callUserDelegate:YES];
+            [obj _deselectNode:treeNode];
             return @"OK";
         }
     }
