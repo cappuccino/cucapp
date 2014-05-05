@@ -2,6 +2,9 @@ require 'thin'
 require 'driver'
 
 module Encumber
+
+  env_mode = ENV['MODE']
+
   build_dir = Dir.glob('Build/*.build').first
   raise 'Can not find build directory' if build_dir.nil?
   raise 'Can not determine Cappuccino application name' if build_dir.match(/Build\/(.*)\.build/).nil?
@@ -12,7 +15,12 @@ module Encumber
   else
     mode = 'Release'
   end
-  APP_DIRECTORY = "Build/#{mode}/#{app_name}"
+
+  if env_mode == 'debug'
+    APP_DIRECTORY = "."
+  else
+    APP_DIRECTORY = "Build/#{mode}/#{app_name}"
+  end
 
   raise "Can not locate built application directory: #{APP_DIRECTORY}" if !File.exists?(APP_DIRECTORY)
 
@@ -73,7 +81,11 @@ module Encumber
     end
   end
 
-  html = File.read(File.join(APP_DIRECTORY, 'index.html'))
+  if env_mode == 'debug'
+    html = File.read(File.join(APP_DIRECTORY, 'index.html'))
+  else
+    html = File.read(File.join(APP_DIRECTORY, 'index.html'))
+  end
 
   html.gsub!(/<title>(.*)<\/title>/) do
     "<title>#{$1} - Cucumber</title>"
@@ -100,9 +112,9 @@ END_OF_JS
   File.open(File.join(APP_DIRECTORY, 'cucumber.html'), 'w') {|f| f.write(html) }
 
   class MyThread < Thread
-    
+
   end
-  
+
   MyThread.new{
     EM.run {
       cucumber = Rack::URLMap.new(
@@ -111,12 +123,12 @@ END_OF_JS
         '/' => Rack::Directory.new(APP_DIRECTORY)
       )
       port = Driver::WebDriver.getPort
-  
+
       Thin::Server.start('0.0.0.0', port) {
-	puts "Starting server"
+	      puts "Starting server"
         run(cucumber)
         puts "RESTARTING main thread"
-	#Driver::WebDriver.updatePort
+	      #Driver::WebDriver.updatePort
         Encumber::MAIN_THREAD.wakeup
       }
     }
