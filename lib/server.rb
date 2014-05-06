@@ -115,6 +115,8 @@ END_OF_JS
 
   end
 
+  Thin::Logging.debug = true
+
   MyThread.new{
     EM.run {
       cucumber = Rack::URLMap.new(
