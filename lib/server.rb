@@ -1,6 +1,17 @@
 require 'thin'
 require 'driver'
 
+module Rack::Utils
+  def unescape(s, encoding = Encoding::UTF_8)
+      if s.include? "+"
+        return s
+      else
+        URI.decode_www_form_component(s, encoding)
+      end
+    end
+  module_function :unescape
+end
+
 module Encumber
 
   env_mode = ENV['MODE']
