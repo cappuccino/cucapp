@@ -16,24 +16,32 @@ module Encumber
 
   env_mode = ENV['MODE']
 
-  build_dir = Dir.glob('Build/*.build').first
-  raise 'Can not find build directory' if build_dir.nil?
-  raise 'Can not determine Cappuccino application name' if build_dir.match(/Build\/(.*)\.build/).nil?
-  app_name = $1
-
-  if File.exists?('Build/Debug')
-    mode = 'Debug'
-  else
-    mode = 'Release'
-  end
-
   if env_mode == 'debug'
     APP_DIRECTORY = "."
   else
     APP_DIRECTORY = "Build/#{mode}/#{app_name}"
+    build_dir = Dir.glob('Build/*.build').first
+    raise 'Can not find build directory' if build_dir.nil?
+    raise 'Can not determine Cappuccino application name' if build_dir.match(/Build\/(.*)\.build/).nil?
+    app_name = $1
+
+    if File.exists?('Build/Debug')
+      mode = 'Debug'
+    else
+      mode = 'Release'
+    end
   end
 
   raise "Can not locate built application directory: #{APP_DIRECTORY}" if !File.exists?(APP_DIRECTORY)
+
+  n = 0
+
+  until n > ARGV.length - 1
+    if "-r" == ARGV[n]
+      feature_path = ARGV[n + 1]
+    end
+    n += 1
+  end
 
   bundle = File.join(File.dirname(__FILE__), 'Build', 'Debug', 'Cucumber')
   if !File.exists?(bundle)
@@ -93,7 +101,7 @@ module Encumber
   end
 
   if env_mode == 'debug'
-    html = File.read(File.join(APP_DIRECTORY, 'index.html'))
+    html = File.read(File.join(APP_DIRECTORY, 'index-debug.html'))
   else
     html = File.read(File.join(APP_DIRECTORY, 'index.html'))
   end
@@ -107,7 +115,15 @@ module Encumber
       <script type="text/javascript">
         function startCucumber() {
           if(window['CPApp'] && CPApp._finishedLaunching) {
-            new CFBundle("/Cucumber/Bundle/").load(true);
+            var bundle = new CFBundle("/Cucumber/Bundle/");
+
+            bundle.addEventListener("load", function()
+            {
+              objj_importFile("/#{feature_path}/support/CucumberCategories.j");
+            });
+
+            bundle.load(YES);
+
           } else {
             window.setTimeout(startCucumber, 100);
           }
