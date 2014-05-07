@@ -15,6 +15,7 @@ module Encumber
 
   env_mode = ENV['MODE']
   port = ENV['PORT']||3000
+  app_directory = ENV['DIRECTORY']||"."
 
   if env_mode == 'build'
     build_dir = Dir.glob('Build/*.build').first
@@ -30,7 +31,7 @@ module Encumber
 
     APP_DIRECTORY = "Build/#{mode}/#{app_name}"
   else
-    APP_DIRECTORY = "."
+    APP_DIRECTORY = app_directory
   end
 
   raise "Can not locate built application directory: #{APP_DIRECTORY}" if !File.exists?(APP_DIRECTORY)
