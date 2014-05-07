@@ -1,5 +1,4 @@
 require 'thin'
-require 'driver'
 
 module Rack::Utils
   def unescape(s, encoding = Encoding::UTF_8)
@@ -151,13 +150,11 @@ END_OF_JS
         '/Cucumber/Bundle' => Rack::Directory.new(CUCUMBER_BUNDLE_DIR),
         '/' => Rack::Directory.new(APP_DIRECTORY)
       )
-      port = Driver::WebDriver.getPort
 
-      Thin::Server.start('0.0.0.0', port) {
+      Thin::Server.start('0.0.0.0', 3000) {
 	      puts "Starting server"
         run(cucumber)
         puts "RESTARTING main thread"
-	      #Driver::WebDriver.updatePort
         Encumber::MAIN_THREAD.wakeup
       }
     }
