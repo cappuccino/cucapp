@@ -16,7 +16,7 @@ module Encumber
   env_mode = ENV['MODE']
   port = ENV['PORT']||3000
 
-  if env_mode == 'debug'
+  if env_mode == 'source'
     APP_DIRECTORY = "."
   else
     APP_DIRECTORY = "Build/#{mode}/#{app_name}"
