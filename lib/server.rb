@@ -14,6 +14,7 @@ end
 module Encumber
 
   env_mode = ENV['MODE']
+  port = ENV['PORT']||3000
 
   if env_mode == 'debug'
     APP_DIRECTORY = "."
@@ -151,7 +152,7 @@ END_OF_JS
         '/' => Rack::Directory.new(APP_DIRECTORY)
       )
 
-      Thin::Server.start('0.0.0.0', 3000) {
+      Thin::Server.start('0.0.0.0', port) {
 	      puts "Starting server"
         run(cucumber)
         puts "RESTARTING main thread"
