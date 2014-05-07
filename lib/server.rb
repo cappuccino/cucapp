@@ -19,7 +19,6 @@ module Encumber
   if env_mode == 'source'
     APP_DIRECTORY = "."
   else
-    APP_DIRECTORY = "Build/#{mode}/#{app_name}"
     build_dir = Dir.glob('Build/*.build').first
     raise 'Can not find build directory' if build_dir.nil?
     raise 'Can not determine Cappuccino application name' if build_dir.match(/Build\/(.*)\.build/).nil?
@@ -30,6 +29,8 @@ module Encumber
     else
       mode = 'Release'
     end
+
+    APP_DIRECTORY = "Build/#{mode}/#{app_name}"
   end
 
   raise "Can not locate built application directory: #{APP_DIRECTORY}" if !File.exists?(APP_DIRECTORY)
@@ -100,7 +101,7 @@ module Encumber
     end
   end
 
-  if env_mode == 'debug'
+  if env_mode == 'source'
     html = File.read(File.join(APP_DIRECTORY, 'index-debug.html'))
   else
     html = File.read(File.join(APP_DIRECTORY, 'index.html'))
