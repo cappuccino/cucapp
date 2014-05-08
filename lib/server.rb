@@ -16,6 +16,7 @@ module Encumber
   env_mode = ENV['MODE']
   port = ENV['PORT']||3000
   app_directory = ENV['DIRECTORY']||"."
+  use_cucapp_source = ENV['USE_CUCAPP_SOURCE']||"yes"
 
   if env_mode == 'build'
     build_dir = Dir.glob('Build/*.build').first
@@ -110,22 +111,29 @@ module Encumber
       <script type="text/javascript">
         function startCucumber() {
           if(window['CPApp'] && CPApp._finishedLaunching) {
-            var bundle = new CFBundle("/Cucumber/Bundle/");
 
-            bundle.addEventListener("load", function()
+            if ("#{use_cucapp_source}" == "yes")
             {
-              objj_importFile("/features/support/CucumberCategories.j");
-            });
+              objj_importFile("/Cucapp/lib/Cucumber.j");
+              setTimeout(function(){
+              objj_importFile("/features/support/CucumberCategories.j");},0);
+            }
+            else
+            {
+              var bundle = new CFBundle("/Cucumber/Bundle/");
 
-            bundle.load(YES);
+              bundle.addEventListener("load", function()
+              {
+                objj_importFile("/features/support/CucumberCategories.j");
+              });
 
+              bundle.load(YES);
+            }
           } else {
             window.setTimeout(startCucumber, 100);
           }
         }
         window.setTimeout(startCucumber, 100);
-
-//          new CFBundle("/Cucumber/Bundle/").load(true);
       </script>
     </body>
 END_OF_JS
