@@ -38,13 +38,6 @@ module Encumber
 
   n = 0
 
-  until n > ARGV.length - 1
-    if "-r" == ARGV[n]
-      feature_path = ARGV[n + 1]
-    end
-    n += 1
-  end
-
   bundle = File.join(File.dirname(__FILE__), 'Build', 'Debug', 'Cucumber')
   if !File.exists?(bundle)
     bundle = File.join(File.dirname(__FILE__), 'Plugin', 'Cucumber')
@@ -121,7 +114,7 @@ module Encumber
 
             bundle.addEventListener("load", function()
             {
-              objj_importFile("/#{feature_path}/support/CucumberCategories.j");
+              objj_importFile("/features/support/CucumberCategories.j");
             });
 
             bundle.load(YES);
