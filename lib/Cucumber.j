@@ -551,7 +551,7 @@ function dumpGuiObject(obj)
                 transformer = [CPValueTransformer valueTransformerForName:transformerName];
         }
 
-        if (transformer && transformer != [CPNull null])\
+        if (transformer && transformer != [CPNull null])
         {
             if ([[transformer class] allowsReverseTransformation])
                 value = [transformer reverseTransformedValue:value];
