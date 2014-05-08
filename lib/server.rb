@@ -144,7 +144,7 @@ END_OF_JS
 
   end
 
-  Thin::Logging.debug = true
+  Thin::Logging.debug = false
 
   MyThread.new{
     EM.run {
