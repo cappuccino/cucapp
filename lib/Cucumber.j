@@ -411,7 +411,11 @@ function dumpGuiObject(obj)
                 if (@"" + data === params[0])
                 {
                     [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:j] byExtendingSelection:NO];
-                    return "OK";
+
+                    if (data == [[obj dataSource] tableView:obj objectValueForTableColumn:column row:[obj selectedRow]])
+                        return "OK";
+                    else
+                        return "DATA NOT FOUND";
                 }
             }
         }
@@ -451,7 +455,8 @@ function dumpGuiObject(obj)
                         var index = [obj rowForItem:subChild];
                         [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
-                        return YES;
+                        if (subChild == [[obj dataSource] outlineView:obj child:index ofItem:child])
+                            return YES;
                     }
                 }
             }
