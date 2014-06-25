@@ -9,7 +9,7 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = "An interface between Cucumber and Cappuccino"
   s.add_dependency("cucumber", ">= 0")
-  s.add_dependency("thin", ">= 0")
+  s.add_dependency("thin", "1.6.2")
   s.add_dependency("nokogiri", ">= 0")
   s.add_dependency("json", ">= 0")
   s.add_dependency("launchy", ">= 0")
