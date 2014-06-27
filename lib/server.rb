@@ -145,7 +145,8 @@ END_OF_JS
 
   end
 
-  Thin::Logging.debug = false
+  # This makes gourd crash on linux.
+  # Thin::Logging.debug = false
 
   MyThread.new{
     EM.run {
