@@ -13,7 +13,18 @@ Original Concept and Developer: Daniel Parnell (see: https://github.com/dparnell
 
 ## Installation
 
+To get started, download the current version of Cuccap:
 
+    $ git clone git://github.com/cappuccino/cucapp.git (git)
 
-## Usage
+Then install cucapp on your system:
 
+    $ gem build cucapp.gemspec && gem install cucapp
+
+The following gems are going to be installed:
+
+- Cucumber
+- Thin
+- Nokogiri
+- JSON
+- Launchy
