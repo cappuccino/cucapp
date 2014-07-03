@@ -1,3 +1,18 @@
+# Copyright 2010, Daniel Parnell, Automagic Software Pty Ltd All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+
 require 'thin'
 
 module Rack::Utils
@@ -13,10 +28,10 @@ end
 
 module Encumber
 
-  env_mode = ENV['MODE']
-  port = ENV['PORT']||3000
-  app_directory = ENV['DIRECTORY']||"."
-  use_cucapp_source = ENV['USE_CUCAPP_SOURCE']||"yes"
+  env_mode = ENV['CUCAPP_APPLOADINGMODE']
+  port = ENV['CUCAPP_PORT']||3000
+  app_directory = ENV['CUCAPP_APPDIRECTORY']||"."
+  use_cucapp_bundle = ENV['CUCAPP_USEBUNDLE']||"no"
 
   if env_mode == 'build'
     build_dir = Dir.glob('Build/*.build').first
@@ -112,19 +127,20 @@ module Encumber
         function startCucumber() {
           if(window['CPApp'] && CPApp._finishedLaunching) {
 
-            if ("#{use_cucapp_source}" == "yes")
+            if ("#{use_cucapp_bundle}" == "no")
             {
               objj_importFile("/Cucapp/lib/Cucumber.j");
+
               setTimeout(function(){
-              objj_importFile("/features/support/CucumberCategories.j");},0);
+                try {objj_importFile("/features/support/CucumberCategories.j")} catch (e) {}
+              },0);
             }
             else
             {
               var bundle = new CFBundle("/Cucumber/Bundle/");
 
-              bundle.addEventListener("load", function()
-              {
-                objj_importFile("/features/support/CucumberCategories.j");
+              bundle.addEventListener("load", function() {
+                try {objj_importFile("/features/support/CucumberCategories.j")} catch (e) {}
               });
 
               bundle.load(YES);
