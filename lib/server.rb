@@ -161,9 +161,6 @@ END_OF_JS
 
   end
 
-  # This makes gourd crash on linux.
-  # Thin::Logging.debug = false
-
   MyThread.new{
     EM.run {
       cucumber = Rack::URLMap.new(
