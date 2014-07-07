@@ -190,5 +190,29 @@ module Encumber
       sleep 1
     end
 
+    def simulateLeftClick xpath, flags
+      result = command('simulateLeftClick', id_for_element(xpath), flags)
+      raise "View not found: #{xpath} - #{result}" if result!='OK'
+    end
+
+    def simulateDoubleClick xpath, flags
+      result = command('simulateDoubleClick', id_for_element(xpath), flags)
+      raise "View not found: #{xpath} - #{result}" if result!='OK'
+    end
+
+    def simulateDraggedClick xpath1, xpath2, flags
+      result = command('simulateDraggedClick', id_for_element(xpath), id_for_element(xpath2), flags)
+      raise "View not found: #{xpath} or #{xpath2}- #{result}" if result!='OK'
+    end
+
+    def simulateRightClick xpath, flags
+      result = command('simulateRightClick', id_for_element(xpath), flags)
+      raise "View not found: #{xpath} - #{result}" if result!='OK'
+    end
+
+    def simulateKeyboardEvent charac, flags
+      result = command('simulateKeyboardEvent', charac, flags)
+    end
+
   end
 end

@@ -598,6 +598,150 @@ function dumpGuiObject(obj)
     launched = YES;
 }
 
+
+#pragma mark -
+#pragma mark Events methods
+
+- (void)simulateKeyboardEvent:(CPArray)params
+{
+    var character = params.shift(),
+        charactersIgnoringModifiers = character.toLowerCase(),
+        modifierFlags = 0,
+        currentWindow = [CPApp keyWindow];
+
+    for (var i = 0; i < [params count]; i++)
+    {
+        var flag = params[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    var keyDownEvent = [CPEvent keyEventWithType:CPKeyDown location:CGPointMakeZero() modifierFlags:modifierFlags
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:0];
+    [CPApp sendEvent:keyDownEvent];
+
+    var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:0];
+    [CPApp sendEvent:keyUpEvent];
+}
+
+- (CPString)simulateDraggedClick:(CPArray)params
+{
+    var obj1 = cucumber_objects[params.shift()],
+        obj2 = cucumber_objects[params.shift()],
+
+    if (!obj1 || !obj2)
+        return "OBJECT NOT FOUND";
+
+    [self _perfomeMouseEventOnView:obj1 toView:obj2 eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params];
+
+    return "OK";
+}
+
+- (CPString)simulateLeftClick:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()];
+
+    if (!obj)
+        return "OBJECT NOT FOUND";
+
+    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params];
+
+    return "OK";
+}
+
+- (CPString)simulateRightClick:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()];
+
+    if (!obj)
+        return "OBJECT NOT FOUND";
+
+    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params];
+
+    return "OK";
+}
+
+- (CPString)simulateLeftDoubleClick:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()];
+
+    if (!obj)
+        return "OBJECT NOT FOUND";
+
+    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params];
+
+    return "OK";
+}
+
+- (void)_perfomMouseEventOnView:(CPView)aView toView:(CPView)aView2 eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
+{
+    var locationWindowPoint,
+        locationWindowPoint2,
+        currentWindow = [aView window],
+        typeMouseDown = CPLeftMouseDown,
+        typeMouseUp = CPLeftMouseUp,
+        modifiersFlag = 0,
+        currentLocation = CGPointMakeCopy(locationWindowPoint);
+
+    if ([aView superview])
+        locationWindowPoint = [[aView superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame])];
+    else
+        locationWindowPoint = CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]);
+
+    if (anEventType == CPRightMouseDown)
+    {
+        typeMouseDown = CPRightMouseDown;
+        typeMouseUp = CPRightMouseUp;
+    }
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    for (var i = 1; i < numberOfClick + 1; i++)
+    {
+        var mouseDown = [CPEvent mouseEventWithType:typeMouseDown location:currentLocation modifierFlags:modifierFlags
+                           timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
+        [CPApp sendEvent:mouseDown];
+
+        if (aView2)
+        {
+            if ([aView2 superview])
+                locationWindowPoint2 = [[aView2 superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame])];
+            else
+                locationWindowPoint2 = CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame]);
+
+            var maxDiff = MAX(ABS(locationWindowPoint.x - locationWindowPoint2.x), ABS(locationWindowPoint.y - locationWindowPoint2.y)),
+                xDiff = locationWindowPoint.x - locationWindowPoint2.x,
+                yDiff = locationWindowPoint.y - locationWindowPoint2.y;
+
+            for (var j = 0; i < maxDiff; j++)
+            {
+                var gapX = xDiff > 0 ? -1 : 1,
+                    gapY = yDiff > 0 ? -1 : 1;
+
+                if (currentLocation.y == locationWindowPoint2.y)
+                    gapY = 0;
+
+                if (currentLocation.x == locationWindowPoint2.x)
+                    gapX = 0;
+
+                currentLocation = CGPointMake(currentLocation.x + gapX, currentLocation.y + gapY);
+
+                var mouseDragged = [CPEvent mouseEventWithType:CPLeftMouseDragged location:currentLocation modifierFlags:modifierFlags
+                                   timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
+                [CPApp sendEvent:mouseDragged];
+            }
+        }
+
+        var mouseUp = [CPEvent mouseEventWithType:typeMouseUp location:currentLocation modifierFlags:modifierFlags
+                           timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
+        [CPApp sendEvent:mouseUp];
+    }
+}
+
 @end
 
 [Cucumber startCucumber];
