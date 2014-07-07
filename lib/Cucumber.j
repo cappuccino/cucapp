@@ -627,7 +627,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateDraggedClick:(CPArray)params
 {
     var obj1 = cucumber_objects[params.shift()],
-        obj2 = cucumber_objects[params.shift()],
+        obj2 = cucumber_objects[params.shift()];
 
     if (!obj1 || !obj2)
         return "OBJECT NOT FOUND";
@@ -680,13 +680,13 @@ function dumpGuiObject(obj)
         currentWindow = [aView window],
         typeMouseDown = CPLeftMouseDown,
         typeMouseUp = CPLeftMouseUp,
-        modifiersFlag = 0,
+        modifiersFlags = 0,
         currentLocation = CGPointMakeCopy(locationWindowPoint);
 
     if ([aView superview])
-        locationWindowPoint = [[aView superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame])];
+        locationWindowPoint = [[aView superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]))];
     else
-        locationWindowPoint = CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]);
+        locationWindowPoint = CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]));
 
     if (anEventType == CPRightMouseDown)
     {
@@ -709,9 +709,9 @@ function dumpGuiObject(obj)
         if (aView2)
         {
             if ([aView2 superview])
-                locationWindowPoint2 = [[aView2 superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame])];
+                locationWindowPoint2 = [[aView2 superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame]))];
             else
-                locationWindowPoint2 = CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame]);
+                locationWindowPoint2 = CGPointMake(CGRectGetMidX([aView2 frame]), CGRectGetMidY([aView2 frame]));
 
             var maxDiff = MAX(ABS(locationWindowPoint.x - locationWindowPoint2.x), ABS(locationWindowPoint.y - locationWindowPoint2.y)),
                 xDiff = locationWindowPoint.x - locationWindowPoint2.x,
