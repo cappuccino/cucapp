@@ -307,31 +307,56 @@ module Encumber
       sleep 1
     end
 
-    def simulateLeftClick xpath, flags
+    def simulate_left_click xpath, flags
       result = command('simulateLeftClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result!='OK'
     end
 
-    def simulateDoubleClick xpath, flags
+    def simulate_left_click_on_point x, y, flags
+      result = command('simulateLeftClickOnPoint', x, y, flags)
+      raise "Point not found: #{result}" if result!='OK'
+    end
+
+    def simulate_double_click xpath, flags
       result = command('simulateDoubleClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result!='OK'
     end
 
-    def simulateDraggedClick xpath1, xpath2, flags
-      result = command('simulateDraggedClick', id_for_element(xpath), id_for_element(xpath2), flags)
-      raise "View not found: #{xpath} or #{xpath2}- #{result}" if result!='OK'
+    def simulate_double_click_on_point x, y, flags
+      result = command('simulateDoubleClick', x, y, flags)
+      raise "View not found: #{result}" if result!='OK'
     end
 
-    def simulateRightClick xpath, flags
+    def simulate_dragged_click_view_to_view xpath1, xpath2, flags
+      result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
+      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result!='OK'
+    end
+
+    def simulate_dragged_click_view_to_point xpath1, x, y, flags
+      result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
+      raise "View/Point not found: #{xpath1} - #{result}" if result!='OK'
+    end
+
+    def simulate_dragged_click_point_to_point x, y, x2, y2, flags
+      result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
+      raise "Point not found: #{result}" if result!='OK'
+    end
+
+    def simulate_right_click xpath, flags
       result = command('simulateRightClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result!='OK'
     end
 
-    def simulateKeyboardEvent charac, flags
+    def simulate_right_click_on_point x, y, flags
+      result = command('simulateRightClickOnPoint', x, y, flags)
+      raise "Point not found: #{result}" if result!='OK'
+    end
+
+    def simulate_keyboard_event charac, flags
       result = command('simulateKeyboardEvent', charac, flags)
     end
 
-    def simulateKeyboardEvents string, flags
+    def simulate_keyboard_events string, flags
       string.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
         sleep(0.1)
