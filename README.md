@@ -50,7 +50,7 @@ The cucappIdentifier can be used massivelly in the Cucumber features to get an e
 When launching Cucumber, Cucapp will try to load the file `CucumberCategories.j`. This file has to be located in features/support/CucumberCategories.j.
 This category allows you to add new Cappuccino methods who can be called from the features of your test (for instance a method to check the color of a CPView).
 
-#### Steps features
+#### Features
 
 Cucapp provides a set of basic methods who can be called from Cucumber (take a look at encumber.rb and Cucumber.j). You should mainly used the following methods :
 
