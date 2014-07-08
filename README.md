@@ -33,23 +33,32 @@ The following gems are going to be installed:
 
 ## Usage
 
+#### Environement Variables
+
 You can set different env variables to configure Cucapp :
 
-    - The env variable CUCAPP_PORT allows you to specify the port used by the server Thin.
-    - The env variable CUCAPP_APPDIRECTORY allows you to specify where is your Cappuccino application.
-    - The env variable CUCAPP_USEBUNDLE allows you to specify if you want to use or not the bundle of Cucapp (It means you need to jake Cucapp)
-    - The env variable CUCAPP_APPLOADINGMODE allows you to specify which mode of the app you want to test (build or debug)
+- The env variable CUCAPP_PORT allows you to specify the port used by the server Thin.
+- The env variable CUCAPP_APPDIRECTORY allows you to specify where is your Cappuccino application.
+- The env variable CUCAPP_USEBUNDLE allows you to specify if you want to use or not the bundle of Cucapp (It means you need to jake Cucapp)
+- The env variable CUCAPP_APPLOADINGMODE allows you to specify which mode of the app you want to test (build or debug)
+
+#### Categories
 
 Cucapp provides a Category (HelperCategories.j) who allows you to add a cucappIdentifier to your different responder in your Cappuccino application. You should include the Category in your Cappuccino application.
 The cucappIdentifier can be used massivelly in the Cucumber features to get an easy access to a targeted element.
 
+When launching Cucumber, Cucapp will try to load the file CucumberCategories.j. This file has to be located in features/support/CucumberCategories.j.
+This category allows you to add new Cappuccino methods who can be called from the features of your test (for instance a method to check the color of a CPView).
+
+#### Steps features
+
 Cucapp provides a set of basic methods who can be called from Cucumber (take a look at encumber.rb and Cucumber.j). You should mainly used the following methods :
 
-    -  ```ruby simulate_left_click xpath, flags```
-    -  ```ruby simulate_dragged_click_view_to_view xpath1, xpath2, flags```
-    -  ```ruby simulate_right_click xpath, flags```
-    -  ```ruby simulate_keyboard_event charac, flags```
-    -  ```ruby simulate_scroll_wheel xpath, deltaX, deltaY, flags```
+    simulate_left_click xpath, flags
+    simulate_dragged_click_view_to_view xpath1, xpath2, flags
+    simulate_right_click xpath, flags
+    simulate_keyboard_event charac, flags
+    simulate_scroll_wheel xpath, deltaX, deltaY, flags
 
 Example of a step:
 
@@ -65,8 +74,5 @@ I want to fill a form and send the informations do
   app.gui.simulate_left_click         "//CPButton[cucappIdentifier='button-send']", []
 end
 ```
-
-When launching Cucumber, Cucapp will try to load the file CucumberCategories.j. This file has to be located in features/support/CucumberCategories.j.
-This category allows you to add new Cappuccino methods who can be called from the features of your test (for instance a method to check the color of a CPView).
 
 The rest is pure Cucumber, don't hesitate to take a look at their website ;) (see: http://cukes.info)
