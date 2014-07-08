@@ -363,5 +363,10 @@ module Encumber
       end
     end
 
+    def simulate_scroll_wheel xpath, deltaX, deltaY, flags
+      result = command('simulateScrollWheel',id_for_element(xpath), deltaX, deltaY, flags)
+      raise "View not found: #{xpath} - #{result}" if result!='OK'
+    end
+
   end
 end

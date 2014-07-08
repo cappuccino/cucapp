@@ -684,7 +684,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateLeftClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp mainWindow];
+        window = [CPApp keyWindow];
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 }
@@ -710,7 +710,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateRightClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp mainWindow];
+        window = [CPApp keyWindow];
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
 }
@@ -736,7 +736,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateDoubleClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp mainWindow];
+        window = [CPApp keyWindow];
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 }
@@ -757,6 +757,39 @@ function dumpGuiObject(obj)
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 
     return "OK";
+}
+
+- (void)simulateScrollWheel:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()]
+        locationWindowPoint;
+
+    if (!obj)
+        return "OBJECT NOT FOUND";
+
+    if ([obj superview])
+        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
+    else
+        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
+
+    var deltaX = params.shift(),
+        deltaY = params.shift(),
+        flags = params.shift(),
+        modifierFlags = 0;
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
+        timestamp:[CPEvent currentTimestamp] windowNumber:[[obj window] windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
+
+    mouseWheel._deltaX = deltaX;
+    mouseWheel._deltaY = deltaY;
+
+    [CPApp sendEvent:mouseWheel];
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
