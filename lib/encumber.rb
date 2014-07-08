@@ -18,6 +18,123 @@ require 'nokogiri'
 require 'server'
 require 'launchy'
 
+$CPAlphaShiftKeyMask                     = 1 << 16;
+$CPShiftKeyMask                          = 1 << 17;
+$CPControlKeyMask                        = 1 << 18;
+$CPAlternateKeyMask                      = 1 << 19;
+$CPCommandKeyMask                        = 1 << 20;
+$CPNumericPadKeyMask                     = 1 << 21;
+$CPHelpKeyMask                           = 1 << 22;
+$CPFunctionKeyMask                       = 1 << 23;
+$CPDeviceIndependentModifierFlagsMask    = 0xffff0000;
+
+$CPLeftMouseDownMask                     = 1 << 1;
+$CPLeftMouseUpMask                       = 1 << 2;
+$CPRightMouseDownMask                    = 1 << 3;
+$CPRightMouseUpMask                      = 1 << 4;
+$CPOtherMouseDownMask                    = 1 << 25;
+$CPOtherMouseUpMask                      = 1 << 26;
+$CPMouseMovedMask                        = 1 << 5;
+$CPLeftMouseDraggedMask                  = 1 << 6;
+$CPRightMouseDraggedMask                 = 1 << 7;
+$CPOtherMouseDragged                     = 1 << 27;
+$CPMouseEnteredMask                      = 1 << 8;
+$CPMouseExitedMask                       = 1 << 9;
+$CPCursorUpdateMask                      = 1 << 17;
+$CPKeyDownMask                           = 1 << 10;
+$CPKeyUpMask                             = 1 << 11;
+$CPFlagsChangedMask                      = 1 << 12;
+$CPAppKitDefinedMask                     = 1 << 13;
+$CPSystemDefinedMask                     = 1 << 14;
+$CPApplicationDefinedMask                = 1 << 15;
+$CPPeriodicMask                          = 1 << 16;
+$CPScrollWheelMask                       = 1 << 22;
+$CPAnyEventMask                          = 0xffffffff;
+
+$CPUpArrowFunctionKey                    = "\uF700";
+$CPDownArrowFunctionKey                  = "\uF701";
+$CPLeftArrowFunctionKey                  = "\uF702";
+$CPRightArrowFunctionKey                 = "\uF703";
+$CPF1FunctionKey                         = "\uF704";
+$CPF2FunctionKey                         = "\uF705";
+$CPF3FunctionKey                         = "\uF706";
+$CPF4FunctionKey                         = "\uF707";
+$CPF5FunctionKey                         = "\uF708";
+$CPF6FunctionKey                         = "\uF709";
+$CPF7FunctionKey                         = "\uF70A";
+$CPF8FunctionKey                         = "\uF70B";
+$CPF9FunctionKey                         = "\uF70C";
+$CPF10FunctionKey                        = "\uF70D";
+$CPF11FunctionKey                        = "\uF70E";
+$CPF12FunctionKey                        = "\uF70F";
+$CPF13FunctionKey                        = "\uF710";
+$CPF14FunctionKey                        = "\uF711";
+$CPF15FunctionKey                        = "\uF712";
+$CPF16FunctionKey                        = "\uF713";
+$CPF17FunctionKey                        = "\uF714";
+$CPF18FunctionKey                        = "\uF715";
+$CPF19FunctionKey                        = "\uF716";
+$CPF20FunctionKey                        = "\uF717";
+$CPF21FunctionKey                        = "\uF718";
+$CPF22FunctionKey                        = "\uF719";
+$CPF23FunctionKey                        = "\uF71A";
+$CPF24FunctionKey                        = "\uF71B";
+$CPF25FunctionKey                        = "\uF71C";
+$CPF26FunctionKey                        = "\uF71D";
+$CPF27FunctionKey                        = "\uF71E";
+$CPF28FunctionKey                        = "\uF71F";
+$CPF29FunctionKey                        = "\uF720";
+$CPF30FunctionKey                        = "\uF721";
+$CPF31FunctionKey                        = "\uF722";
+$CPF32FunctionKey                        = "\uF723";
+$CPF33FunctionKey                        = "\uF724";
+$CPF34FunctionKey                        = "\uF725";
+$CPF35FunctionKey                        = "\uF726";
+$CPInsertFunctionKey                     = "\uF727";
+$CPDeleteFunctionKey                     = "\uF728";
+$CPHomeFunctionKey                       = "\uF729";
+$CPBeginFunctionKey                      = "\uF72A";
+$CPEndFunctionKey                        = "\uF72B";
+$CPPageUpFunctionKey                     = "\uF72C";
+$CPPageDownFunctionKey                   = "\uF72D";
+$CPPrintScreenFunctionKey                = "\uF72E";
+$CPScrollLockFunctionKey                 = "\uF72F";
+$CPPauseFunctionKey                      = "\uF730";
+$CPSysReqFunctionKey                     = "\uF731";
+$CPBreakFunctionKey                      = "\uF732";
+$CPResetFunctionKey                      = "\uF733";
+$CPStopFunctionKey                       = "\uF734";
+$CPMenuFunctionKey                       = "\uF735";
+$CPUserFunctionKey                       = "\uF736";
+$CPSystemFunctionKey                     = "\uF737";
+$CPPrintFunctionKey                      = "\uF738";
+$CPClearLineFunctionKey                  = "\uF739";
+$CPClearDisplayFunctionKey               = "\uF73A";
+$CPInsertLineFunctionKey                 = "\uF73B";
+$CPDeleteLineFunctionKey                 = "\uF73C";
+$CPInsertCharFunctionKey                 = "\uF73D";
+$CPDeleteCharFunctionKey                 = "\uF73E";
+$CPPrevFunctionKey                       = "\uF73F";
+$CPNextFunctionKey                       = "\uF740";
+$CPSelectFunctionKey                     = "\uF741";
+$CPExecuteFunctionKey                    = "\uF742";
+$CPUndoFunctionKey                       = "\uF743";
+$CPRedoFunctionKey                       = "\uF744";
+$CPFindFunctionKey                       = "\uF745";
+$CPHelpFunctionKey                       = "\uF746";
+$CPModeSwitchFunctionKey                 = "\uF747";
+$CPEscapeFunctionKey                     = "\u001B";
+$CPSpaceFunctionKey                      = "\u0020";
+
+$CPEnterCharacter                        = "\u0003";
+$CPBackspaceCharacter                    = "\u0008";
+$CPTabCharacter                          = "\u0009";
+$CPNewlineCharacter                      = "\u000a";
+$CPFormFeedCharacter                     = "\u000c";
+$CPCarriageReturnCharacter               = "\u000d";
+$CPBackTabCharacter                      = "\u0019";
+$CPDeleteCharacter                       = "\u007f";
+
 module Encumber
 
   class GUI
@@ -29,7 +146,7 @@ module Encumber
       raw = params.shift if params.first == :raw
       command = { :name => name, :params => params }
 
-#      puts "command = #{command.inspect}"
+      #puts "command = #{command.inspect}"
 
       th = Thread.current
       response = nil
@@ -212,6 +329,13 @@ module Encumber
 
     def simulateKeyboardEvent charac, flags
       result = command('simulateKeyboardEvent', charac, flags)
+    end
+
+    def simulateKeyboardEvents string, flags
+      string.split("").each do |c|
+        result = command('simulateKeyboardEvent', c, flags)
+        sleep(0.1)
+      end
     end
 
   end

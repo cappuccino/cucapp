@@ -18,7 +18,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/CPApplication.j>
 @import <AppKit/CPToolbarItem.j>
-
 @import "HelperCategories.j"
 
 @global CPApp
@@ -607,20 +606,21 @@ function dumpGuiObject(obj)
     var character = params.shift(),
         charactersIgnoringModifiers = character.toLowerCase(),
         modifierFlags = 0,
-        currentWindow = [CPApp keyWindow];
+        currentWindow = [CPApp keyWindow],
+        flags = params[0];
 
-    for (var i = 0; i < [params count]; i++)
+    for (var i = 0; i < [flags count]; i++)
     {
-        var flag = params[i];
+        var flag = flags[i];
         modifierFlags |= parseInt(flag);
     }
 
     var keyDownEvent = [CPEvent keyEventWithType:CPKeyDown location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:0];
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
     [CPApp sendEvent:keyDownEvent];
 
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:0];
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
     [CPApp sendEvent:keyUpEvent];
 }
 
@@ -632,7 +632,7 @@ function dumpGuiObject(obj)
     if (!obj1 || !obj2)
         return "OBJECT NOT FOUND";
 
-    [self _perfomeMouseEventOnView:obj1 toView:obj2 eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params];
+    [self _perfomMouseEventOnView:obj1 toView:obj2 eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return "OK";
 }
@@ -644,7 +644,7 @@ function dumpGuiObject(obj)
     if (!obj)
         return "OBJECT NOT FOUND";
 
-    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params];
+    [self _perfomMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return "OK";
 }
@@ -656,7 +656,7 @@ function dumpGuiObject(obj)
     if (!obj)
         return "OBJECT NOT FOUND";
 
-    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params];
+    [self _perfomMouseEventOnView:obj toView:nil eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return "OK";
 }
@@ -668,7 +668,7 @@ function dumpGuiObject(obj)
     if (!obj)
         return "OBJECT NOT FOUND";
 
-    [self _perfomeMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params];
+    [self _perfomMouseEventOnView:obj toView:nil eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 
     return "OK";
 }
@@ -680,13 +680,14 @@ function dumpGuiObject(obj)
         currentWindow = [aView window],
         typeMouseDown = CPLeftMouseDown,
         typeMouseUp = CPLeftMouseUp,
-        modifiersFlags = 0,
-        currentLocation = CGPointMakeCopy(locationWindowPoint);
+        modifierFlags = 0;
 
     if ([aView superview])
         locationWindowPoint = [[aView superview] convertPointToBase:CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]))];
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([aView frame]), CGRectGetMidY([aView frame]));
+
+    var currentLocation = CGPointMakeCopy(locationWindowPoint);
 
     if (anEventType == CPRightMouseDown)
     {
@@ -743,5 +744,29 @@ function dumpGuiObject(obj)
 }
 
 @end
+
+
+@implementation CPTextField (CucumberTextField)
+
+- (void)insertText:(CPString)aString
+{
+    if (!([self isEnabled] && [self isEditable]))
+        return;
+
+    var newValue = [self _inputElement].value + aString;
+
+    if (newValue !== _stringValue)
+    {
+        [self setStringValue:newValue];
+        [self _didEdit];
+    }
+
+    [[[self window] platformWindow] _propagateCurrentDOMEvent:NO];
+
+    [self setNeedsLayout];
+    [self setNeedsDisplay:YES];
+}
+@end
+
 
 [Cucumber startCucumber];
