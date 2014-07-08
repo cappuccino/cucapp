@@ -54,11 +54,13 @@ This category allows you to add new Cappuccino methods who can be called from th
 
 Cucapp provides a set of basic methods who can be called from Cucumber (take a look at encumber.rb and Cucumber.j). You should mainly used the following methods :
 
-    simulate_left_click xpath, flags
-    simulate_dragged_click_view_to_view xpath1, xpath2, flags
-    simulate_right_click xpath, flags
-    simulate_keyboard_event charac, flags
-    simulate_scroll_wheel xpath, deltaX, deltaY, flags
+```ruby
+    def simulate_left_click xpath, flags
+    def simulate_dragged_click_view_to_view xpath1, xpath2, flags
+    def simulate_right_click xpath, flags
+    def simulate_keyboard_event charac, flags
+    def simulate_scroll_wheel xpath, deltaX, deltaY, flags
+````
 
 Example of a step:
 
