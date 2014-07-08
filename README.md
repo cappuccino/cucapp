@@ -37,17 +37,17 @@ The following gems are going to be installed:
 
 You can set different env variables to configure Cucapp :
 
-- The env variable CUCAPP_PORT allows you to specify the port used by the server Thin.
-- The env variable CUCAPP_APPDIRECTORY allows you to specify where is your Cappuccino application.
-- The env variable CUCAPP_USEBUNDLE allows you to specify if you want to use or not the bundle of Cucapp (It means you need to jake Cucapp)
-- The env variable CUCAPP_APPLOADINGMODE allows you to specify which mode of the app you want to test (build or debug)
+- The env variable `CUCAPP_PORT` allows you to specify the port used by the server Thin.
+- The env variable `CUCAPP_APPDIRECTORY` allows you to specify where is your Cappuccino application.
+- The env variable `CUCAPP_USEBUNDLE` allows you to specify if you want to use or not the bundle of Cucapp (It means you need to jake Cucapp)
+- The env variable `CUCAPP_APPLOADINGMODE` allows you to specify which mode of the app you want to test (build or debug)
 
 #### Categories
 
-Cucapp provides a Category (HelperCategories.j) who allows you to add a cucappIdentifier to your different responder in your Cappuccino application. You should include the Category in your Cappuccino application.
+Cucapp provides a Category (`HelperCategories.j`) who allows you to add a cucappIdentifier to your different responder in your Cappuccino application. You should include the Category in your Cappuccino application.
 The cucappIdentifier can be used massivelly in the Cucumber features to get an easy access to a targeted element.
 
-When launching Cucumber, Cucapp will try to load the file CucumberCategories.j. This file has to be located in features/support/CucumberCategories.j.
+When launching Cucumber, Cucapp will try to load the file `CucumberCategories.j`. This file has to be located in features/support/CucumberCategories.j.
 This category allows you to add new Cappuccino methods who can be called from the features of your test (for instance a method to check the color of a CPView).
 
 #### Steps features
