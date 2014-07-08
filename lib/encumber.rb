@@ -153,6 +153,7 @@ module Encumber
       CUCUMBER_REQUEST_QUEUE.push(command)
       CUCUMBER_RESPONSE_QUEUE.pop { |result|
 #        puts "RESPONSE: #{result}"
+
         response = result
         th.wakeup
       }
@@ -169,7 +170,11 @@ module Encumber
           if obj["error"]
             raise obj["error"]
           else
-            obj["result"]
+            begin
+              JSON.parse(obj["result"])
+            rescue Exception => e
+              obj["result"]
+            end
           end
         else
           nil
@@ -214,7 +219,7 @@ module Encumber
     def performRemoteAction(action, xpath)
       result = command action, id_for_element(xpath)
 
-      raise "View not found: #{xpath}" if result!='OK'
+      raise "View not found: #{xpath}" if result['result'] != 'OK'
     end
 
     def press(xpath)
@@ -232,13 +237,13 @@ module Encumber
     def select_from(value_to_select, xpath)
       result = command 'selectFrom', value_to_select, id_for_element(xpath)
 
-      raise "Could not select #{value_to_select} in #{xpath} " + result if result != "OK"
+      raise "Could not select #{value_to_select} in #{xpath} " + result if result['result'] != "OK"
     end
 
     def select_menu(menu_item)
       result = command 'selectMenu', menu_item
 
-      raise "Could not select #{menu_item} from the menu" + result if result != "OK"
+      raise "Could not select #{menu_item} from the menu" + result if result['result'] != "OK"
     end
 
     def fill_in(value, xpath)
@@ -248,23 +253,23 @@ module Encumber
     def find_in(value, xpath)
       result = command "findIn", value, id_for_element(xpath)
 
-      raise "Could not find #{value} in #{xpath}" if result != "OK"
+      raise "Could not find #{value} in #{xpath}" if result['result'] != "OK"
 
-      result == "OK"
+      result['result'] == "OK"
     end
 
     def text_for(xpath)
       result = command "textFor", id_for_element(xpath)
 
-      raise "Could not find text for element #{xpath}" if result == "__CUKE_ERROR__"
+      raise "Could not find text for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
 
-      result
+      result['result']
     end
 
     def double_click(value, xpath)
       result = command 'doubleClick', id_for_element(xpath)
 
-      raise "Could not double click #{xpath}" if result != "OK"
+      raise "Could not double click #{xpath}" if result["result"] != "OK"
     end
 
     # Nokogiri XML DOM for the current Brominet XML representation of the GUI
@@ -294,7 +299,7 @@ module Encumber
 
     def type_in_field text, xpath
       result = command('setText', text, id_for_element(xpath))
-      raise "View not found: #{xpath} - #{result}" if result!='OK'
+      raise "View not found: #{xpath} - #{result}" if result['result'] != 'OK'
       sleep 1
     end
 
@@ -309,17 +314,17 @@ module Encumber
 
     def simulate_left_click xpath, flags
       result = command('simulateLeftClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result!='OK'
+      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
     end
 
     def simulate_left_click_on_point x, y, flags
       result = command('simulateLeftClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result!='OK'
+      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_double_click xpath, flags
       result = command('simulateDoubleClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result!='OK'
+      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
     def simulate_double_click_on_point x, y, flags
@@ -329,27 +334,27 @@ module Encumber
 
     def simulate_dragged_click_view_to_view xpath1, xpath2, flags
       result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
-      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result!='OK'
+      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result["result"] != 'OK'
     end
 
     def simulate_dragged_click_view_to_point xpath1, x, y, flags
       result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
-      raise "View/Point not found: #{xpath1} - #{result}" if result!='OK'
+      raise "View/Point not found: #{xpath1} - #{result}" if result["result"] != 'OK'
     end
 
     def simulate_dragged_click_point_to_point x, y, x2, y2, flags
       result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
-      raise "Point not found: #{result}" if result!='OK'
+      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_right_click xpath, flags
       result = command('simulateRightClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result!='OK'
+      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
     def simulate_right_click_on_point x, y, flags
       result = command('simulateRightClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result!='OK'
+      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_keyboard_event charac, flags
@@ -365,7 +370,7 @@ module Encumber
 
     def simulate_scroll_wheel xpath, deltaX, deltaY, flags
       result = command('simulateScrollWheel',id_for_element(xpath), deltaX, deltaY, flags)
-      raise "View not found: #{xpath} - #{result}" if result!='OK'
+      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
   end

@@ -305,7 +305,7 @@ function dumpGuiObject(obj)
     if ([[CPApp delegate] respondsToSelector: @selector(restoreDefaults:)])
         [[CPApp delegate] restoreDefaults: params];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)outputView:(CPArray)params
@@ -321,14 +321,14 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "NOT FOUND";
+        return '{"result" : "NOT FOUND"}';
 
     if ([obj isKindOfClass:[CPToolbarItem class]])
         [[obj target] performSelector:[obj action] withObject:obj];
     else
         [obj performClick: self];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)closeWindow:(CPArray)params
@@ -336,10 +336,10 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "NOT FOUND";
+        return '{"result" : "NOT FOUND"}';
 
     [obj performClose: self];
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)performMenuItem:(CPArray)params
@@ -347,16 +347,17 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "NOT FOUND";
+        return '{"result" : "NOT FOUND"}';
 
     [[obj target] performSelector: [obj action] withObject: obj];
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)closeBrowser:(CPArray)params
 {
     time_to_die = YES;
-    return "OK";
+
+    return '{"result" : "OK"}';
 }
 
 - (CPString)launched:(CPArray)params
@@ -372,12 +373,12 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "__CUKE_ERROR__";
+        return '{"result" : "__CUKE_ERROR__"}';
 
     if ([obj respondsToSelector:@selector(objectValue)])
-        return @"" + [obj objectValue];
+        return '{"result" : "' + [obj objectValue] + '"}';
 
-    return nil;
+    return '{"result" : ""}';
 }
 
 - (id)valueForKeyPathFor:(CPArray)params
@@ -385,15 +386,15 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-		return "__CUKE_ERROR__";
+		return '{"result" : "__CUKE_ERROR__"}';
 
     try
     {
-       return [obj valueForKeyPath:params[1]];
+       return '{"result" : "' + [obj valueForKeyPath:params[1]] + '"}';
     }
     catch (e)
     {
-        return "__CUKE_ERROR__";
+        return '{"result" : "__CUKE_ERROR__"}';
     }
 }
 
@@ -402,7 +403,7 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[1]];
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     var columns = [obj tableColumns];
 
@@ -421,9 +422,9 @@ function dumpGuiObject(obj)
                     [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:j] byExtendingSelection:NO];
 
                     if (data == [[obj dataSource] tableView:obj objectValueForTableColumn:column row:[obj selectedRow]])
-                        return "OK";
+                        return '{"result" : "OK"}';
                     else
-                        return "DATA NOT FOUND";
+                        return '{"result" : "DATA NOT FOUND"}';
                 }
             }
         }
@@ -432,10 +433,10 @@ function dumpGuiObject(obj)
     if ([[obj dataSource] respondsToSelector:@selector(outlineView:numberOfChildrenOfItem:)])
     {
         if ([self searchForObjectValue:params[0] inItemsInOutlineView:obj forItem:nil])
-            return "OK";
+            return '{"result" : "OK"}';
     }
 
-    return "DATA NOT FOUND";
+    return '{"result" : "DATA NOT FOUND"}';
 }
 
 - (BOOL)searchForObjectValue:(id)value inItemsInOutlineView:(CPOutlineView)obj forItem:(id)item
@@ -479,14 +480,14 @@ function dumpGuiObject(obj)
     var obj = [CPApp mainMenu];
 
     if (!obj)
-        return "MENU NOT FOUND";
+        return '{"result" : "MENU NOT FOUND"}';
 
     var item = [obj itemWithTitle:params[0]];
 
     if (item)
-        return "OK";
+        return '{"result" : "OK"}';
 
-    return "MENU ITEM NOT FOUND";
+    return '{"result" : "MENU ITEM NOT FOUND"}';
 }
 
 - (CPString)findIn:(CPArray)params
@@ -499,12 +500,12 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "__CUKE_ERROR__";
+        return '{"result" : "__CUKE_ERROR__"}';
 
     if ([obj respondsToSelector:@selector(stringValue)])
-        return [obj stringValue];
+        return '{"result" : "' + [obj stringValue] + '"}';
 
-    return "__CUKE_ERROR__";
+    return '{"result" : "__CUKE_ERROR__"}';
 }
 
 - (CPString)doubleClick:(CPArray)params
@@ -512,16 +513,16 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[0]];
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj respondsToSelector:@selector(doubleAction)] && [obj doubleAction] !== null)
     {
         [[obj target] performSelector:[obj doubleAction] withObject:self];
 
-        return "OK";
+        return '{"result" : "OK"}';
     }
 
-    return "NO DOUBLE ACTION";
+    return '{"result" : "NO DOUBLE ACTION"}';
 }
 
 - (CPString)setText:(CPArray)params
@@ -529,16 +530,16 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params[1]];
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj respondsToSelector:@selector(setStringValue:)])
     {
         [obj setStringValue:params[0]];
         [self propagateValue:[obj stringValue] forBinding:"value" forObject:obj];
-        return "OK";
+        return '{"result" : "OK"}';
     }
 
-    return "CANNOT SET TEXT ON OBJECT";
+    return '{"result" : "CANNOT SET TEXT ON OBJECT"}';
 }
 
 - (void)propagateValue:(id)value forBinding:(CPString)binding forObject:(id)aObject
@@ -632,7 +633,7 @@ function dumpGuiObject(obj)
         locationWindowPoint2;
 
     if (!obj1 || !obj2)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj1 superview])
         locationWindowPoint = [[obj1 superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj1 frame]), CGRectGetMidY([obj1 frame]))];
@@ -646,7 +647,7 @@ function dumpGuiObject(obj)
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[obj1 window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)simulateDraggedClickViewToPoint:(CPArray)params
@@ -656,7 +657,7 @@ function dumpGuiObject(obj)
         locationWindowPoint2 = CGPointMake(params.shift(), params.shift());
 
     if (!obj1 || !locationWindowPoint2)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj1 superview])
         locationWindowPoint = [[obj1 superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj1 frame]), CGRectGetMidY([obj1 frame]))];
@@ -665,20 +666,20 @@ function dumpGuiObject(obj)
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[obj1 window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)simulateDraggedClickViewToPoint:(CPArray)params
 {
-    var locationWindowPoint = CGPointMake(params.shift(), params.shift())
+    var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
         locationWindowPoint2 = CGPointMake(params.shift(), params.shift());
 
     if (!locationWindowPoint || !locationWindowPoint2)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[CPApp mainWindow] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)simulateLeftClickOnPoint:(CPArray)params
@@ -695,7 +696,7 @@ function dumpGuiObject(obj)
         locationWindowPoint;
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
@@ -704,7 +705,7 @@ function dumpGuiObject(obj)
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)simulateRightClickOnPoint:(CPArray)params
@@ -721,7 +722,7 @@ function dumpGuiObject(obj)
         locationWindowPoint;
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
@@ -730,7 +731,7 @@ function dumpGuiObject(obj)
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (CPString)simulateDoubleClickOnPoint:(CPArray)params
@@ -743,11 +744,11 @@ function dumpGuiObject(obj)
 
 - (CPString)simulateDoubleClick:(CPArray)params
 {
-    var obj = cucumber_objects[params.shift()]
+    var obj = cucumber_objects[params.shift()],
         locationWindowPoint;
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
@@ -756,16 +757,16 @@ function dumpGuiObject(obj)
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 
-    return "OK";
+    return '{"result" : "OK"}';
 }
 
 - (void)simulateScrollWheel:(CPArray)params
 {
-    var obj = cucumber_objects[params.shift()]
+    var obj = cucumber_objects[params.shift()],
         locationWindowPoint;
 
     if (!obj)
-        return "OBJECT NOT FOUND";
+        return '{"result" : "OBJECT NOT FOUND"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
