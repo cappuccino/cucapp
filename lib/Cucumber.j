@@ -464,7 +464,7 @@ function dumpGuiObject(obj)
                         var index = [obj rowForItem:subChild];
                         [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
-                        if (subChild == [[obj dataSource] outlineView:obj child:index ofItem:child])
+                        if (subChild == [[obj dataSource] outlineView:obj child:(index - 1) ofItem:child])
                             return YES;
                     }
                 }
