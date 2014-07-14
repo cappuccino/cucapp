@@ -464,7 +464,7 @@ function dumpGuiObject(obj)
                         var index = [obj rowForItem:subChild];
                         [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
-                        if (subChild == [[obj dataSource] outlineView:obj child:index ofItem:child])
+                        if (subChild == [[obj dataSource] outlineView:obj child:(index - 1) ofItem:child])
                             return YES;
                     }
                 }
@@ -622,7 +622,10 @@ function dumpGuiObject(obj)
 
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
+
     [CPApp sendEvent:keyUpEvent];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 - (CPString)simulateDraggedClickViewToView:(CPArray)params
@@ -682,7 +685,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateLeftClickOnPoint:(CPArray)params
+- (void)simulateLeftClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -708,7 +711,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateRightClickOnPoint:(CPArray)params
+- (void)simulateRightClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -734,7 +737,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateDoubleClickOnPoint:(CPArray)params
+- (void)simulateDoubleClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -791,6 +794,8 @@ function dumpGuiObject(obj)
     mouseWheel._deltaY = deltaY;
 
     [CPApp sendEvent:mouseWheel];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
@@ -813,6 +818,9 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
+    if (locationWindowPoint2)
+        modifierFlags |= CPLeftMouseDraggedMask;
+
     for (var i = 1; i < numberOfClick + 1; i++)
     {
         var mouseDown = [CPEvent mouseEventWithType:typeMouseDown location:currentLocation modifierFlags:modifierFlags
@@ -825,7 +833,7 @@ function dumpGuiObject(obj)
                 xDiff = locationWindowPoint.x - locationWindowPoint2.x,
                 yDiff = locationWindowPoint.y - locationWindowPoint2.y;
 
-            for (var j = 0; i < maxDiff; j++)
+            for (var j = 0; j < maxDiff; j++)
             {
                 var gapX = xDiff > 0 ? -1 : 1,
                     gapY = yDiff > 0 ? -1 : 1;
@@ -839,7 +847,8 @@ function dumpGuiObject(obj)
                 currentLocation = CGPointMake(currentLocation.x + gapX, currentLocation.y + gapY);
 
                 var mouseDragged = [CPEvent mouseEventWithType:CPLeftMouseDragged location:currentLocation modifierFlags:modifierFlags
-                                   timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
+                                   timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:-1 clickCount:i pressure:0];
+
                 [CPApp sendEvent:mouseDragged];
             }
         }
@@ -848,6 +857,8 @@ function dumpGuiObject(obj)
                            timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
         [CPApp sendEvent:mouseUp];
     }
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 @end

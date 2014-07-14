@@ -364,7 +364,6 @@ module Encumber
     def simulate_keyboard_events string, flags
       string.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
-        sleep(0.1)
       end
     end
 
