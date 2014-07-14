@@ -464,7 +464,7 @@ function dumpGuiObject(obj)
                         var index = [obj rowForItem:subChild];
                         [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
-                        if (subChild == [[obj dataSource] outlineView:obj child:index ofItem:child])
+                        if (subChild == [[obj dataSource] outlineView:obj child:(index - 1) ofItem:child])
                             return YES;
                     }
                 }
@@ -813,6 +813,9 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
+    if (locationWindowPoint2)
+        modifierFlags |= CPLeftMouseDraggedMask;
+
     for (var i = 1; i < numberOfClick + 1; i++)
     {
         var mouseDown = [CPEvent mouseEventWithType:typeMouseDown location:currentLocation modifierFlags:modifierFlags
@@ -825,7 +828,7 @@ function dumpGuiObject(obj)
                 xDiff = locationWindowPoint.x - locationWindowPoint2.x,
                 yDiff = locationWindowPoint.y - locationWindowPoint2.y;
 
-            for (var j = 0; i < maxDiff; j++)
+            for (var j = 0; j < maxDiff; j++)
             {
                 var gapX = xDiff > 0 ? -1 : 1,
                     gapY = yDiff > 0 ? -1 : 1;
@@ -839,7 +842,8 @@ function dumpGuiObject(obj)
                 currentLocation = CGPointMake(currentLocation.x + gapX, currentLocation.y + gapY);
 
                 var mouseDragged = [CPEvent mouseEventWithType:CPLeftMouseDragged location:currentLocation modifierFlags:modifierFlags
-                                   timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
+                                   timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:-1 clickCount:i pressure:0];
+
                 [CPApp sendEvent:mouseDragged];
             }
         }
