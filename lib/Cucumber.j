@@ -622,7 +622,10 @@ function dumpGuiObject(obj)
 
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
+
     [CPApp sendEvent:keyUpEvent];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 - (CPString)simulateDraggedClickViewToView:(CPArray)params
@@ -682,7 +685,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateLeftClickOnPoint:(CPArray)params
+- (void)simulateLeftClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -708,7 +711,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateRightClickOnPoint:(CPArray)params
+- (void)simulateRightClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -734,7 +737,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateDoubleClickOnPoint:(CPArray)params
+- (void)simulateDoubleClickOnPoint:(CPArray)params
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
@@ -791,6 +794,8 @@ function dumpGuiObject(obj)
     mouseWheel._deltaY = deltaY;
 
     [CPApp sendEvent:mouseWheel];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
@@ -852,6 +857,8 @@ function dumpGuiObject(obj)
                            timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
         [CPApp sendEvent:mouseUp];
     }
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 @end
