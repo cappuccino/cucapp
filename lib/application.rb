@@ -23,15 +23,16 @@ class Cucapp
   attr_reader :gui
 
   def initialize(*p)
-    if p.has_key?("timeout_in_seconds")
-      @gui = Encumber::GUI.new(p[:timeout_in_seconds])
-    else 
+    timeout_in_seconds, url_params = *p
+    if timeout_in_seconds.nil?
       @gui = Encumber::GUI.new
+    else
+      @gui = Encumber::GUI.new(timeout_in_seconds)
     end
-    if p.has_key?("url_params")
-      @gui.launch(p[:url_params])
-    else 
+    if url_params.nil?
       @gui.launch
+    else
+      @gui.launch(url_params)
     end
   end
 
