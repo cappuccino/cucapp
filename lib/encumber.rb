@@ -17,6 +17,7 @@ require 'json'
 require 'nokogiri'
 require 'server'
 require 'launchy'
+require 'uri'
 
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
@@ -188,10 +189,9 @@ module Encumber
       dom_for_gui.search(xpath)
     end
 
-    def launch
+    def launch(url_params="")
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html")
-
+      Launchy.open("http://localhost:3000/cucumber.html" + URI.escape(url_params))
       startTime = Time.now
       until command('launched') == "YES" || (Time.now-startTime<@timeout) do
         # do nothing
