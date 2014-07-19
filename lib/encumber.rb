@@ -265,7 +265,7 @@ module Encumber
       result['result']
     end
 
-    def double_click(value, xpath)
+    def double_click(xpath)
       result = command 'doubleClick', id_for_element(xpath)
 
       raise "Could not double click #{xpath}" if result["result"] != "OK"
