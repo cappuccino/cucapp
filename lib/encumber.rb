@@ -188,10 +188,9 @@ module Encumber
       dom_for_gui.search(xpath)
     end
 
-    def launch
+    def launch(url_params="")
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html")
-
+      Launchy.open("http://localhost:3000/cucumber.html" + url_params)
       startTime = Time.now
       until command('launched') == "YES" || (Time.now-startTime<@timeout) do
         # do nothing
@@ -237,7 +236,7 @@ module Encumber
     def select_from(value_to_select, xpath)
       result = command 'selectFrom', value_to_select, id_for_element(xpath)
 
-      raise "Could not select #{value_to_select} in #{xpath} " + result if result['result'] != "OK"
+      raise "Could not select #{value_to_select} in #{xpath} " + result['result'] if result['result'] != "OK"
     end
 
     def select_menu(menu_item)
@@ -266,7 +265,7 @@ module Encumber
       result['result']
     end
 
-    def double_click(value, xpath)
+    def double_click(xpath)
       result = command 'doubleClick', id_for_element(xpath)
 
       raise "Could not double click #{xpath}" if result["result"] != "OK"

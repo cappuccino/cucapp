@@ -22,9 +22,18 @@ class Cucapp
   attr_reader :warning_text
   attr_reader :gui
 
-  def initialize
-    @gui = Encumber::GUI.new
-    @gui.launch
+  def initialize(*p)
+    timeout_in_seconds, url_params = *p
+    if timeout_in_seconds.nil?
+      @gui = Encumber::GUI.new
+    else
+      @gui = Encumber::GUI.new(timeout_in_seconds)
+    end
+    if url_params.nil?
+      @gui.launch
+    else
+      @gui.launch(url_params)
+    end
   end
 
   def reset
