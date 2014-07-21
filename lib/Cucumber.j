@@ -871,7 +871,7 @@ function dumpGuiObject(obj)
     if (!([self isEnabled] && [self isEditable]))
         return;
 
-    var selectedRange = [self selectedRange];
+    var selectedRange = [self selectedRange],
         newValue = [self _inputElement].value  + aString;
 
     if (selectedRange.length)
