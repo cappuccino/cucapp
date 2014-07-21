@@ -871,7 +871,11 @@ function dumpGuiObject(obj)
     if (!([self isEnabled] && [self isEditable]))
         return;
 
-    var newValue = [self _inputElement].value + aString;
+    var selectedRange = [self selectedRange];
+        newValue = [self _inputElement].value  + aString;
+
+    if (selectedRange.length)
+        newValue = [[self _inputElement].value stringByReplacingCharactersInRange:selectedRange withString:aString];
 
     if (newValue !== _stringValue)
     {
@@ -885,6 +889,5 @@ function dumpGuiObject(obj)
     [self setNeedsDisplay:YES];
 }
 @end
-
 
 [Cucumber startCucumber];
