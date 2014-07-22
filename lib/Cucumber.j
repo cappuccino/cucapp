@@ -298,7 +298,7 @@ function dumpGuiObject(obj)
 
 
 #pragma mark -
-#pragma mark Cucumber actions
+#pragma mark Cucapp methods
 
 - (CPString)restoreDefaults:(CPDictionary)params
 {
@@ -316,21 +316,6 @@ function dumpGuiObject(obj)
     return [CPApp xmlDescription];
 }
 
-- (CPString)simulateTouch:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return '{"result" : "NOT FOUND"}';
-
-    if ([obj isKindOfClass:[CPToolbarItem class]])
-        [[obj target] performSelector:[obj action] withObject:obj];
-    else
-        [obj performClick: self];
-
-    return '{"result" : "OK"}';
-}
-
 - (CPString)closeWindow:(CPArray)params
 {
     var obj = cucumber_objects[params[0]];
@@ -339,17 +324,6 @@ function dumpGuiObject(obj)
         return '{"result" : "NOT FOUND"}';
 
     [obj performClose: self];
-    return '{"result" : "OK"}';
-}
-
-- (CPString)performMenuItem:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return '{"result" : "NOT FOUND"}';
-
-    [[obj target] performSelector: [obj action] withObject: obj];
     return '{"result" : "OK"}';
 }
 
@@ -368,6 +342,16 @@ function dumpGuiObject(obj)
     return "NO";
 }
 
+
+- (void)applicationDidFinishLaunching:(CPNotification)note
+{
+    launched = YES;
+}
+
+
+#pragma mark -
+#pragma mark Utilties
+
 - (id)objectValueFor:(CPArray)params
 {
     var obj = cucumber_objects[params[0]];
@@ -379,6 +363,19 @@ function dumpGuiObject(obj)
         return '{"result" : "' + [obj objectValue] + '"}';
 
     return '{"result" : ""}';
+}
+
+- (CPString)textFor:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    if ([obj respondsToSelector:@selector(stringValue)])
+        return '{"result" : "' + [obj stringValue] + '"}';
+
+    return '{"result" : "__CUKE_ERROR__"}';
 }
 
 - (id)valueForKeyPathFor:(CPArray)params
@@ -396,206 +393,6 @@ function dumpGuiObject(obj)
     {
         return '{"result" : "__CUKE_ERROR__"}';
     }
-}
-
-- (CPString)selectFrom:(CPArray)params
-{
-    var obj = cucumber_objects[params[1]];
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    var columns = [obj tableColumns];
-
-    if ([[obj dataSource] respondsToSelector:@selector(tableView:objectValueForTableColumn:row:)])
-    {
-        for (var i = 0; i < [columns count]; i++)
-        {
-            var column = columns[i];
-
-            for (var j = 0; j < [obj numberOfRows]; j++)
-            {
-                var data = [[obj dataSource] tableView:obj objectValueForTableColumn:column row:j];
-
-                if (@"" + data === params[0])
-                {
-                    [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:j] byExtendingSelection:NO];
-
-                    if (data == [[obj dataSource] tableView:obj objectValueForTableColumn:column row:[obj selectedRow]])
-                        return '{"result" : "OK"}';
-                    else
-                        return '{"result" : "DATA NOT FOUND"}';
-                }
-            }
-        }
-    }
-
-    if ([[obj dataSource] respondsToSelector:@selector(outlineView:numberOfChildrenOfItem:)])
-    {
-        if ([self searchForObjectValue:params[0] inItemsInOutlineView:obj forItem:nil])
-            return '{"result" : "OK"}';
-    }
-
-    return '{"result" : "DATA NOT FOUND"}';
-}
-
-- (BOOL)searchForObjectValue:(id)value inItemsInOutlineView:(CPOutlineView)obj forItem:(id)item
-{
-    var columns = [obj tableColumns];
-
-    for (var k = 0; k < [columns count]; k++)
-    {
-        for (var i = 0; i < [[obj dataSource] outlineView:obj numberOfChildrenOfItem:item]; i++)
-        {
-            var child = [[obj dataSource] outlineView:obj child:i ofItem:item],
-                testValue = [[obj dataSource] outlineView:obj objectValueForTableColumn:columns[k] byItem:child];
-
-            if (@"" + testValue === value)
-                return YES;
-
-            if ([self searchForObjectValue:value inItemsInOutlineView:obj forItem:child])
-            {
-                for (var j = 0; j < [[obj dataSource] outlineView:obj numberOfChildrenOfItem:child]; j++)
-                {
-                    var subChild = [[obj dataSource] outlineView:obj child:j ofItem:child];
-
-                    if (@"" + subChild === value)
-                    {
-                        var index = [obj rowForItem:subChild];
-                        [obj selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-
-                        if (subChild == [[obj dataSource] outlineView:obj child:(index - 1) ofItem:child])
-                            return YES;
-                    }
-                }
-            }
-        }
-    }
-
-    return NO;
-}
-
-- (CPString)selectMenu:(CPArray)params
-{
-    var obj = [CPApp mainMenu];
-
-    if (!obj)
-        return '{"result" : "MENU NOT FOUND"}';
-
-    var item = [obj itemWithTitle:params[0]];
-
-    if (item)
-        return '{"result" : "OK"}';
-
-    return '{"result" : "MENU ITEM NOT FOUND"}';
-}
-
-- (CPString)findIn:(CPArray)params
-{
-    return [self selectFrom:params];
-}
-
-- (CPString)textFor:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return '{"result" : "__CUKE_ERROR__"}';
-
-    if ([obj respondsToSelector:@selector(stringValue)])
-        return '{"result" : "' + [obj stringValue] + '"}';
-
-    return '{"result" : "__CUKE_ERROR__"}';
-}
-
-- (CPString)doubleClick:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    if ([obj respondsToSelector:@selector(doubleAction)] && [obj doubleAction] !== null)
-    {
-        [[obj target] performSelector:[obj doubleAction] withObject:self];
-
-        return '{"result" : "OK"}';
-    }
-
-    return '{"result" : "NO DOUBLE ACTION"}';
-}
-
-- (CPString)setText:(CPArray)params
-{
-    var obj = cucumber_objects[params[1]];
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    if ([obj respondsToSelector:@selector(setStringValue:)])
-    {
-        [obj setStringValue:params[0]];
-        [self propagateValue:[obj stringValue] forBinding:"value" forObject:obj];
-        return '{"result" : "OK"}';
-    }
-
-    return '{"result" : "CANNOT SET TEXT ON OBJECT"}';
-}
-
-- (void)propagateValue:(id)value forBinding:(CPString)binding forObject:(id)aObject
-{
-    //WARNING: bindingInfo contains CPNull, so it must be accounted for
-    var bindingInfo = [aObject infoForBinding:binding];
-
-    if (!bindingInfo)
-        return; //there is no binding
-
-    //apply the value transformer, if one has been set
-    var bindingOptions = [bindingInfo objectForKey:CPOptionsKey];
-
-    if (bindingOptions)
-    {
-        var transformer = [bindingOptions valueForKey:CPValueTransformerBindingOption];
-
-        if (!transformer || transformer == [CPNull null])
-        {
-            var transformerName = [bindingOptions valueForKey:CPValueTransformerNameBindingOption];
-
-            if (transformerName && transformerName != [CPNull null])
-                transformer = [CPValueTransformer valueTransformerForName:transformerName];
-        }
-
-        if (transformer && transformer != [CPNull null])
-        {
-            if ([[transformer class] allowsReverseTransformation])
-                value = [transformer reverseTransformedValue:value];
-            else
-                CPLog(@"WARNING: binding \"%@\" has value transformer, but it doesn't allow reverse transformations in %s", binding, __PRETTY_FUNCTION__);
-        }
-    }
-
-    var boundObject = [bindingInfo objectForKey:CPObservedObjectKey];
-
-    if (!boundObject || boundObject == [CPNull null])
-    {
-        CPLog(@"ERROR: CPObservedObjectKey was nil for binding \"%@\" in %s", binding, __PRETTY_FUNCTION__);
-        return;
-    }
-
-    var boundKeyPath = [bindingInfo objectForKey:CPObservedKeyPathKey];
-
-    if (!boundKeyPath || boundKeyPath == [CPNull null])
-    {
-        CPLog(@"ERROR: CPObservedKeyPathKey was nil for binding \"%@\" in %s", binding, __PRETTY_FUNCTION__);
-        return;
-    }
-
-    [boundObject setValue:value forKeyPath:boundKeyPath];
-}
-
-- (void)applicationDidFinishLaunching:(CPNotification)note
-{
-    launched = YES;
 }
 
 
