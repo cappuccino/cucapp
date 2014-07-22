@@ -17,7 +17,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import "CPApplication+Cucumber.j"
+@import "Cappuccino+Cucumber.j"
 
 @global CPApp
 @global __PRETTY_FUNCTION__
