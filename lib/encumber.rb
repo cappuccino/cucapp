@@ -216,60 +216,14 @@ module Encumber
       elements.first.inner_text.to_i
     end
 
-    def performRemoteAction(action, xpath)
-      result = command action, id_for_element(xpath)
-
-      raise "View not found: #{xpath}" if result['result'] != 'OK'
-    end
-
-    def press(xpath)
-      performRemoteAction('simulateTouch', xpath)
-    end
-
-    def performMenuItem(xpath)
-      performRemoteAction('performMenuItem', xpath)
-    end
-
     def closeWindow(xpath)
       performRemoteAction('closeWindow', xpath)
     end
 
-    def select_from(value_to_select, xpath)
-      result = command 'selectFrom', value_to_select, id_for_element(xpath)
-
-      raise "Could not select #{value_to_select} in #{xpath} " + result if result['result'] != "OK"
-    end
-
-    def select_menu(menu_item)
-      result = command 'selectMenu', menu_item
-
-      raise "Could not select #{menu_item} from the menu" + result if result['result'] != "OK"
-    end
-
-    def fill_in(value, xpath)
-      type_in_field value, xpath
-    end
-
-    def find_in(value, xpath)
-      result = command "findIn", value, id_for_element(xpath)
-
-      raise "Could not find #{value} in #{xpath}" if result['result'] != "OK"
-
-      result['result'] == "OK"
-    end
-
     def text_for(xpath)
       result = command "textFor", id_for_element(xpath)
-
       raise "Could not find text for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
-
       result['result']
-    end
-
-    def double_click(value, xpath)
-      result = command 'doubleClick', id_for_element(xpath)
-
-      raise "Could not double click #{xpath}" if result["result"] != "OK"
     end
 
     # Nokogiri XML DOM for the current Brominet XML representation of the GUI
@@ -295,21 +249,6 @@ module Encumber
 
         return nil if elapsed_time_in_seconds >= @timeout
       end
-    end
-
-    def type_in_field text, xpath
-      result = command('setText', text, id_for_element(xpath))
-      raise "View not found: #{xpath} - #{result}" if result['result'] != 'OK'
-      sleep 1
-    end
-
-    def tap xpath
-      press xpath
-    end
-
-    def tap_and_wait xpath
-      press xpath
-      sleep 1
     end
 
     def simulate_left_click xpath, flags
