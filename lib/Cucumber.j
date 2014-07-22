@@ -16,9 +16,8 @@
 */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/CPApplication.j>
-@import <AppKit/CPToolbarItem.j>
-@import "HelperCategories.j"
+@import <AppKit/AppKit.j>
+@import "CPApplication+Cucumber.j"
 
 @global CPApp
 @global __PRETTY_FUNCTION__
