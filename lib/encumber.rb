@@ -135,6 +135,8 @@ $CPCarriageReturnCharacter               = "\u000d";
 $CPBackTabCharacter                      = "\u0019";
 $CPDeleteCharacter                       = "\u007f";
 
+$url_params                              = {};
+
 module Encumber
 
   class GUI
@@ -190,7 +192,7 @@ module Encumber
 
     def launch
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html")
+      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
       until command('launched') == "YES" || (Time.now-startTime<@timeout) do
@@ -199,6 +201,16 @@ module Encumber
       raise "launch timed out " if Time.now-startTime>@timeout
 
       sleep 1
+    end
+
+    def make_url_params
+      url = "?"
+
+      $url_params.each_pair do |key, value|
+          url = url + key + "=" + value + "&"
+        end
+
+      url
     end
 
     def quit
