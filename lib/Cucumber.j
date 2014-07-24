@@ -36,7 +36,9 @@ function addCucumberObject(obj)
 
 function dumpGuiObject(obj)
 {
-    if (!obj)
+    if (!obj ||
+        ([obj respondsToSelector:@selector(isHidden)] && [obj isHidden]) ||
+        ([obj respondsToSelector:@selector(isVisible)] && ![obj isVisible]))
         return '';
 
     var resultingXML = "<" + [obj className] + ">";
