@@ -46,7 +46,7 @@ Cucapp provides a set of environment variables :
 
 #### Global variable
 
-The global variable `$url_params` allows you to specify URL params between each scenarios (need to be changed in the hooks).
+The global variable `$url_params` (which is a dictionary) allows you to specify URL params between each scenarios (need to be changed in the hooks).
 
 #### Categories
 
