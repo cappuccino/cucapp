@@ -37,28 +37,39 @@ The following gems are going to be installed:
 
 You can set different env variables to configure Cucapp :
 
-- The env variable `CUCAPP_PORT` allows you to specify the port used by the server Thin.
-- The env variable `CUCAPP_APPDIRECTORY` allows you to specify where is your Cappuccino application.
-- The env variable `CUCAPP_USEBUNDLE` allows you to specify if you want to use or not the bundle of Cucapp (It means you need to jake Cucapp)
-- The env variable `CUCAPP_APPLOADINGMODE` allows you to specify which mode of the app you want to test (build or debug)
+Cucapp provides a set of environment variables :
+
+* `$CUCAPP_PORT` allows you to specify the port used by the Thin server.
+* `$CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
+* `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
+* `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
+
+#### Global variable
+
+The global variable `$url_params` (which is a dictionary) allows you to specify URL params between each scenarios (need to be changed in the hooks).
 
 #### Categories
 
-Cucapp provides a Category (`HelperCategories.j`) who allows you to add a cucappIdentifier to your different responder in your Cappuccino application. You should include the Category in your Cappuccino application.
-The cucappIdentifier can be used massivelly in the Cucumber features to get an easy access to a targeted element.
+- `CPResponder+CuCapp.j` contains a category of `CPResponder`. It adds the method `-(void)setCucappIdentifier:`. This `cucappIdentifier` can be used to identify the control with its XPath. You need to include this category in your Cappuccino application to use cucappIdentifiers. With that, you can use a xpath such as `//CPButton[cucappIdentifier='cucappIdentifier-button-bar-add']`.
 
-When launching Cucumber, Cucapp will try to load the file `CucumberCategories.j`. This file has to be located in features/support/CucumberCategories.j.
-This category allows you to add new Cappuccino methods who can be called from the features of your test (for instance a method to check the color of a CPView).
+- `Cucumber+Extensions.j` will be loaded (optionally) by Cucapp when launching Cucumber. It allows you to add new Cappuccino methods needed for your own tests (for instance a method to check the color of a CPView). This file has to be located in `features/support/Cucumber+Extensions.j`.
 
 #### Features
 
 Cucapp provides a set of basic methods who can be called from Cucumber (take a look at encumber.rb and Cucumber.j). You should mainly used the following methods :
 
 ```ruby
-    def simulate_left_click xpath, flags
-    def simulate_dragged_click_view_to_view xpath1, xpath2, flags
-    def simulate_right_click xpath, flags
     def simulate_keyboard_event charac, flags
+    def simulate_keyboard_events string, flags
+    def simulate_left_click xpath, flags
+    def simulate_left_click_on_point x, y, flags
+    def simulate_double_click xpath, flags
+    def simulate_double_click_on_point x, y, flags
+    def simulate_dragged_click_view_to_view xpath1, xpath2, flags
+    def simulate_dragged_click_view_to_point xpath1, x, y, flags
+    def simulate_dragged_click_point_to_point x, y, x2, y2, flags
+    def simulate_right_click xpath, flags
+    def simulate_right_click_on_point x, y, flags
     def simulate_scroll_wheel xpath, deltaX, deltaY, flags
 ````
 
@@ -78,3 +89,7 @@ end
 ```
 
 The rest is pure Cucumber, don't hesitate to take a look at their website ;) (see: http://cukes.info)
+
+## Demo
+
+A full demo of what Cucapp can do is available [here](https://github.com/Dogild/Cucapp-demo).
