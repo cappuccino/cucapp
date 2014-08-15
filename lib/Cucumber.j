@@ -597,6 +597,25 @@ function dumpGuiObject(obj)
     [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
+- (void)simulateMouseMovedOnPoint:(CPArray)params
+{
+    var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
+        modifierFlags = 0,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    var mouseMoved = [CPEvent mouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:modifierFlags
+        timestamp:[CPEvent currentTimestamp] windowNumber:[window windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
+
+    [CPApp sendEvent:mouseMoved];
+}
+
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
 {
     var typeMouseDown = CPLeftMouseDown,
@@ -687,6 +706,7 @@ function dumpGuiObject(obj)
     [self setNeedsLayout];
     [self setNeedsDisplay:YES];
 }
+
 @end
 
 [Cucumber startCucumber];

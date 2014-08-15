@@ -270,7 +270,6 @@ module Encumber
 
     def simulate_left_click_on_point x, y, flags
       result = command('simulateLeftClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_double_click xpath, flags
@@ -280,7 +279,6 @@ module Encumber
 
     def simulate_double_click_on_point x, y, flags
       result = command('simulateDoubleClick', x, y, flags)
-      raise "View not found: #{result}" if result!='OK'
     end
 
     def simulate_dragged_click_view_to_view xpath1, xpath2, flags
@@ -295,7 +293,6 @@ module Encumber
 
     def simulate_dragged_click_point_to_point x, y, x2, y2, flags
       result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_right_click xpath, flags
@@ -305,7 +302,10 @@ module Encumber
 
     def simulate_right_click_on_point x, y, flags
       result = command('simulateRightClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
+    end
+
+    def simulate_mouse_moved_on_point x, y, flags
+      result = command('simulateMouseMovedOnPoint', x, y, flags)
     end
 
     def simulate_keyboard_event charac, flags
