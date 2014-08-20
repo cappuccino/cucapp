@@ -135,6 +135,8 @@ $CPCarriageReturnCharacter               = "\u000d";
 $CPBackTabCharacter                      = "\u0019";
 $CPDeleteCharacter                       = "\u007f";
 
+$url_params                              = {};
+
 module Encumber
 
   class GUI
@@ -190,7 +192,7 @@ module Encumber
 
     def launch
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html")
+      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
       until command('launched') == "YES" || (Time.now-startTime<@timeout) do
@@ -199,6 +201,16 @@ module Encumber
       raise "launch timed out " if Time.now-startTime>@timeout
 
       sleep 1
+    end
+
+    def make_url_params
+      url = "?"
+
+      $url_params.each_pair do |key, value|
+          url = url + key + "=" + value + "&"
+        end
+
+      url
     end
 
     def quit
@@ -216,60 +228,14 @@ module Encumber
       elements.first.inner_text.to_i
     end
 
-    def performRemoteAction(action, xpath)
-      result = command action, id_for_element(xpath)
-
-      raise "View not found: #{xpath}" if result['result'] != 'OK'
-    end
-
-    def press(xpath)
-      performRemoteAction('simulateTouch', xpath)
-    end
-
-    def performMenuItem(xpath)
-      performRemoteAction('performMenuItem', xpath)
-    end
-
     def closeWindow(xpath)
       performRemoteAction('closeWindow', xpath)
     end
 
-    def select_from(value_to_select, xpath)
-      result = command 'selectFrom', value_to_select, id_for_element(xpath)
-
-      raise "Could not select #{value_to_select} in #{xpath} " + result if result['result'] != "OK"
-    end
-
-    def select_menu(menu_item)
-      result = command 'selectMenu', menu_item
-
-      raise "Could not select #{menu_item} from the menu" + result if result['result'] != "OK"
-    end
-
-    def fill_in(value, xpath)
-      type_in_field value, xpath
-    end
-
-    def find_in(value, xpath)
-      result = command "findIn", value, id_for_element(xpath)
-
-      raise "Could not find #{value} in #{xpath}" if result['result'] != "OK"
-
-      result['result'] == "OK"
-    end
-
     def text_for(xpath)
       result = command "textFor", id_for_element(xpath)
-
       raise "Could not find text for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
-
       result['result']
-    end
-
-    def double_click(value, xpath)
-      result = command 'doubleClick', id_for_element(xpath)
-
-      raise "Could not double click #{xpath}" if result["result"] != "OK"
     end
 
     # Nokogiri XML DOM for the current Brominet XML representation of the GUI
@@ -297,21 +263,6 @@ module Encumber
       end
     end
 
-    def type_in_field text, xpath
-      result = command('setText', text, id_for_element(xpath))
-      raise "View not found: #{xpath} - #{result}" if result['result'] != 'OK'
-      sleep 1
-    end
-
-    def tap xpath
-      press xpath
-    end
-
-    def tap_and_wait xpath
-      press xpath
-      sleep 1
-    end
-
     def simulate_left_click xpath, flags
       result = command('simulateLeftClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
@@ -319,7 +270,6 @@ module Encumber
 
     def simulate_left_click_on_point x, y, flags
       result = command('simulateLeftClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_double_click xpath, flags
@@ -329,7 +279,6 @@ module Encumber
 
     def simulate_double_click_on_point x, y, flags
       result = command('simulateDoubleClick', x, y, flags)
-      raise "View not found: #{result}" if result!='OK'
     end
 
     def simulate_dragged_click_view_to_view xpath1, xpath2, flags
@@ -344,7 +293,6 @@ module Encumber
 
     def simulate_dragged_click_point_to_point x, y, x2, y2, flags
       result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
     end
 
     def simulate_right_click xpath, flags
@@ -354,7 +302,10 @@ module Encumber
 
     def simulate_right_click_on_point x, y, flags
       result = command('simulateRightClickOnPoint', x, y, flags)
-      raise "Point not found: #{result}" if result["result"] != 'OK'
+    end
+
+    def simulate_mouse_moved_on_point x, y, flags
+      result = command('simulateMouseMovedOnPoint', x, y, flags)
     end
 
     def simulate_keyboard_event charac, flags
@@ -364,7 +315,6 @@ module Encumber
     def simulate_keyboard_events string, flags
       string.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
-        sleep(0.1)
       end
     end
 

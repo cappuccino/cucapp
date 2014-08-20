@@ -132,7 +132,7 @@ module Encumber
               objj_importFile("/Cucapp/lib/Cucumber.j");
 
               setTimeout(function(){
-                try {objj_importFile("/features/support/CucumberCategories.j")} catch (e) {}
+                try {objj_importFile("/features/support/Cucumber+Extensions.j")} catch (e) {}
               },0);
             }
             else
@@ -140,7 +140,7 @@ module Encumber
               var bundle = new CFBundle("/Cucumber/Bundle/");
 
               bundle.addEventListener("load", function() {
-                try {objj_importFile("/features/support/CucumberCategories.j")} catch (e) {}
+                try {objj_importFile("/features/support/Cucumber+Extensions.j")} catch (e) {}
               });
 
               bundle.load(YES);
