@@ -27,6 +27,7 @@
 // Then from a test, you can use it as a selector like //CPView[cucappIdentifier="my-button"]
 
 @import <AppKit/CPResponder.j>
+@import <AppKit/CPMenuItem.j>
 
 @implementation CPResponder (cucappAdditions)
 
@@ -38,6 +39,20 @@
 - (CPString)cucappIdentifier
 {
     return self.__cucappIdentifier;
+}
+
+@end
+
+@implementation CPMenuItem (cucappAdditionsMenu)
+
+- (void)setCucappIdentifier:(CPString)anIdentifier
+{
+    [[self _menuItemView] setCucappIdentifier:anIdentifier];
+}
+
+- (CPString)cucappIdentifier
+{
+    [[self _menuItemView] cucappIdentifier];
 }
 
 @end
