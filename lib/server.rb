@@ -129,11 +129,9 @@ module Encumber
 
             if ("#{use_cucapp_bundle}" == "no")
             {
-              objj_importFile("/Cucapp/lib/Cucumber.j");
-
-              setTimeout(function(){
-                try {objj_importFile("/features/support/Cucumber+Extensions.j")} catch (e) {}
-              },0);
+              objj_importFile("/Cucapp/lib/Cucumber.j", true, function() {
+                  try {objj_importFile("/features/support/Cucumber+Extensions.j")} catch (e) {}
+              });
             }
             else
             {
