@@ -632,6 +632,9 @@ function dumpGuiObject(obj)
         flags = 0,
         currentLocation = CGPointMakeCopy(lastMouseEventPoint);
 
+    locationWindowPoint.x = Math.round(locationWindowPoint.x);
+    locationWindowPoint.y = Math.round(locationWindowPoint.y);
+
     var maxDiff = MAX(ABS(lastMouseEventPoint.x - locationWindowPoint.x), ABS(lastMouseEventPoint.y - locationWindowPoint.y)),
         xDiff = lastMouseEventPoint.x - locationWindowPoint.x,
         yDiff = lastMouseEventPoint.y - locationWindowPoint.y;
@@ -661,6 +664,9 @@ function dumpGuiObject(obj)
         typeMouseUp = CPLeftMouseUp,
         modifierFlags = 0;
 
+    locationWindowPoint.x = Math.round(locationWindowPoint.x);
+    locationWindowPoint.y = Math.round(locationWindowPoint.y);
+
     var currentLocation = CGPointMakeCopy(locationWindowPoint);
 
     [self _moveMouseToPoint:currentLocation];
@@ -678,7 +684,12 @@ function dumpGuiObject(obj)
     }
 
     if (locationWindowPoint2)
+    {
         modifierFlags |= CPLeftMouseDraggedMask;
+        locationWindowPoint2.x = Math.round(locationWindowPoint2.x);
+        locationWindowPoint2.y = Math.round(locationWindowPoint2.y);
+    }
+
 
     for (var i = 1; i < numberOfClick + 1; i++)
     {
