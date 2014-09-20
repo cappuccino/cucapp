@@ -56,3 +56,75 @@
 }
 
 @end
+
+
+function find_cucappID(cucappIdentifier)
+{
+    CPLog.error(@"Begin to look for : " + cucappIdentifier)
+    var windows = [CPApp windows],
+        menu = [CPApp mainMenu];
+
+    for (var i = 0; i < windows.length; i++)
+        _searchCucappID(windows[i], cucappIdentifier);
+
+    if (menu)
+        _searchCucappID(menu);
+
+    CPLog.error(@"End of look of : " + cucappIdentifier)
+}
+
+function _searchCucappID(obj, cucappIdentifier)
+{
+    if (!obj ||
+        ([obj respondsToSelector:@selector(isHidden)] && [obj isHidden]) ||
+        ([obj respondsToSelector:@selector(isVisible)] && ![obj isVisible]) ||
+        ([obj respondsToSelector:@selector(visibleRect)] && CGRectEqualToRect([obj visibleRect], CGRectMakeZero())))
+        return '';
+
+    if ([obj respondsToSelector:@selector(cucappIdentifier)] && [obj cucappIdentifier] == cucappIdentifier)
+    {
+        CPLog.error([obj description])
+        console.error(obj);
+    }
+
+    if ([obj respondsToSelector: @selector(subviews)])
+    {
+        var views = [obj subviews];
+
+        for (var i = 0; i < views.length; i++)
+            _searchCucappID(views[i], cucappIdentifier);
+    }
+
+    if ([obj respondsToSelector: @selector(itemArray)])
+    {
+        var items = [obj itemArray];
+
+        if (items && items.length > 0)
+        {
+            for (var i = 0; i < items.length; i++)
+                _searchCucappID(items[i], cucappIdentifier);
+        }
+    }
+
+    if ([obj respondsToSelector: @selector(submenu)])
+    {
+        var submenu = [obj submenu];
+
+        if (submenu)
+           _searchCucappID(submenu, cucappIdentifier);
+    }
+
+    if ([obj respondsToSelector: @selector(buttons)])
+    {
+        var buttons = [obj buttons];
+
+        if (buttons && buttons.length > 0)
+        {
+            for (var i = 0; i < buttons.length; i++)
+                _searchCucappID(buttons[i], cucappIdentifier);
+        }
+    }
+
+    if ([obj respondsToSelector: @selector(contentView)])
+        _searchCucappID([obj contentView], cucappIdentifier);
+}
