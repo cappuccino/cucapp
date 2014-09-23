@@ -410,9 +410,10 @@ function dumpGuiObject(obj)
         case CPDeleteCharFunctionKey:
         case CPDeleteLineFunctionKey:
         case CPDeleteFunctionKey:
+        case CPDeleteCharacter:
             return CPDeleteKeyCode;
 
-        case CPTabFunctionKey:
+        case CPTabCharacter:
             return CPTabKeyCode;
 
         case CPNewlineCharacter:
