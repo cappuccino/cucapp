@@ -445,7 +445,7 @@ function dumpGuiObject(obj)
             return CPDownArrowKeyCode;
 
         default:
-            return 100;
+            return charac.charCodeAt(0);
     }
 }
 
