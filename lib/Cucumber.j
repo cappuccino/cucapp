@@ -403,6 +403,52 @@ function dumpGuiObject(obj)
 #pragma mark -
 #pragma mark Events methods
 
+- (int)_keyCodeForCharacter:(CPString)charac
+{
+    switch (charac)
+    {
+        case CPDeleteCharFunctionKey:
+        case CPDeleteLineFunctionKey:
+        case CPDeleteFunctionKey:
+            return CPDeleteKeyCode;
+
+        case CPTabFunctionKey:
+            return CPTabKeyCode;
+
+        case CPNewlineCharacter:
+        case CPCarriageReturnCharacter:
+        case CPEnterCharacter:
+            return CPReturnKeyCode;
+
+        case CPEscapeFunctionKey:
+            return CPEscapeKeyCode;
+
+        case CPSpaceFunctionKey:
+            return CPSpaceKeyCode;
+
+        case CPPageUpFunctionKey:
+            return CPPageUpKeyCode;
+
+        case CPPageDownFunctionKey:
+            return CPPageDownKeyCode;
+
+        case CPLeftArrowFunctionKey:
+            return CPLeftArrowKeyCode;
+
+        case CPUpArrowFunctionKey:
+            return CPUpArrowKeyCode;
+
+        case CPRightArrowFunctionKey:
+            return CPRightArrowKeyCode;
+
+        case CPDownArrowFunctionKey:
+            return CPDownArrowKeyCode;
+
+        default:
+            return 100;
+    }
+}
+
 - (void)simulateKeyboardEvent:(CPArray)params
 {
     var character = params.shift(),
@@ -418,12 +464,11 @@ function dumpGuiObject(obj)
     }
 
     var keyDownEvent = [CPEvent keyEventWithType:CPKeyDown location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyDownEvent];
 
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
-
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyUpEvent];
 
     [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
