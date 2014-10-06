@@ -22,8 +22,6 @@
 @global CPApp
 @global __PRETTY_FUNCTION__
 
-var lastMouseEventPoint = CGPointMakeZero();
-
 cucumber_instance = nil;
 cucumber_objects = nil;
 cucumber_counter = 0;
@@ -94,6 +92,18 @@ function dumpGuiObject(obj)
             resultingXML += "<width>" + frame.size.width + "</width>";
             resultingXML += "<height>" + frame.size.height + "</height>";
             resultingXML += "</frame>";
+        }
+
+        if (frame && [obj respondsToSelector:@selector(superview)])
+        {
+            var globalPoint = [obj superview] ? [[obj superview] convertPointToBase:frame.origin] : frame.origin;
+
+            resultingXML += "<absoluteFrame>";
+            resultingXML += "<x>" + globalPoint.x + "</x>";
+            resultingXML += "<y>" + globalPoint.y + "</y>";
+            resultingXML += "<width>" + frame.size.width + "</width>";
+            resultingXML += "<height>" + frame.size.height + "</height>";
+            resultingXML += "</absoluteFrame>";
         }
     }
 
@@ -634,8 +644,6 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
-    [self _moveMouseToPoint:locationWindowPoint];
-
     var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[[obj window] windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
 
@@ -660,7 +668,6 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
-    [self _moveMouseToPoint:locationWindowPoint];
     [self _performMouseMoveOnPoint:locationWindowPoint window:window modifierFlags:modifierFlags];
 }
 
@@ -670,38 +677,6 @@ function dumpGuiObject(obj)
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
 
     [CPApp sendEvent:mouseMoved];
-}
-
-- (void)_moveMouseToPoint:(CGPoint)locationWindowPoint
-{
-    var window = [CPApp keyWindow],
-        flags = 0,
-        currentLocation = CGPointMakeCopy(lastMouseEventPoint);
-
-    locationWindowPoint.x = Math.round(locationWindowPoint.x);
-    locationWindowPoint.y = Math.round(locationWindowPoint.y);
-
-    var maxDiff = MAX(ABS(lastMouseEventPoint.x - locationWindowPoint.x), ABS(lastMouseEventPoint.y - locationWindowPoint.y)),
-        xDiff = lastMouseEventPoint.x - locationWindowPoint.x,
-        yDiff = lastMouseEventPoint.y - locationWindowPoint.y;
-
-    for (var j = 0; j < maxDiff; j++)
-    {
-        var gapX = xDiff > 0 ? -1 : 1,
-            gapY = yDiff > 0 ? -1 : 1;
-
-        if (currentLocation.y == locationWindowPoint.y)
-            gapY = 0;
-
-        if (currentLocation.x == locationWindowPoint.x)
-            gapX = 0;
-
-        currentLocation = CGPointMake(currentLocation.x + gapX, currentLocation.y + gapY);
-
-        [self _performMouseMoveOnPoint:currentLocation window:window modifierFlags:flags];
-    }
-
-    lastMouseEventPoint = currentLocation;
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
@@ -714,8 +689,6 @@ function dumpGuiObject(obj)
     locationWindowPoint.y = Math.round(locationWindowPoint.y);
 
     var currentLocation = CGPointMakeCopy(locationWindowPoint);
-
-    [self _moveMouseToPoint:currentLocation];
 
     if (anEventType == CPRightMouseDown)
     {
@@ -735,7 +708,6 @@ function dumpGuiObject(obj)
         locationWindowPoint2.x = Math.round(locationWindowPoint2.x);
         locationWindowPoint2.y = Math.round(locationWindowPoint2.y);
     }
-
 
     for (var i = 1; i < numberOfClick + 1; i++)
     {
@@ -767,8 +739,6 @@ function dumpGuiObject(obj)
 
                 [CPApp sendEvent:mouseDragged];
             }
-
-            lastMouseEventPoint = currentLocation;
         }
 
         var mouseUp = [CPEvent mouseEventWithType:typeMouseUp location:currentLocation modifierFlags:modifierFlags
