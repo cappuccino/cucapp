@@ -194,14 +194,15 @@ module Encumber
     end
 
     def launch
-
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
       Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
-      until command('launched') == "YES" || (Time.now-startTime<@timeout) do
+
+      while command('launched') == "NO" && (Time.now - startTime < @timeout) do
         # do nothing
       end
+
       raise "launch timed out " if Time.now-startTime>@timeout
 
       sleep 1
