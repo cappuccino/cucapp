@@ -57,6 +57,197 @@
 
 @end
 
+var CLI_LOADED = NO;
+
+function load_cucapp_CLI(path)
+{
+    if (!path)
+        path = "../../Cucapp/lib/Cucumber.j"
+
+    try {
+        objj_importFile(path, true, function() {
+            [Cucumber stopCucumber];
+            CLI_LOADED = YES;
+        });
+    }
+    catch(e)
+    {
+        [CPException raise:CPInvalidArgumentException reason:@"Invalid path for the lib Cucumber"];
+    }
+}
+
+function simulate_keyboard_event(character, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateKeyboardEvent:[character, flags]];
+}
+
+function simulate_keyboard_events(string, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    for (var i = 0; i < string.length; i++)
+    {
+        [cucumber_instance simulateKeyboardEvent:[string[i], flags]];
+    }
+}
+
+function simulate_left_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateLeftClick:[objectID, flags]];
+}
+
+function simulate_right_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateRightClick:[objectID, flags]];
+}
+
+function simulate_double_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDoubleClick:[objectID, flags]];
+}
+
+function simulate_left_click_on_point(x, y, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateLeftClickOnPoint:[x, y, flags]];
+}
+
+function simulate_right_click_on_point(x, y, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateRightClick:[x, y, flags]];
+}
+
+function simulate_double_click_on_point(x, y, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDoubleClick:[x, y, flags]];
+}
+
+function simulate_dragged_click_view_to_view(aKey, aValue, aKey2, aValue2, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue),
+        objectID2 = _getObjectsWithKeyAndValue(aKey2, aValue2);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[objectID, objectID2, flags]];
+}
+
+function simulate_dragged_click_view_to_point(aKey, aValue, x, y, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[objectID, x, y, flags]];
+}
+
+function simulate_dragged_click_point_to_point(x, y, x1, y2, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[x, y, x2, y2, flags]];
+}
+
+function simulate_mouse_moved_on_point(x, y, flags)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMovedOnPoint:[x, y, flags]];
+}
+
+function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMovedOnPoint:[aKey, aValue, deltaX, deltaY, flags]];
+}
+
+function _getObjectsWithKeyAndValue(aKey, aValue)
+{
+    if (!CLI_LOADED)
+        [CPException raise:CPInvalidArgumentException reason:@"Cucapp CLI need to be loaded first with the function load_cucapp_CLI(path)"];
+
+    if (!aKey || !aValue)
+        [CPException raise:CPInvalidArgumentException reason:@"The given key or value is null"];
+
+    cucumber_objects = [];
+    cucumber_counter = 0;
+
+    var windows = [CPApp windows],
+        menu = [CPApp mainMenu],
+        selector = CPSelectorFromString(aKey);
+
+    for (var i = 0; i < windows.length; i++)
+        dumpGuiObject(windows[i]);
+
+    if (menu)
+        dumpGuiObject(menu);
+
+    for (var i = [cucumber_objects count]; i >= 0; i--)
+    {
+        var cucumber_object = cucumber_objects[i];
+
+        if ([cucumber_object respondsToSelector:selector] && [cucumber_object performSelector:selector] == aValue)
+            return i;
+    }
+
+    [CPException raise:CPInvalidArgumentException reason:@"No result for the key " + aKey + " and the value " + aValue];;
+}
 
 function find_cucappID(cucappIdentifier)
 {

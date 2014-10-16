@@ -174,23 +174,26 @@ function dumpGuiObject(obj)
     return resultingXML;
 }
 
-
-
 @implementation Cucumber : CPObject
 {
     BOOL requesting;
     BOOL time_to_die;
     BOOL launched;
+    BOOL stopRequest;
 }
 
 + (void)startCucumber
 {
-
     if (cucumber_instance == nil)
     {
         [[Cucumber alloc] init];
         [cucumber_instance startRequest];
     }
+}
+
++ (void)stopCucumber
+{
+    [cucumber_instance stopRequest];
 }
 
 - (id)init
@@ -202,6 +205,7 @@ function dumpGuiObject(obj)
         requesting = YES;
         time_to_die = NO;
         launched = NO;
+        stopRequest = NO;
 
         [[CPNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidFinishLaunching:)
@@ -212,9 +216,16 @@ function dumpGuiObject(obj)
     return self;
 }
 
+- (void)stopRequest
+{
+    requesting = NO;
+    stopRequest = YES;
+}
+
 - (void)startRequest
 {
     requesting = YES;
+    stopRequest = NO;
 
     var request = [[CPURLRequest alloc] initWithURL:@"/cucumber"];
 
@@ -252,6 +263,9 @@ function dumpGuiObject(obj)
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
+    if (stopRequest)
+        return;
+
     if (requesting)
     {
         var result = nil,
@@ -519,7 +533,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateDraggedClickViewToPoint:(CPArray)params
+- (CPString)simulateDraggedClickPointToPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
         locationWindowPoint2 = CGPointMake(params.shift(), params.shift());
