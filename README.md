@@ -120,7 +120,7 @@ For example, to simulate a left click on a button with a `cucappIdentifier` set 
 
 ``` javascript
 load_cucapp_CLI()
-function simulate_left_click_on_view(@“cucappIdentifier, “button-login", [])
+simulate_left_click_on_view(“cucappIdentifier, “button-login", [])
 ```
 
 ## Demo
