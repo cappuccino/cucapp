@@ -57,74 +57,19 @@
 
 @end
 
-
-function find_cucappID(cucappIdentifier)
+function load_cucapp_CLI(path)
 {
-    CPLog.error(@"Begin to look for : " + cucappIdentifier)
-    var windows = [CPApp windows],
-        menu = [CPApp mainMenu];
+    if (!path)
+        path = "../../Cucapp/lib/Cucumber.j"
 
-    for (var i = 0; i < windows.length; i++)
-        _searchCucappID(windows[i], cucappIdentifier);
-
-    if (menu)
-        _searchCucappID(menu);
-
-    CPLog.error(@"End of look of : " + cucappIdentifier)
-}
-
-function _searchCucappID(obj, cucappIdentifier)
-{
-    if (!obj ||
-        ([obj respondsToSelector:@selector(isHidden)] && [obj isHidden]) ||
-        ([obj respondsToSelector:@selector(isVisible)] && ![obj isVisible]) ||
-        ([obj respondsToSelector:@selector(visibleRect)] && CGRectEqualToRect([obj visibleRect], CGRectMakeZero())))
-        return '';
-
-    if ([obj respondsToSelector:@selector(cucappIdentifier)] && [obj cucappIdentifier] == cucappIdentifier)
-    {
-        CPLog.error([obj description])
-        console.error(obj);
+    try {
+        objj_importFile(path, true, function() {
+            [Cucumber stopCucumber];
+            CPLog.debug("Cucapp CLI has been well loaded");
+        });
     }
-
-    if ([obj respondsToSelector: @selector(subviews)])
+    catch(e)
     {
-        var views = [obj subviews];
-
-        for (var i = 0; i < views.length; i++)
-            _searchCucappID(views[i], cucappIdentifier);
+        [CPException raise:CPInvalidArgumentException reason:@"Invalid path for the lib Cucumber"];
     }
-
-    if ([obj respondsToSelector: @selector(itemArray)])
-    {
-        var items = [obj itemArray];
-
-        if (items && items.length > 0)
-        {
-            for (var i = 0; i < items.length; i++)
-                _searchCucappID(items[i], cucappIdentifier);
-        }
-    }
-
-    if ([obj respondsToSelector: @selector(submenu)])
-    {
-        var submenu = [obj submenu];
-
-        if (submenu)
-           _searchCucappID(submenu, cucappIdentifier);
-    }
-
-    if ([obj respondsToSelector: @selector(buttons)])
-    {
-        var buttons = [obj buttons];
-
-        if (buttons && buttons.length > 0)
-        {
-            for (var i = 0; i < buttons.length; i++)
-                _searchCucappID(buttons[i], cucappIdentifier);
-        }
-    }
-
-    if ([obj respondsToSelector: @selector(contentView)])
-        _searchCucappID([obj contentView], cucappIdentifier);
 }
