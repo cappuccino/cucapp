@@ -50,7 +50,7 @@ The global variable `$url_params` (which is a dictionary) allows you to specify 
 
 #### Categories
 
-- `CPResponder+CuCapp.j` contains a category of `CPResponder`. It adds the method `-(void)setCucappIdentifier:`. This `cucappIdentifier` can be used to identify the control with its XPath. You need to include this category in your Cappuccino application to use cucappIdentifiers. With that, you can use a xpath such as `//CPButton[cucappIdentifier='cucappIdentifier-button-bar-add']`.
+- `CPResponder+CuCapp.j` contains a category of `CPResponder`. It adds the method `-(void)setCucappIdentifier:`. This `cucappIdentifier` can be used to identify the control with its XPath. You need to include this category in your Cappuccino application to use cucappIdentifiers. With that, you can use a xpath such as `//CPButton[cucappIdentifier='cucappIdentifier-button-bar-add']`. This category contains also a CLI mode for Cucapp, more informations below.
 
 - `Cucumber+Extensions.j` will be loaded (optionally) by Cucapp when launching Cucumber. It allows you to add new Cappuccino methods needed for your own tests (for instance a method to check the color of a CPView). This file has to be located in `features/support/Cucumber+Extensions.j`.
 
@@ -92,6 +92,36 @@ end
 ```
 
 The rest is pure Cucumber, don't hesitate to take a look at their website ;) (see: http://cukes.info)
+
+#### CLI
+
+Cucapp contains a CLI mode. To use it, make sure your application import the category `CPResponder+CuCapp.j` and open the javascript console of your browser.
+
+To load the CLI mode, you need to call the function `function load_cucapp_CLI(path)`. The path argument represents the path to the file `Cucumber.j`. By default this is set to `../../Cucapp/lib/Cucumber.j`. Once you have loaded the CLI, you can use the following methods :
+
+``` javascript
+function simulate_keyboard_event(character, flags)
+function simulate_keyboard_events(string, flags)
+function simulate_left_click_on_view(aKey, aValue, flags)
+function simulate_right_click_on_view(aKey, aValue, flags)
+function simulate_double_click_on_view(aKey, aValue, flags)
+function simulate_left_click_on_point(x, y, flags)
+function simulate_right_click_on_point(x, y, flags)
+function simulate_double_click_on_point(x, y, flags)
+function simulate_dragged_click_view_to_view(aKey, aValue, aKey2, aValue2, flags)
+function simulate_dragged_click_view_to_point(aKey, aValue, x, y, flags)
+function simulate_dragged_click_point_to_point(x, y, x1, y2, flags)
+function simulate_mouse_moved_on_point(x, y, flags)
+function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
+function find_cucappID(cucappIdentifier)
+```
+
+For example, to simulate a left click on a button with a `cucappIdentifier` set to "button-login", you need to do:
+
+``` javascript
+load_cucapp_CLI()
+function simulate_left_click_on_view(@“cucappIdentifier, “button-login", [])
+```
 
 ## Demo
 
