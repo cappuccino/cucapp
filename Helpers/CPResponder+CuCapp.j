@@ -60,7 +60,7 @@
 function load_cucapp_CLI(path)
 {
     if (!path)
-        path = "../../Cucapp/lib/Cucumber.j"
+        path = "../Cucapp/lib/Cucumber.j"
 
     try {
         objj_importFile(path, true, function() {
@@ -71,5 +71,21 @@ function load_cucapp_CLI(path)
     catch(e)
     {
         [CPException raise:CPInvalidArgumentException reason:@"Invalid path for the lib Cucumber"];
+    }
+}
+
+function load_cucapp_record(path)
+{
+    if (!path)
+        path = "CuCapp+Record.j"
+
+    try {
+        objj_importFile(path, true, function() {
+            CPLog.debug("Cucapp record has been well loaded");
+        });
+    }
+    catch(e)
+    {
+        [CPException raise:CPInvalidArgumentException reason:@"Invalid path for the lib Cucapp+Record.j"];
     }
 }
