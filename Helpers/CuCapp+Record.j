@@ -10,7 +10,7 @@ function stop_record()
     [CPWindow stop_record];
 }
 
-function save_record_javascript(fileName)
+function save_record(fileName)
 {
     if (!fileName)
         fileName = @"record"
