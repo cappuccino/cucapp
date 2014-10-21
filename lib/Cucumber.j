@@ -28,7 +28,6 @@ cucumber_instance = nil;
 cucumber_objects = nil;
 cucumber_counter = 0;
 
-
 function simulate_keyboard_event(character, flags)
 {
     if (!flags)
@@ -149,6 +148,30 @@ function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
     [cucumber_instance simulateMouseMovedOnPoint:[aKey, aValue, deltaX, deltaY, flags]];
 }
 
+function find_control(aKey, aValue)
+{
+    CPLog.warn(@"Begin to look for the value " + aValue + " of the key " + aKey);
+
+    // In a try catch to use the function _getObjectsWithKeyAndValue which can raises an exception
+    try
+    {
+        var selector = CPSelectorFromString(aKey);
+
+        _getObjectsWithKeyAndValue(aKey, aValue)
+
+        for (var i = [cucumber_objects count] - 1; i >= 0; i--)
+        {
+            var cucumber_object = cucumber_objects[i];
+
+            if ([cucumber_object respondsToSelector:selector] && [cucumber_object performSelector:selector] == aValue)
+                console.log(cucumber_object);
+        }
+    }
+    catch(e){}
+
+    CPLog.warn(@"End of look the value " + aValue + " of the key " + aKey);
+}
+
 function _getObjectsWithKeyAndValue(aKey, aValue)
 {
     if (!aKey || !aValue)
@@ -176,77 +199,6 @@ function _getObjectsWithKeyAndValue(aKey, aValue)
     }
 
     [CPException raise:CPInvalidArgumentException reason:@"No result for the key " + aKey + " and the value " + aValue];;
-}
-
-function find_cucappID(cucappIdentifier)
-{
-    CPLog.error(@"Begin to look for : " + cucappIdentifier)
-    var windows = [CPApp windows],
-        menu = [CPApp mainMenu];
-
-    for (var i = 0; i < windows.length; i++)
-        _searchCucappID(windows[i], cucappIdentifier);
-
-    if (menu)
-        _searchCucappID(menu);
-
-    CPLog.error(@"End of look of : " + cucappIdentifier)
-}
-
-function _searchCucappID(obj, cucappIdentifier)
-{
-    if (!obj ||
-        ([obj respondsToSelector:@selector(isHidden)] && [obj isHidden]) ||
-        ([obj respondsToSelector:@selector(isVisible)] && ![obj isVisible]) ||
-        ([obj respondsToSelector:@selector(visibleRect)] && CGRectEqualToRect([obj visibleRect], CGRectMakeZero())))
-        return '';
-
-    if ([obj respondsToSelector:@selector(cucappIdentifier)] && [obj cucappIdentifier] == cucappIdentifier)
-    {
-        CPLog.error([obj description])
-        console.error(obj);
-    }
-
-    if ([obj respondsToSelector: @selector(subviews)])
-    {
-        var views = [obj subviews];
-
-        for (var i = 0; i < views.length; i++)
-            _searchCucappID(views[i], cucappIdentifier);
-    }
-
-    if ([obj respondsToSelector: @selector(itemArray)])
-    {
-        var items = [obj itemArray];
-
-        if (items && items.length > 0)
-        {
-            for (var i = 0; i < items.length; i++)
-                _searchCucappID(items[i], cucappIdentifier);
-        }
-    }
-
-    if ([obj respondsToSelector: @selector(submenu)])
-    {
-        var submenu = [obj submenu];
-
-        if (submenu)
-           _searchCucappID(submenu, cucappIdentifier);
-    }
-
-    if ([obj respondsToSelector: @selector(buttons)])
-    {
-        var buttons = [obj buttons];
-
-        if (buttons && buttons.length > 0)
-        {
-            for (var i = 0; i < buttons.length; i++)
-                _searchCucappID(buttons[i], cucappIdentifier);
-        }
-    }
-
-    if ([obj respondsToSelector: @selector(contentView)])
-        _searchCucappID([obj contentView], cucappIdentifier);
 }
 
 function addCucumberObject(obj)
