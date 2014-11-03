@@ -136,12 +136,15 @@ $CPBackTabCharacter                      = "\u0019";
 $CPDeleteCharacter                       = "\u007f";
 
 $url_params                              = {};
+$mouse_moved_activated                   = "yes"
 
 module Encumber
 
   class GUI
     def initialize(timeout_in_seconds=10)
       @timeout     = timeout_in_seconds
+      @global_x    = 0
+      @global_y    = 0
     end
 
     def command(name, *params)
@@ -195,9 +198,11 @@ module Encumber
       Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
-      until command('launched') == "YES" || (Time.now-startTime<@timeout) do
+
+      while command('launched') == "NO" && (Time.now - startTime < @timeout) do
         # do nothing
       end
+
       raise "launch timed out " if Time.now-startTime>@timeout
 
       sleep 1
@@ -226,6 +231,16 @@ module Encumber
       elements = dom_for_gui.search(xpath+"/id")
       raise "element not found: #{xpath}" if elements.empty?
       elements.first.inner_text.to_i
+    end
+
+    def points_for_element(xpath)
+      x_elements = dom_for_gui.search(xpath+"/absoluteFrame/x")
+      y_elements = dom_for_gui.search(xpath+"/absoluteFrame/y")
+      width_elements = dom_for_gui.search(xpath+"/absoluteFrame/width")
+      height_elements = dom_for_gui.search(xpath+"/absoluteFrame/height")
+      raise "element not found: #{xpath}" if x_elements.empty?
+
+      [x_elements.first.inner_text.to_f + width_elements.first.inner_text.to_f / 2 , y_elements.first.inner_text.to_f + height_elements.first.inner_text.to_f / 2]
     end
 
     def closeWindow(xpath)
@@ -263,62 +278,142 @@ module Encumber
       end
     end
 
-    def simulate_left_click xpath, flags
+    def move_mouse_to_point(x, y)
+
+      if !$mouse_moved_activated
+        return
+      end
+
+      x = x.round
+      y = y.round
+
+      if x == @global_x && y == @global_y
+        return
+      end
+
+      i = 0;
+      distance = Math.sqrt((x - @global_x) ** 2 + (y - @global_y) ** 2)
+      step = 0.01
+
+      if distance < 50
+        step = 0.05
+      end
+
+      if distance > 50 && distance < 300
+        step = 0.02
+      end
+
+      while i <= 1 do
+
+        tmp_x = (1 - i) * @global_x + i * x
+        tmp_y = (1 - i) * @global_y + i * y
+
+        command('simulateMouseMovedOnPoint', tmp_x, tmp_y, [])
+
+        i = i + step
+
+      end
+
+      command('simulateMouseMovedOnPoint', x, y, [])
+
+      @global_x = x
+      @global_y = y
+
+    end
+
+    def simulate_left_click(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateLeftClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
     end
 
-    def simulate_left_click_on_point x, y, flags
+    def simulate_left_click_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
       result = command('simulateLeftClickOnPoint', x, y, flags)
     end
 
-    def simulate_double_click xpath, flags
+    def simulate_double_click(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateDoubleClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
-    def simulate_double_click_on_point x, y, flags
+    def simulate_double_click_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
       result = command('simulateDoubleClick', x, y, flags)
     end
 
-    def simulate_dragged_click_view_to_view xpath1, xpath2, flags
+    def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
+      points = points_for_element(xpath1)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
       raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result["result"] != 'OK'
+
+      points = points_for_element(xpath2)
+      @global_y = points[0]
+      @global_x = points[1]
     end
 
-    def simulate_dragged_click_view_to_point xpath1, x, y, flags
+    def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
+      points = points_for_element(xpath1)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
       raise "View/Point not found: #{xpath1} - #{result}" if result["result"] != 'OK'
+
+      @global_y = x
+      @global_x = y
     end
 
-    def simulate_dragged_click_point_to_point x, y, x2, y2, flags
+    def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
+      move_mouse_to_point(x, y)
       result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
+
+      @global_y = x2
+      @global_x = y2
     end
 
-    def simulate_right_click xpath, flags
+    def simulate_right_click(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateRightClick', id_for_element(xpath), flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
-    def simulate_right_click_on_point x, y, flags
+    def simulate_right_click_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
       result = command('simulateRightClickOnPoint', x, y, flags)
     end
 
-    def simulate_mouse_moved_on_point x, y, flags
+    def simulate_mouse_moved_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
       result = command('simulateMouseMovedOnPoint', x, y, flags)
     end
 
-    def simulate_keyboard_event charac, flags
+    def simulate_keyboard_event(charac, flags=[])
       result = command('simulateKeyboardEvent', charac, flags)
     end
 
-    def simulate_keyboard_events string, flags
+    def simulate_keyboard_events(string, flags=[])
       string.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
       end
     end
 
-    def simulate_scroll_wheel xpath, deltaX, deltaY, flags
+    def simulate_scroll_wheel(xpath, deltaX, deltaY, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
       result = command('simulateScrollWheel',id_for_element(xpath), deltaX, deltaY, flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
