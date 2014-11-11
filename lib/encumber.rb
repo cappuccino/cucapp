@@ -158,27 +158,27 @@ module Encumber
       data = nil
       CUCUMBER_REQUEST_QUEUE.push(command)
       CUCUMBER_RESPONSE_QUEUE.pop { |result|
-                if result
-                    data = result['rack.input'].read
-                end
-                th.wakeup
+          if result
+              data = result['rack.input'].read
+          end
+          th.wakeup
       }
       startTime = Time.now
       sleep @timeout
       raise "Command timed out" if Time.now-startTime>=@timeout
-            if data && !data.empty?
-                obj = JSON.parse(data)
-                if obj["error"]
-                    raise obj["error"]
-                else
-                    begin
-                        JSON.parse(obj["result"])
-                    rescue Exception => e
-                        obj["result"]
-                    end
-                end
-            else
-                nil
+      if data && !data.empty?
+          obj = JSON.parse(data)
+          if obj["error"]
+              raise obj["error"]
+          else
+              begin
+                  JSON.parse(obj["result"])
+              rescue Exception => e
+                  obj["result"]
+              end
+          end
+      else
+          nil
       end
     end
 
