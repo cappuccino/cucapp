@@ -405,7 +405,7 @@ module Encumber
     end
 
     def simulate_keyboard_events(string, flags=[])
-      string.split("").each do |c|
+      string.to_s.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
       end
     end
