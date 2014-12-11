@@ -664,6 +664,8 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
+    CPLog.debug("Cucapp is about to simulate a keyboard event with the character " + charactersIgnoringModifiers + " with the keyboard flags " + modifierFlags);
+
     var keyDownEvent = [CPEvent keyEventWithType:CPKeyDown location:CGPointMakeZero() modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyDownEvent];
@@ -695,6 +697,8 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint2 = CGPointMake(CGRectGetMidX([obj2 frame]), CGRectGetMidY([obj2 frame]));
 
+    CPLog.debug("Cucapp is about to simulate dragging events from the view " + obj1 + " to the view " + obj2);
+
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[obj1 window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return '{"result" : "OK"}';
@@ -714,6 +718,8 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj1 frame]), CGRectGetMidY([obj1 frame]));
 
+    CPLog.debug("Cucapp is about to simulate dragging events from the view " + obj1 + " to the point " + locationWindowPoint2);
+
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[obj1 window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return '{"result" : "OK"}';
@@ -727,6 +733,8 @@ function dumpGuiObject(obj)
     if (!locationWindowPoint || !locationWindowPoint2)
         return '{"result" : "OBJECT NOT FOUND"}';
 
+    CPLog.debug("Cucapp is about to simulate dragging events from the point " + locationWindowPoint + " to the point " + locationWindowPoint2);
+
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:locationWindowPoint2 window:[CPApp mainWindow] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return '{"result" : "OK"}';
@@ -736,6 +744,8 @@ function dumpGuiObject(obj)
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
+
+    CPLog.debug("Cucapp is about to simulate a left click on the point : " + point);
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 }
@@ -753,6 +763,8 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
 
+    CPLog.debug("Cucapp is about to simulate a left click on the view : " + obj);
+
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return '{"result" : "OK"}';
@@ -762,6 +774,8 @@ function dumpGuiObject(obj)
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
+
+    CPLog.debug("Cucapp is about to simulate a right click on the point : " + point);
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
 }
@@ -779,6 +793,8 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
 
+    CPLog.debug("Cucapp is about to simulate a right click on the view : " + obj);
+
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
 
     return '{"result" : "OK"}';
@@ -788,6 +804,8 @@ function dumpGuiObject(obj)
 {
     var point = CGPointMake(params.shift(), params.shift()),
         window = [CPApp keyWindow];
+
+    CPLog.debug("Cucapp is about to simulate a double click on the point : " + point);
 
     [self _perfomMouseEventOnPoint:point toPoint:nil window:window eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 }
@@ -804,6 +822,8 @@ function dumpGuiObject(obj)
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
+
+    CPLog.debug("Cucapp is about to simulate a double click on the view : " + obj);
 
     [self _perfomMouseEventOnPoint:locationWindowPoint toPoint:nil window:[obj window] eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
 
@@ -834,6 +854,8 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
+    CPLog.debug("Cucapp is about to simulate a scroll wheel on the view : " + obj + " with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
+
     var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[[obj window] windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
 
@@ -857,6 +879,8 @@ function dumpGuiObject(obj)
         var flag = flags[i];
         modifierFlags |= parseInt(flag);
     }
+
+    CPLog.debug("Cucapp is about to simulate a mouse moved to the point " + locationWindowPoint);
 
     [self _performMouseMoveOnPoint:locationWindowPoint window:window modifierFlags:modifierFlags];
 }
