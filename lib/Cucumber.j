@@ -26,6 +26,35 @@ cucumber_instance = nil;
 cucumber_objects = nil;
 cucumber_counter = 0;
 
+function _addition_cpapplication_send_event_method()
+{
+    var aFunction = class_getMethodImplementation([CPApplication class], @selector(sendEvent:));
+
+    class_replaceMethod([CPApplication class], @selector(sendEvent:),
+
+        function(object, _cmd)
+        {
+            if(object === CPApp) {
+
+            var event = arguments[2],
+                window = [event window];
+
+            if ([event type] == CPLeftMouseDown && window)
+            {
+                var view = [window._windowView hitTest:[event locationInWindow]];
+
+                if ([view respondsToSelector:@selector(cucappIdentifier)])
+                {
+                    CPLog.debug("The cucappIdentifier of the targeted view is : " + [view cucappIdentifier]);
+                    console.error(view);
+                }
+            }
+        }
+
+        return aFunction.apply(this, arguments);
+    });
+}
+
 function simulate_keyboard_event(character, flags)
 {
     if (!flags)
