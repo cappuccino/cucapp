@@ -66,13 +66,16 @@ function load_cucapp_CLI(path)
         objj_importFile(path, true, function() {
             [Cucumber stopCucumber];
             CPLog.debug("Cucapp CLI has been well loaded");
+            _addition_cpapplication_send_event_method();
         });
+
     }
     catch(e)
     {
         [CPException raise:CPInvalidArgumentException reason:@"Invalid path for the lib Cucumber"];
     }
 }
+
 
 function load_cucapp_record(path)
 {
