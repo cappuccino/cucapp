@@ -16,7 +16,8 @@
 */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+@import <AppKit/CPTextField.j>
+
 @import "Cappuccino+Cucumber.j"
 
 @global CPApp
