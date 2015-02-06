@@ -35,9 +35,8 @@ function _addition_cpapplication_send_event_method()
 
         function(object, _cmd)
         {
-            if(object === CPApp)
+            if (object === CPApp)
             {
-
                 var event = arguments[2],
                     window = [event window];
 
@@ -45,16 +44,36 @@ function _addition_cpapplication_send_event_method()
                 {
                     var view = [window._windowView hitTest:[event locationInWindow]];
 
-                    if ([view respondsToSelector:@selector(cucappIdentifier)])
+                    CPLog.debug("A left click has been catched on the views (ascending order):");
+
+                    while(view)
                     {
-                        CPLog.debug("The cucappIdentifier of the targeted view is : " + [view cucappIdentifier]);
-                        console.error(view);
+                        _print_informations_of_view(view);
+                        view = [view superview];
                     }
                 }
             }
 
         return aFunction.apply(this, arguments);
         });
+}
+
+function _print_informations_of_view(aView)
+{
+    var keys = ["cucappIdentifier", "title", "identifier", "text", "placeholderString", "label", "tag", "objectValue"]
+
+    for (var i = 0; i < [keys count]; i++)
+    {
+        var key = keys[i],
+            selector = CPSelectorFromString(key);
+
+        if (![aView respondsToSelector:selector] || ![aView performSelector:selector] || (key === "tag" && [aView performSelector:selector] == -1))
+            continue;
+
+        CPLog.debug("The " + key + " of the targeted view is : " + [aView performSelector:selector]);
+        console.error(aView);
+        return;
+    }
 }
 
 function simulate_keyboard_event(character, flags)
