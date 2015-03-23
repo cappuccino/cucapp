@@ -880,7 +880,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (void)simulateScrollWheel:(CPArray)params
+- (CPString)simulateScrollWheel:(CPArray)params
 {
     var obj = cucumber_objects[params.shift()],
         locationWindowPoint;
@@ -915,6 +915,8 @@ function dumpGuiObject(obj)
     [CPApp sendEvent:mouseWheel];
 
     [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+
+    return '{"result" : "OK"}';
 }
 
 - (void)simulateMouseMovedOnPoint:(CPArray)params
