@@ -911,6 +911,8 @@ function dumpGuiObject(obj)
 
     mouseWheel._deltaX = deltaX;
     mouseWheel._deltaY = deltaY;
+    mouseWheel._scrollingDeltaX = deltaX;
+    mouseWheel._scrollingDeltaY = deltaY;
 
     [CPApp sendEvent:mouseWheel];
 
