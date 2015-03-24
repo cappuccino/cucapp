@@ -333,6 +333,15 @@ function dumpGuiObject(obj)
         }
     }
 
+    if ([obj respondsToSelector:@selector(backgroundColor)])
+        resultingXML += "<backgroundColor>" + [[obj backgroundColor] hexString] + "</backgroundColor>";
+
+    if ([obj respondsToSelector:@selector(textColor)])
+        resultingXML += "<textColor>" + [[obj textColor] hexString] + "</textColor>";
+
+    if ([obj respondsToSelector:@selector(borderColor)])
+        resultingXML += "<borderColor>" + [[obj borderColor] hexString] + "</borderColor>";
+
     if ([obj respondsToSelector: @selector(subviews)])
     {
         var views = [obj subviews];
