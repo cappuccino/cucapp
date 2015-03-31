@@ -889,6 +889,38 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
+- (CPString)simulateScrollWheelOnPoint:(CPArray)params
+{
+    var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
+        deltaX = params.shift(),
+        deltaY = params.shift(),
+        flags = params.shift(),
+        modifierFlags = 0,
+        window = [CPApp keyWindow];
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    CPLog.debug("Cucapp is about to simulate a scroll wheel on the point (" + point.x + "," + point.y + ") with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
+
+    var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
+        timestamp:[CPEvent currentTimestamp] windowNumber:[window windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
+
+    mouseWheel._deltaX = deltaX;
+    mouseWheel._deltaY = deltaY;
+    mouseWheel._scrollingDeltaX = deltaX;
+    mouseWheel._scrollingDeltaY = deltaY;
+
+    [CPApp sendEvent:mouseWheel];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+
+    return '{"result" : "OK"}';
+}
+
 - (CPString)simulateScrollWheel:(CPArray)params
 {
     var obj = cucumber_objects[params.shift()],
