@@ -622,7 +622,10 @@ function dumpGuiObject(obj)
     if (!obj)
         return '{"result" : "__CUKE_ERROR__"}';
 
-    if ([obj respondsToSelector:@selector(objectValue)])
+    if ([obj isKindOfClass:[CPPopUpButton class]])
+        return '{"result" : "' + [obj titleOfSelectedItem] + '"}';
+
+    if ([obj isKindOfClass:@selector(objectValue)])
         return '{"result" : "' + [obj objectValue] + '"}';
 
     return '{"result" : ""}';
@@ -634,6 +637,9 @@ function dumpGuiObject(obj)
 
     if (!obj)
         return '{"result" : "__CUKE_ERROR__"}';
+
+    if ([obj isKindOfClass:[CPPopUpButton class]])
+        return '{"result" : "' + [obj titleOfSelectedItem] + '"}';
 
     if ([obj respondsToSelector:@selector(stringValue)])
         return '{"result" : "' + [obj stringValue] + '"}';
