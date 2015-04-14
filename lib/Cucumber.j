@@ -26,6 +26,7 @@
 cucumber_instance = nil;
 cucumber_objects = nil;
 cucumber_counter = 0;
+exception_message = nil;
 
 function _addition_cpapplication_send_event_method()
 {
@@ -508,6 +509,13 @@ function dumpGuiObject(obj)
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
+    if (exception_message)
+    {
+        var error = exception_message;
+        [self startResponse:nil withError:error];
+        return;
+    }
+
     if (stopRequest)
         return;
 
@@ -910,7 +918,7 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
-    CPLog.debug("Cucapp is about to simulate a scroll wheel on the point (" + point.x + "," + point.y + ") with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
+    CPLog.debug("Cucapp is about to simulate a scroll wheel on the point (" + locationWindowPoint.x + "," + locationWindowPoint.y + ") with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
 
     var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[window windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
@@ -1094,4 +1102,134 @@ function dumpGuiObject(obj)
 
 @end
 
+
+var original_objj_msgSend = objj_msgSend,
+    original_objj_msgSendFast = objj_msgSendFast,
+    original_objj_msgSendFast0 = objj_msgSendFast0,
+    original_objj_msgSendFast1 = objj_msgSendFast1,
+    original_objj_msgSendFast2 = objj_msgSendFast2,
+    original_objj_msgSendFast3 = objj_msgSendFast3;
+
+var catcher_objj_msgSend = function()
+{
+    try
+    {
+        objj_msgSend = original_objj_msgSend;
+        return objj_msgSend.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSend = catcher_objj_msgSend;
+    }
+};
+
+var catcher_objj_msgSendFast = function()
+{
+    try
+    {
+        objj_msgSendFast = original_objj_msgSendFast;
+        return objj_msgSendFast.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSendFast = catcher_objj_msgSendFast;
+    }
+};
+
+var catcher_objj_msgSendFast0 = function()
+{
+    try
+    {
+        objj_msgSendFast0 = original_objj_msgSendFast0;
+        return objj_msgSendFast0.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSendFast0 = catcher_objj_msgSendFast0;
+    }
+};
+
+
+var catcher_objj_msgSendFast1 = function()
+{
+    try
+    {
+        objj_msgSendFast1 = original_objj_msgSendFast1;
+        return objj_msgSendFast1.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSendFast1 = catcher_objj_msgSendFast1;
+    }
+};
+
+var catcher_objj_msgSendFast2 = function()
+{
+    try
+    {
+        objj_msgSendFast2 = original_objj_msgSendFast2;
+        return objj_msgSendFast2.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSendFast2 = catcher_objj_msgSendFast2;
+    }
+};
+
+
+var catcher_objj_msgSendFast3 = function()
+{
+    try
+    {
+        objj_msgSendFast3 = original_objj_msgSendFast3;
+        return objj_msgSendFast3.apply(this, arguments);
+    }
+    catch (anException)
+    {
+        exception_message = anException.message;
+        return;
+    }
+    finally
+    {
+        objj_msgSendFast3 = catcher_objj_msgSendFast3;
+    }
+};
+
+
+var install_msgSend_catcher = function()
+{
+    objj_msgSend = catcher_objj_msgSend;
+    objj_msgSendFast = catcher_objj_msgSendFast;
+    objj_msgSendFast0 = catcher_objj_msgSendFast0;
+    objj_msgSendFast1 = catcher_objj_msgSendFast1;
+    objj_msgSendFast2 = catcher_objj_msgSendFast2;
+    objj_msgSendFast3 = catcher_objj_msgSendFast3;
+};
+
+install_msgSend_catcher();
 [Cucumber startCucumber];
