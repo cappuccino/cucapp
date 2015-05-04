@@ -71,7 +71,7 @@ function _print_informations_of_view(aView)
         if (![aView respondsToSelector:selector] || ![aView performSelector:selector] || (key === "tag" && [aView performSelector:selector] == -1))
             continue;
 
-        CPLog.debug("The " + key + " of the targeted view is : " + [aView performSelector:selector]);
+        CPLog.debug("The " + key + " of the targeted view (class : " + [aView class] + ") is : " + [aView performSelector:selector]);
         console.error(aView);
         return;
     }
