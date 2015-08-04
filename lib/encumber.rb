@@ -236,8 +236,14 @@ module Encumber
       [x_elements.first.inner_text.to_f + width_elements.first.inner_text.to_f / 2 , y_elements.first.inner_text.to_f + height_elements.first.inner_text.to_f / 2]
     end
 
-    def closeWindow(xpath)
-      performRemoteAction('closeWindow', xpath)
+    def make_key_and_order_front_window(xpath)
+      result = command "makeKeyAndOrderFrontWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result["result"] != 'OK'
+    end
+
+    def close_window(xpath)
+      result = command "closeWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
     end
 
     def text_for(xpath)

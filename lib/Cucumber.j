@@ -587,17 +587,6 @@ function dumpGuiObject(obj)
     return [CPApp xmlDescription];
 }
 
-- (CPString)closeWindow:(CPArray)params
-{
-    var obj = cucumber_objects[params[0]];
-
-    if (!obj)
-        return '{"result" : "NOT FOUND"}';
-
-    [obj performClose: self];
-    return '{"result" : "OK"}';
-}
-
 - (CPString)closeBrowser:(CPArray)params
 {
     time_to_die = YES;
@@ -670,6 +659,30 @@ function dumpGuiObject(obj)
     {
         return '{"result" : "__CUKE_ERROR__"}';
     }
+}
+
+- (CPString)makeKeyAndOrderFrontWindow:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj || ![obj isKindOfClass:[CPWindow class]])
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    [obj makeKeyAndOrderFront:self];
+
+    return '{"result" : "OK"}';
+}
+
+- (CPString)closeWindow:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj || ![obj isKindOfClass:[CPWindow class]])
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    [obj performClose:self];
+
+    return '{"result" : "OK"}';
 }
 
 
