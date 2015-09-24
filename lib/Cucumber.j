@@ -557,9 +557,24 @@ function dumpGuiObject(obj)
     else
     {
         if (time_to_die)
+        {
             window.close();
+
+            var platformWindows = [CPPlatformWindow visiblePlatformWindows],
+                primaryPlatformWindow = [CPPlatformWindow primaryPlatformWindow],
+                platformWindowEnumerator = [platformWindows objectEnumerator],
+                platformWindow = nil;
+
+            while ((platformWindow = [platformWindowEnumerator nextObject]) !== nil)
+            {
+                if (platformWindow != primaryPlatformWindow)
+                    [platformWindow orderOut:self];
+            }
+        }
         else
+        {
             [self startRequest];
+        }
     }
 }
 
