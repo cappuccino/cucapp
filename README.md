@@ -20,7 +20,7 @@ To get started, download the current version of Cuccap:
 
 Then install cucapp on your system:
 
-    $ gem build cucapp.gemspec && gem install cucapp
+    $ jake install
 
 The following gems are going to be installed:
 
@@ -30,6 +30,11 @@ The following gems are going to be installed:
 - JSON
 - Launchy
 
+The command `cucapp` is now available in yout system. This command allows you to attach cucumber test with a cappuccino application.
+
+    $ cucapp -p  /path/to/your/application
+
+Once you have installed everything, you need to use `jake cucumber-test` to launch the tests in the application folder.
 
 ## Usage
 

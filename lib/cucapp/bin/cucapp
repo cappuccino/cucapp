@@ -1,0 +1,29 @@
+#!/usr/bin/env objj
+
+var SYSTEM = require("system"),
+    parser = new (require("narwhal/args").Parser)(),
+    OS = require("os");
+
+parser.usage("-p PATH ...");
+parser.help("Initialize a cappuccino application with cucapp.\nUsage: cucapp [OPTIONS]\n");
+
+parser.option("-p", "path")
+    .def(false)
+    .set()
+    .help("Path for the given application to test");
+
+parser.helpful();
+
+function main(args) {
+    var options = parser.parse(args),
+        cucapp_path = SYSTEM.prefix + "/packages/cucapp"
+
+    if (!options.path)
+    {
+        parser.printUsage(options);
+        return 1;
+    }
+
+    OS.system("cat " + cucapp_path + "/Resources/Jakefile" + " >> " + options.path + "/Jakefile");
+    OS.system(["cp", "-r", cucapp_path + "/Resources/features", options.path]);
+}

@@ -23,7 +23,7 @@ require 'rubygems/package_task'
 
 spec = Gem::Specification.new do |s|
   s.name = "cucapp"
-  s.version = "0.0.3"
+  s.version = "0.0.4"
   s.author = "Alexandre Wilhelm"
   s.email = "alexandre.wilhelmfr@gmail.com"
   s.platform = Gem::Platform::RUBY

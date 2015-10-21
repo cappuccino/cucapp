@@ -1,19 +1,4 @@
-/*
-* Copyright 2010, Daniel Parnell, Automagic Software Pty Ltd All rights reserved.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>
-*/
+require ("../Jakefile")
 
 var ENV = require("system").env,
     FILE = require("file"),
@@ -31,11 +16,11 @@ app ("Cucumber", function(task)
 
     task.setProductName("Cucumber");
     task.setIdentifier("com.automagicsoftware.Cucumber");
-    task.setVersion("1.0");
+    task.setVersion("0.0.4");
     task.setAuthor("Daniel Parnell");
     task.setEmail("daniel @nospam@ automagic-software.com");
     task.setSummary("Cucumber");
-    task.setSources((new FileList("**/*.j")).exclude(FILE.join("Build", "**")));
+    task.setSources((new FileList("**/*.j")).exclude(FILE.join("cucapp", "**")).exclude(FILE.join("Build", "**")));
     task.setResources(new FileList("Resources/**"));
     task.setInfoPlistPath("Info.plist");
     task.setNib2CibFlags("-R Resources/");
@@ -46,16 +31,8 @@ app ("Cucumber", function(task)
         task.setCompilerFlags("-O");
 });
 
-function printResults(configuration)
-{
-    print("----------------------------");
-    print(configuration+" app built at path: "+FILE.join("Build", configuration, "Cucumber"));
-    print("----------------------------");
-}
-
 task ("default", ["Cucumber"], function()
 {
-    printResults(configuration);
 });
 
 task ("build", ["default"]);
@@ -70,11 +47,4 @@ task ("release", function()
 {
     ENV["CONFIGURATION"] = "Release";
     JAKE.subjake(["."], "build", ENV);
-});
-
-task ("deploy", ["release"], function()
-{
-    FILE.mkdirs(FILE.join("Build", "Deployment", "Cucumber"));
-    OS.system(["press", "-f", FILE.join("Build", "Release", "Cucumber"), FILE.join("Build", "Deployment", "Cucumber")]);
-    printResults("Deployment")
 });
