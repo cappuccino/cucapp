@@ -406,7 +406,6 @@ module Encumber
     def simulate_keyboard_events(string, flags=[])
       string.to_s.split("").each do |c|
         result = command('simulateKeyboardEvent', c, flags)
-        sleep(0.05) #Without that there are some issues with CPTextField, they don't become firstResponder in time (weird :/)
       end
     end
 
