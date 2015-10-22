@@ -30,11 +30,11 @@ The following gems are going to be installed:
 - JSON
 - Launchy
 
-The command `cucapp` is now available in yout system. This command allows you to attach cucumber test with a cappuccino application.
+The command `cucapp` is now available in your system. This command allows you to create a testing architecture for your cappuccino application. To do that, you need to do :
 
     $ cucapp -p  /path/to/your/application
 
-Once you have installed everything, you need to use `jake cucumber-test` to launch the tests in the application folder.
+Once you have installed everything, you need to use `jake cucumber-test` to launch the tests from the cappuccino application folder.
 
 ## Usage
 
