@@ -771,6 +771,8 @@ function dumpGuiObject(obj)
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyDownEvent];
 
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyUpEvent];
@@ -1028,6 +1030,8 @@ function dumpGuiObject(obj)
         timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
 
     [CPApp sendEvent:mouseMoved];
+
+    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
@@ -1066,6 +1070,8 @@ function dumpGuiObject(obj)
                            timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
         [CPApp sendEvent:mouseDown];
 
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+
         if (locationWindowPoint2)
         {
             var maxDiff = MAX(ABS(locationWindowPoint.x - locationWindowPoint2.x), ABS(locationWindowPoint.y - locationWindowPoint2.y)),
@@ -1089,15 +1095,17 @@ function dumpGuiObject(obj)
                                    timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:-1 clickCount:i pressure:0];
 
                 [CPApp sendEvent:mouseDragged];
+
+                [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
             }
         }
 
         var mouseUp = [CPEvent mouseEventWithType:typeMouseUp location:currentLocation modifierFlags:modifierFlags
                            timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil eventNumber:0 clickCount:i pressure:0.5];
         [CPApp sendEvent:mouseUp];
-    }
 
-    [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+    }
 }
 
 @end
