@@ -22,11 +22,182 @@
 @global CPApp
 @global __PRETTY_FUNCTION__
 
-var lastMouseEventPoint = CGPointMakeZero();
-
 cucumber_instance = nil;
 cucumber_objects = nil;
 cucumber_counter = 0;
+
+function simulate_keyboard_event(character, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateKeyboardEvent:[character, flags]];
+}
+
+function simulate_keyboard_events(string, flags)
+{
+    if (!flags)
+        flags = [];
+
+    for (var i = 0; i < string.length; i++)
+    {
+        [cucumber_instance simulateKeyboardEvent:[string[i], flags]];
+    }
+}
+
+function simulate_left_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateLeftClick:[objectID, flags]];
+}
+
+function simulate_right_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateRightClick:[objectID, flags]];
+}
+
+function simulate_double_click_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDoubleClick:[objectID, flags]];
+}
+
+function simulate_left_click_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateLeftClickOnPoint:[x, y, flags]];
+}
+
+function simulate_right_click_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateRightClick:[x, y, flags]];
+}
+
+function simulate_double_click_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDoubleClick:[x, y, flags]];
+}
+
+function simulate_dragged_click_view_to_view(aKey, aValue, aKey2, aValue2, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue),
+        objectID2 = _getObjectsWithKeyAndValue(aKey2, aValue2);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[objectID, objectID2, flags]];
+}
+
+function simulate_dragged_click_view_to_point(aKey, aValue, x, y, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[objectID, x, y, flags]];
+}
+
+function simulate_dragged_click_point_to_point(x, y, x1, y2, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateDraggedClickViewToView:[x, y, x2, y2, flags]];
+}
+
+function simulate_mouse_moved_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMovedOnPoint:[x, y, flags]];
+}
+
+function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMovedOnPoint:[aKey, aValue, deltaX, deltaY, flags]];
+}
+
+function find_control(aKey, aValue)
+{
+    CPLog.warn(@"Begin to look for the value " + aValue + " of the key " + aKey);
+
+    // In a try catch to use the function _getObjectsWithKeyAndValue which can raises an exception
+    try
+    {
+        var selector = CPSelectorFromString(aKey);
+
+        _getObjectsWithKeyAndValue(aKey, aValue)
+
+        for (var i = [cucumber_objects count] - 1; i >= 0; i--)
+        {
+            var cucumber_object = cucumber_objects[i];
+
+            if ([cucumber_object respondsToSelector:selector] && [cucumber_object performSelector:selector] == aValue)
+                console.log(cucumber_object);
+        }
+    }
+    catch(e){}
+
+    CPLog.warn(@"End of look the value " + aValue + " of the key " + aKey);
+}
+
+function _getObjectsWithKeyAndValue(aKey, aValue)
+{
+    if (!aKey || !aValue)
+        [CPException raise:CPInvalidArgumentException reason:@"The given key or value is null"];
+
+    cucumber_objects = [];
+    cucumber_counter = 0;
+
+    var windows = [CPApp windows],
+        menu = [CPApp mainMenu],
+        selector = CPSelectorFromString(aKey);
+
+    for (var i = 0; i < windows.length; i++)
+        dumpGuiObject(windows[i]);
+
+    if (menu)
+        dumpGuiObject(menu);
+
+    for (var i = [cucumber_objects count]; i >= 0; i--)
+    {
+        var cucumber_object = cucumber_objects[i];
+
+        if ([cucumber_object respondsToSelector:selector] && [cucumber_object performSelector:selector] == aValue)
+            return i;
+    }
+
+    [CPException raise:CPInvalidArgumentException reason:@"No result for the key " + aKey + " and the value " + aValue];;
+}
 
 function addCucumberObject(obj)
 {
@@ -94,6 +265,21 @@ function dumpGuiObject(obj)
             resultingXML += "<width>" + frame.size.width + "</width>";
             resultingXML += "<height>" + frame.size.height + "</height>";
             resultingXML += "</frame>";
+        }
+
+        if (frame && [obj respondsToSelector:@selector(superview)])
+        {
+            var globalPoint = [obj superview] ? [[obj superview] convertPointToBase:frame.origin] : frame.origin;
+
+            globalPoint.x += [[obj window] frame].origin.x;
+            globalPoint.y += [[obj window] frame].origin.y;
+
+            resultingXML += "<absoluteFrame>";
+            resultingXML += "<x>" + globalPoint.x + "</x>";
+            resultingXML += "<y>" + globalPoint.y + "</y>";
+            resultingXML += "<width>" + frame.size.width + "</width>";
+            resultingXML += "<height>" + frame.size.height + "</height>";
+            resultingXML += "</absoluteFrame>";
         }
     }
 
@@ -174,23 +360,26 @@ function dumpGuiObject(obj)
     return resultingXML;
 }
 
-
-
 @implementation Cucumber : CPObject
 {
     BOOL requesting;
     BOOL time_to_die;
     BOOL launched;
+    BOOL stopRequest;
 }
 
 + (void)startCucumber
 {
-
     if (cucumber_instance == nil)
     {
         [[Cucumber alloc] init];
         [cucumber_instance startRequest];
     }
+}
+
++ (void)stopCucumber
+{
+    [cucumber_instance stopRequest];
 }
 
 - (id)init
@@ -202,6 +391,7 @@ function dumpGuiObject(obj)
         requesting = YES;
         time_to_die = NO;
         launched = NO;
+        stopRequest = NO;
 
         [[CPNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidFinishLaunching:)
@@ -212,9 +402,16 @@ function dumpGuiObject(obj)
     return self;
 }
 
+- (void)stopRequest
+{
+    requesting = NO;
+    stopRequest = YES;
+}
+
 - (void)startRequest
 {
     requesting = YES;
+    stopRequest = NO;
 
     var request = [[CPURLRequest alloc] initWithURL:@"/cucumber"];
 
@@ -252,6 +449,9 @@ function dumpGuiObject(obj)
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
+    if (stopRequest)
+        return;
+
     if (requesting)
     {
         var result = nil,
@@ -403,6 +603,53 @@ function dumpGuiObject(obj)
 #pragma mark -
 #pragma mark Events methods
 
+- (int)_keyCodeForCharacter:(CPString)charac
+{
+    switch (charac)
+    {
+        case CPDeleteCharFunctionKey:
+        case CPDeleteLineFunctionKey:
+        case CPDeleteFunctionKey:
+        case CPDeleteCharacter:
+            return CPDeleteKeyCode;
+
+        case CPTabCharacter:
+            return CPTabKeyCode;
+
+        case CPNewlineCharacter:
+        case CPCarriageReturnCharacter:
+        case CPEnterCharacter:
+            return CPReturnKeyCode;
+
+        case CPEscapeFunctionKey:
+            return CPEscapeKeyCode;
+
+        case CPSpaceFunctionKey:
+            return CPSpaceKeyCode;
+
+        case CPPageUpFunctionKey:
+            return CPPageUpKeyCode;
+
+        case CPPageDownFunctionKey:
+            return CPPageDownKeyCode;
+
+        case CPLeftArrowFunctionKey:
+            return CPLeftArrowKeyCode;
+
+        case CPUpArrowFunctionKey:
+            return CPUpArrowKeyCode;
+
+        case CPRightArrowFunctionKey:
+            return CPRightArrowKeyCode;
+
+        case CPDownArrowFunctionKey:
+            return CPDownArrowKeyCode;
+
+        default:
+            return charac.charCodeAt(0);
+    }
+}
+
 - (void)simulateKeyboardEvent:(CPArray)params
 {
     var character = params.shift(),
@@ -418,12 +665,11 @@ function dumpGuiObject(obj)
     }
 
     var keyDownEvent = [CPEvent keyEventWithType:CPKeyDown location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyDownEvent];
 
     var keyUpEvent = [CPEvent keyEventWithType:CPKeyUp location:CGPointMakeZero() modifierFlags:modifierFlags
-        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:100];
-
+        timestamp:[CPEvent currentTimestamp] windowNumber:[currentWindow windowNumber] context:nil characters:character charactersIgnoringModifiers:charactersIgnoringModifiers isARepeat:NO keyCode:[self _keyCodeForCharacter:character]];
     [CPApp sendEvent:keyUpEvent];
 
     [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
@@ -473,7 +719,7 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
-- (CPString)simulateDraggedClickViewToPoint:(CPArray)params
+- (CPString)simulateDraggedClickPointToPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
         locationWindowPoint2 = CGPointMake(params.shift(), params.shift());
@@ -588,8 +834,6 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
-    [self _moveMouseToPoint:locationWindowPoint];
-
     var mouseWheel = [CPEvent mouseEventWithType:CPScrollWheel location:locationWindowPoint modifierFlags:modifierFlags
         timestamp:[CPEvent currentTimestamp] windowNumber:[[obj window] windowNumber] context:nil eventNumber:-1 clickCount:1 pressure:0];
 
@@ -614,7 +858,6 @@ function dumpGuiObject(obj)
         modifierFlags |= parseInt(flag);
     }
 
-    [self _moveMouseToPoint:locationWindowPoint];
     [self _performMouseMoveOnPoint:locationWindowPoint window:window modifierFlags:modifierFlags];
 }
 
@@ -626,44 +869,16 @@ function dumpGuiObject(obj)
     [CPApp sendEvent:mouseMoved];
 }
 
-- (void)_moveMouseToPoint:(CGPoint)locationWindowPoint
-{
-    var window = [CPApp keyWindow],
-        flags = 0,
-        currentLocation = CGPointMakeCopy(lastMouseEventPoint);
-
-    var maxDiff = MAX(ABS(lastMouseEventPoint.x - locationWindowPoint.x), ABS(lastMouseEventPoint.y - locationWindowPoint.y)),
-        xDiff = lastMouseEventPoint.x - locationWindowPoint.x,
-        yDiff = lastMouseEventPoint.y - locationWindowPoint.y;
-
-    for (var j = 0; j < maxDiff; j++)
-    {
-        var gapX = xDiff > 0 ? -1 : 1,
-            gapY = yDiff > 0 ? -1 : 1;
-
-        if (currentLocation.y == locationWindowPoint.y)
-            gapY = 0;
-
-        if (currentLocation.x == locationWindowPoint.x)
-            gapX = 0;
-
-        currentLocation = CGPointMake(currentLocation.x + gapX, currentLocation.y + gapY);
-
-        [self _performMouseMoveOnPoint:currentLocation window:window modifierFlags:flags];
-    }
-
-    lastMouseEventPoint = currentLocation;
-}
-
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint toPoint:(CPView)locationWindowPoint2 window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
 {
     var typeMouseDown = CPLeftMouseDown,
         typeMouseUp = CPLeftMouseUp,
         modifierFlags = 0;
 
-    var currentLocation = CGPointMakeCopy(locationWindowPoint);
+    locationWindowPoint.x = Math.round(locationWindowPoint.x);
+    locationWindowPoint.y = Math.round(locationWindowPoint.y);
 
-    [self _moveMouseToPoint:currentLocation];
+    var currentLocation = CGPointMakeCopy(locationWindowPoint);
 
     if (anEventType == CPRightMouseDown)
     {
@@ -678,7 +893,11 @@ function dumpGuiObject(obj)
     }
 
     if (locationWindowPoint2)
+    {
         modifierFlags |= CPLeftMouseDraggedMask;
+        locationWindowPoint2.x = Math.round(locationWindowPoint2.x);
+        locationWindowPoint2.y = Math.round(locationWindowPoint2.y);
+    }
 
     for (var i = 1; i < numberOfClick + 1; i++)
     {
@@ -710,8 +929,6 @@ function dumpGuiObject(obj)
 
                 [CPApp sendEvent:mouseDragged];
             }
-
-            lastMouseEventPoint = currentLocation;
         }
 
         var mouseUp = [CPEvent mouseEventWithType:typeMouseUp location:currentLocation modifierFlags:modifierFlags
