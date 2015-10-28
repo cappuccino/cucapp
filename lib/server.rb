@@ -88,7 +88,7 @@ module Encumber
 
         # Get the headers out there asap, let the client know we're alive...
         EM.next_tick do
-          env['async.callback'].call [200, {'Content-Type' => 'text/plain'}, body]
+          env['async.callback'].call [200, {'Content-Type' => 'application/json'}, body]
 
           CUCUMBER_REQUEST_QUEUE.pop { |req|
             body.call [req.to_json]
@@ -96,17 +96,14 @@ module Encumber
           }
         end
 
-        AsyncResponse
+        return AsyncResponse
       else
         CUCUMBER_RESPONSE_QUEUE.push env
         result = {:result => :ok}
 
         body = [result.to_json]
-        [
-          200,
-          { 'Content-Type' => 'text/plain' },
-          body
-        ]
+
+        return [200, {'Content-Type' => 'application/json'}, body]
       end
     end
   end
