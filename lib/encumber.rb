@@ -188,10 +188,6 @@ module Encumber
 
     def launch
       sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-
-      # TODO: WTF ? sometimes (linux or mac) the browset dos not open, we make sure to be opened
-      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
-      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
       Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
