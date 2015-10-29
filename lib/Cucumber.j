@@ -558,8 +558,6 @@ function dumpGuiObject(obj)
     {
         if (time_to_die)
         {
-            window.close();
-
             var platformWindows = [CPPlatformWindow visiblePlatformWindows],
                 primaryPlatformWindow = [CPPlatformWindow primaryPlatformWindow],
                 platformWindowEnumerator = [platformWindows objectEnumerator],

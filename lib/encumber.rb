@@ -16,7 +16,7 @@
 require 'json'
 require 'nokogiri'
 require 'server'
-require 'launchy'
+require 'watir-webdriver'
 
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
@@ -145,6 +145,7 @@ module Encumber
       @timeout     = timeout_in_seconds
       @global_x    = 0
       @global_y    = 0
+      @browser     = nil
     end
 
     def command(name, *params)
@@ -156,7 +157,6 @@ module Encumber
       th = Thread.current
       response = nil
       data = nil
-
       CUCUMBER_REQUEST_QUEUE.push(command)
       CUCUMBER_RESPONSE_QUEUE.pop { |result|
           if result
@@ -164,7 +164,6 @@ module Encumber
           end
           th.wakeup
       }
-
       startTime = Time.now
       sleep @timeout
 
@@ -190,9 +189,16 @@ module Encumber
       dom_for_gui.search(xpath)
     end
 
+    def close
+      @browser.close
+    end
+
     def launch
-      sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
+
+      browser = ENV["BROWSER"] || :firefox
+
+      @browser = Watir::Browser.new browser
+      @browser.goto("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
 
@@ -201,8 +207,6 @@ module Encumber
       end
 
       raise "launch timed out " if Time.now-startTime>@timeout
-
-      sleep 1
     end
 
     def make_url_params
@@ -213,11 +217,6 @@ module Encumber
         end
 
       url
-    end
-
-    def quit
-      command 'terminateApp'
-      sleep 0.2
     end
 
     def dump
