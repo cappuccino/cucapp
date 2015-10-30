@@ -23,7 +23,7 @@ require 'rubygems/package_task'
 
 spec = Gem::Specification.new do |s|
   s.name = "cucapp"
-  s.version = "0.0.4"
+  s.version = "0.0.5"
   s.author = "Alexandre Wilhelm"
   s.email = "alexandre.wilhelmfr@gmail.com"
   s.platform = Gem::Platform::RUBY
@@ -32,5 +32,5 @@ spec = Gem::Specification.new do |s|
   s.add_dependency("thin", "~> 1.6")
   s.add_dependency("nokogiri", "~> 1.6")
   s.add_dependency("json", "~> 1.8")
-  s.add_dependency("launchy", "~> 2.4")
+  s.add_dependency("watir-webdriver", "~> 0.9.1")
 end
