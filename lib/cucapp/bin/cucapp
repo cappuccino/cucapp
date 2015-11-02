@@ -26,4 +26,6 @@ function main(args) {
 
     OS.system("cat " + cucapp_path + "/Resources/Jakefile" + " >> " + options.path + "/Jakefile");
     OS.system(["cp", "-r", cucapp_path + "/Resources/features", options.path]);
+    OS.system(["cp", cucapp_path + "/Resources/CPResponder+CuCapp.j", options.path]);
+    OS.system(["cp", cucapp_path + "/Resources/CuCapp+Record.j", options.path]);
 }
