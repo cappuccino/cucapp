@@ -51,6 +51,8 @@ Cucapp provides a set of environment variables :
 * `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
 * `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
 * `BROWSER` the browser desired for the test suite.
+* `WATIR_CHROME_DRIVER` the path where Watir locates your ChromeDriver binary.
+* `WATIR_CHROME_SWITCHES` the switches for ChromeDriver to start with.
 
 #### Global variable
 
