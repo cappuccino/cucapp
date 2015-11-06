@@ -1,0 +1,10 @@
+{
+    "name": "cucapp",
+    "author": "Alexandre Wilhelm (alexandre.wilhelmfr@gmail.com)",
+    "description": "Cucumber for Cappuccino",
+    "keywords": [
+        "cucapp",
+        "cucumber"
+    ],
+    "version": "0.0.4"
+}

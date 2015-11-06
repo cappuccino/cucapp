@@ -16,7 +16,7 @@
 require 'json'
 require 'nokogiri'
 require 'server'
-require 'launchy'
+require 'watir-webdriver'
 
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
@@ -145,6 +145,7 @@ module Encumber
       @timeout     = timeout_in_seconds
       @global_x    = 0
       @global_y    = 0
+      @browser     = nil
     end
 
     def command(name, *params)
@@ -155,37 +156,32 @@ module Encumber
 
       th = Thread.current
       response = nil
+      data = nil
       CUCUMBER_REQUEST_QUEUE.push(command)
       CUCUMBER_RESPONSE_QUEUE.pop { |result|
-#        puts "RESPONSE: #{result}"
-
-        response = result
-        th.wakeup
+          if result
+              data = result['rack.input'].read
+          end
+          th.wakeup
       }
       startTime = Time.now
       sleep @timeout
+
       raise "Command timed out" if Time.now-startTime>=@timeout
 
-      if response
-        data = response['rack.input'].read
-
-        if data && !data.empty?
+      if data && !data.empty?
           obj = JSON.parse(data)
-
           if obj["error"]
-            raise obj["error"]
+              raise obj["error"]
           else
-            begin
-              JSON.parse(obj["result"])
-            rescue Exception => e
-              obj["result"]
-            end
+              begin
+                  JSON.parse(obj["result"])
+              rescue Exception => e
+                  return obj["result"]
+              end
           end
-        else
-          nil
-        end
       else
-        nil
+          return nil
       end
     end
 
@@ -193,9 +189,16 @@ module Encumber
       dom_for_gui.search(xpath)
     end
 
+    def close
+      @browser.close
+    end
+
     def launch
-      sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
+
+      browser = ENV["BROWSER"] || :firefox
+
+      @browser = Watir::Browser.new browser
+      @browser.goto("http://localhost:3000/cucumber.html" + self.make_url_params)
 
       startTime = Time.now
 
@@ -204,8 +207,6 @@ module Encumber
       end
 
       raise "launch timed out " if Time.now-startTime>@timeout
-
-      sleep 1
     end
 
     def make_url_params
@@ -216,11 +217,6 @@ module Encumber
         end
 
       url
-    end
-
-    def quit
-      command 'terminateApp'
-      sleep 0.2
     end
 
     def dump
@@ -243,8 +239,14 @@ module Encumber
       [x_elements.first.inner_text.to_f + width_elements.first.inner_text.to_f / 2 , y_elements.first.inner_text.to_f + height_elements.first.inner_text.to_f / 2]
     end
 
-    def closeWindow(xpath)
-      performRemoteAction('closeWindow', xpath)
+    def make_key_and_order_front_window(xpath)
+      result = command "makeKeyAndOrderFrontWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result["result"] != 'OK'
+    end
+
+    def close_window(xpath)
+      result = command "closeWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
     end
 
     def text_for(xpath)

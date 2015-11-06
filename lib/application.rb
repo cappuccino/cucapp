@@ -33,6 +33,7 @@ class Cucapp
 
   def quit
     @gui.command 'closeBrowser'
+    @gui.close
   end
 
   def restart
