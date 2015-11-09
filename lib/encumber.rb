@@ -197,17 +197,17 @@ module Encumber
       browser = ENV["BROWSER"] || :firefox
       start_browser(browser, "http://localhost:3000/cucumber.html"+ self.make_url_params)
       startTime = Time.now
-      
+
       while command('launched') == "NO" && (Time.now - startTime < @timeout) do
         # do nothing
       end
-      
+
       raise "launch timed out " if Time.now-startTime>@timeout
     end
 
     def make_url_params
       url = "?"
-      
+
       $url_params.each_pair do |key, value|
           url = url + key + "=" + value + "&"
       end
@@ -215,34 +215,32 @@ module Encumber
       url
     end
 
-    def start_browser(br, url)
-      case br.downcase  
+    def start_browser(browser, url)
+      case browser.downcase
         when /chrom/
           create_chrome_browser
-      
         when /firefox/
           create_firefox_browser
-        
         when /safari/
           create_safari_browser
-        
         else
-          @browser = Watir::Browser.new br
+          @browser = Watir::Browser.new browser
       end
-      
+
       @browser.goto(url)
     end
 
     def create_chrome_browser()
       driver_path = ENV["WATIR_CHROME_DRIVER"] || '/usr/local/bin'
       args = ENV["WATIR_CHROME_SWITCHES"] || ''
-      prefs = {:download => {:prompt_for_download => false, :default_directory => driver_path } }
+      prefs = {:download => {:prompt_for_download => false, :default_directory => driver_path }}
+
       if args.length > 0
         @browser = Watir::Browser.new :chrome, :switches => %w(args), :prefs => prefs
       else
         @browser = Watir::Browser.new :chrome, :prefs => prefs
       end
-      
+
     end
 
     def create_firefox_browser()
@@ -252,7 +250,7 @@ module Encumber
     def create_safari_browser()
       @browser = Watir::Browser.new :safari
     end
-    
+
     def dump
       command 'outputView'
     end
