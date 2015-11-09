@@ -216,8 +216,7 @@ module Encumber
     end
 
     def start_browser(br, url)
-      case br.downcase
-        
+      case br.downcase  
         when /chrom/
           create_chrome_browser
       
@@ -237,8 +236,7 @@ module Encumber
     def create_chrome_browser()
       driver_path = ENV["WATIR_CHROME_DRIVER"] || '/usr/local/bin'
       args = ENV["WATIR_CHROME_SWITCHES"] || ''
-      prefs = { :download => { :prompt_for_download => false, :default_directory => driver_path } }
-      
+      prefs = {:download => {:prompt_for_download => false, :default_directory => driver_path } }
       if args.length > 0
         @browser = Watir::Browser.new :chrome, :switches => %w(args), :prefs => prefs
       else
