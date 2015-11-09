@@ -20,7 +20,7 @@ To get started, download the current version of Cuccap:
 
 Then install cucapp on your system:
 
-    $ gem build cucapp.gemspec && gem install cucapp
+    $ jake install
 
 The following gems are going to be installed:
 
@@ -28,8 +28,15 @@ The following gems are going to be installed:
 - Thin
 - Nokogiri
 - JSON
-- Launchy
+- Watir-Webdriver
 
+The command `cucapp` is now available in your system. This command allows you to create a testing architecture for your cappuccino application. To do that, you need to do :
+
+    $ cucapp -p  /path/to/your/application
+
+Once you have installed everything, you need to use `jake cucumber-test` to launch the tests from the cappuccino application folder.
+
+By default, cucapp will launch firefox to perform your tests. If you want to to use Chrome or Safari you will need to install the following webdrivers : http://watirwebdriver.com/safari/ - http://watirwebdriver.com/chrome/
 
 ## Usage
 
@@ -43,6 +50,9 @@ Cucapp provides a set of environment variables :
 * `$CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
 * `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
 * `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
+* `BROWSER` the browser desired for the test suite.
+* `WATIR_CHROME_DRIVER` the path where Watir locates your ChromeDriver binary.
+* `WATIR_CHROME_SWITCHES` the switches for ChromeDriver to start with.
 
 #### Global variable
 

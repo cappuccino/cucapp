@@ -16,7 +16,7 @@
 require 'json'
 require 'nokogiri'
 require 'server'
-require 'launchy'
+require 'watir-webdriver'
 
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
@@ -145,6 +145,7 @@ module Encumber
       @timeout     = timeout_in_seconds
       @global_x    = 0
       @global_y    = 0
+      @browser     = nil
     end
 
     def command(name, *params)
@@ -165,7 +166,9 @@ module Encumber
       }
       startTime = Time.now
       sleep @timeout
+
       raise "Command timed out" if Time.now-startTime>=@timeout
+
       if data && !data.empty?
           obj = JSON.parse(data)
           if obj["error"]
@@ -174,11 +177,11 @@ module Encumber
               begin
                   JSON.parse(obj["result"])
               rescue Exception => e
-                  obj["result"]
+                  return obj["result"]
               end
           end
       else
-          nil
+          return nil
       end
     end
 
@@ -186,36 +189,72 @@ module Encumber
       dom_for_gui.search(xpath)
     end
 
+    def close
+      @browser.close
+    end
+
     def launch
-      sleep 0.2 # there seems to be a timing issue. This little hack fixes it.
-      Launchy.open("http://localhost:3000/cucumber.html" + self.make_url_params)
-
+      browser = ENV["BROWSER"] || :firefox
+      start_browser(browser, "http://localhost:3000/cucumber.html"+ self.make_url_params)
       startTime = Time.now
-
+      
       while command('launched') == "NO" && (Time.now - startTime < @timeout) do
         # do nothing
       end
-
+      
       raise "launch timed out " if Time.now-startTime>@timeout
-
-      sleep 1
     end
 
     def make_url_params
       url = "?"
-
+      
       $url_params.each_pair do |key, value|
           url = url + key + "=" + value + "&"
-        end
+      end
 
       url
     end
 
-    def quit
-      command 'terminateApp'
-      sleep 0.2
+    def start_browser(br, url)
+      case br.downcase
+        
+        when /chrom/
+          create_chrome_browser
+      
+        when /firefox/
+          create_firefox_browser
+        
+        when /safari/
+          create_safari_browser
+        
+        else
+          @browser = Watir::Browser.new br
+      end
+      
+      @browser.goto(url)
     end
 
+    def create_chrome_browser()
+      driver_path = ENV["WATIR_CHROME_DRIVER"] || '/usr/local/bin'
+      args = ENV["WATIR_CHROME_SWITCHES"] || ''
+      prefs = { :download => { :prompt_for_download => false, :default_directory => driver_path } }
+      
+      if args.length > 0
+        @browser = Watir::Browser.new :chrome, :switches => %w(args), :prefs => prefs
+      else
+        @browser = Watir::Browser.new :chrome, :prefs => prefs
+      end
+      
+    end
+
+    def create_firefox_browser()
+      @browser = Watir::Browser.new :firefox
+    end
+
+    def create_safari_browser()
+      @browser = Watir::Browser.new :safari
+    end
+    
     def dump
       command 'outputView'
     end
@@ -236,8 +275,14 @@ module Encumber
       [x_elements.first.inner_text.to_f + width_elements.first.inner_text.to_f / 2 , y_elements.first.inner_text.to_f + height_elements.first.inner_text.to_f / 2]
     end
 
-    def closeWindow(xpath)
-      performRemoteAction('closeWindow', xpath)
+    def make_key_and_order_front_window(xpath)
+      result = command "makeKeyAndOrderFrontWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result["result"] != 'OK'
+    end
+
+    def close_window(xpath)
+      result = command "closeWindow", id_for_element(xpath)
+      raise "Could not find window for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
     end
 
     def text_for(xpath)
