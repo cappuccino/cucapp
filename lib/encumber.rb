@@ -386,11 +386,14 @@ module Encumber
     def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
       points = points_for_element(xpath1)
       move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
-      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result["result"] != 'OK'
+      result = command('simulateMouseDownOnPoint', points[0], points[1], flags)
+      raise "View not found: #{xpath1} - #{result}" if result["result"] != 'OK'
 
       points = points_for_element(xpath2)
+      move_mouse_to_point(points[0], points[1])
+      result = command('simulateMouseUpOnPoint', points[0], points[1], flags)
+      raise "View not found: #{xpath2} - #{result}" if result["result"] != 'OK'
+
       @global_y = points[0]
       @global_x = points[1]
     end
@@ -398,9 +401,12 @@ module Encumber
     def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
       points = points_for_element(xpath1)
       move_mouse_to_point(points[0], points[1])
+      result = command('simulateMouseDownOnPoint', points[0], points[1], flags)
+      raise "View not found: #{xpath1} - #{result}" if result["result"] != 'OK'
 
-      result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
-      raise "View/Point not found: #{xpath1} - #{result}" if result["result"] != 'OK'
+      move_mouse_to_point(x, y)
+      result = command('simulateMouseUpOnPoint', x, y, flags)
+      raise "Point not found: (#{x}, #{y}) - #{result}" if result["result"] != 'OK'
 
       @global_y = x
       @global_x = y
@@ -408,7 +414,12 @@ module Encumber
 
     def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
       move_mouse_to_point(x, y)
-      result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
+      result = command('simulateMouseDownOnPoint', x, y, flags)
+      raise "Point not found: (#{x}, #{y}) - #{result}" if result["result"] != 'OK'
+
+      move_mouse_to_point(x2, y2)
+      result = command('simulateMouseUpOnPoint', x2, y2, flags)
+      raise "Point not found: (#{x2}, #{y2}) - #{result}" if result["result"] != 'OK'
 
       @global_y = x2
       @global_x = y2

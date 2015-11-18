@@ -1011,6 +1011,46 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
+- (void)simulateMouseDownOnPoint:(CPArray)params
+{
+    var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
+        modifierFlags = 0,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    CPLog.debug("Cucapp is about to simulate a mouse down to the point " + locationWindowPoint);
+
+    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:modifierFlags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
+}
+
+- (void)simulateMouseUpOnPoint:(CPArray)params
+{
+    var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
+        modifierFlags = 0,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    for (var i = 0; i < [flags count]; i++)
+    {
+        var flag = flags[i];
+        modifierFlags |= parseInt(flag);
+    }
+
+    CPLog.debug("Cucapp is about to simulate a mouse up to the point " + locationWindowPoint);
+
+    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:modifierFlags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
+}
+
 - (void)simulateMouseMovedOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
