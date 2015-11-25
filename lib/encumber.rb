@@ -229,6 +229,10 @@ module Encumber
           @browser = Watir::Browser.new :firefox
       end
 
+      browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
+      browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+
+      @browser.window.resize_to(1280, 1024)
       @browser.goto(url)
     end
 
