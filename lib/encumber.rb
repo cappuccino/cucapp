@@ -223,8 +223,10 @@ module Encumber
           create_firefox_browser
         when /safari/
           create_safari_browser
+        when /phantomjs/
+          create_phantomjs_browser
         else
-          @browser = Watir::Browser.new browser
+          @browser = Watir::Browser.new :firefox
       end
 
       @browser.goto(url)
@@ -243,12 +245,25 @@ module Encumber
 
     end
 
+    def create_phantomjs_browser()
+      @browser = Watir::Browser.new :phantomjs
+    end
+
     def create_firefox_browser()
       @browser = Watir::Browser.new :firefox
     end
 
     def create_safari_browser()
       @browser = Watir::Browser.new :safari
+    end
+
+    def make_screenshot_with_name(aName)
+
+      if !aName
+        return
+      end
+
+      @browser.screenshot.save aName
     end
 
     def dump
