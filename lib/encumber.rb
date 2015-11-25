@@ -226,13 +226,13 @@ module Encumber
         when /phantomjs/
           create_phantomjs_browser
         else
-          @browser = Watir::Browser.new :firefox
+          @browser = Watir::Browser.new :phantomjs
       end
 
       browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
       browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
 
-      @browser.window.resize_to(1280, 1024)
+      @browser.window.resize_to(browser_width, browser_height)
       @browser.goto(url)
     end
 
