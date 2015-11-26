@@ -158,6 +158,16 @@ function simulate_mouse_moved_on_point(x, y, flags)
     [cucumber_instance simulateMouseMovedOnPoint:[x, y, flags]];
 }
 
+function simulate_mouse_moved_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMoved:[objectID, flags]];
+}
+
 function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
 {
     var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
@@ -166,6 +176,42 @@ function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
         flags = [];
 
     [cucumber_instance simulateMouseMovedOnPoint:[aKey, aValue, deltaX, deltaY, flags]];
+}
+
+function simulate_mouse_up_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseUpOnPoint:[x, y, flags]];
+}
+
+function simulate_mouse_down_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseDownOnPoint:[x, y, flags]];
+}
+
+function simulate_mouse_up_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseUp:[objectID, flags]];
+}
+
+function simulate_mouse_down_on_view(aKey, aValue, flags)
+{
+    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
+
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseDown:[objectID, flags]];
 }
 
 function find_control(aKey, aValue)
@@ -922,19 +968,34 @@ function dumpGuiObject(obj)
 - (void)simulateMouseDownOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
-        modifierFlags = 0,
         flags = params[0],
         window = [CPApp keyWindow];
 
-    for (var i = 0; i < [flags count]; i++)
-    {
-        var flag = flags[i];
-        modifierFlags |= parseInt(flag);
-    }
-
     CPLog.debug("Cucapp is about to simulate a mouse down to the point " + locationWindowPoint);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:modifierFlags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
+}
+
+- (void)simulateMouseDown:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()],
+        locationWindowPoint,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    if (!obj)
+        return '{"result" : "OBJECT NOT FOUND"}';
+
+    if ([obj superview])
+        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
+    else
+        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
+
+    CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
+
+    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -942,19 +1003,34 @@ function dumpGuiObject(obj)
 - (void)simulateMouseUpOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
-        modifierFlags = 0,
         flags = params[0],
         window = [CPApp keyWindow];
 
-    for (var i = 0; i < [flags count]; i++)
-    {
-        var flag = flags[i];
-        modifierFlags |= parseInt(flag);
-    }
-
     CPLog.debug("Cucapp is about to simulate a mouse up to the point " + locationWindowPoint);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:modifierFlags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
+}
+
+- (void)simulateMouseUp:(CPArray)params
+{
+    var obj = cucumber_objects[params.shift()],
+        locationWindowPoint,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    if (!obj)
+        return '{"result" : "OBJECT NOT FOUND"}';
+
+    if ([obj superview])
+        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
+    else
+        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
+
+    CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
+
+    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -962,31 +1038,42 @@ function dumpGuiObject(obj)
 - (void)simulateMouseMovedOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
-        modifierFlags = 0,
         flags = params[0],
         window = [CPApp keyWindow];
 
-    for (var i = 0; i < [flags count]; i++)
-    {
-        var flag = flags[i];
-        modifierFlags |= parseInt(flag);
-    }
-
     CPLog.debug("Cucapp is about to simulate a mouse moved to the point " + locationWindowPoint);
 
-    [self _performMouseMoveOnPoint:locationWindowPoint window:window modifierFlags:modifierFlags];
+    [self _dispatchMouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
 }
 
-- (void)_performMouseMoveOnPoint:(CGPoint)locationWindowPoint window:(CPWindow)currentWindow modifierFlags:(unsigned)flags
+- (void)simulateMouseMoved:(CPArray)params
 {
-    [self _dispatchMouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:flags clickCount:0 window:currentWindow];
+    var obj = cucumber_objects[params.shift()],
+        locationWindowPoint,
+        flags = params[0],
+        window = [CPApp keyWindow];
+
+    if (!obj)
+        return '{"result" : "OBJECT NOT FOUND"}';
+
+    if ([obj superview])
+        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
+    else
+        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
+
+    CPLog.debug("Cucapp is about to simulate a mouse moved on the view : " + obj);
+
+    [self _dispatchMouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+
+    return '{"result" : "OK"}';
 }
 
 - (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
 {
     var typeMouseDown = CPLeftMouseDown,
-        typeMouseUp = CPLeftMouseUp,
-        modifierFlags = 0;
+        typeMouseUp = CPLeftMouseUp;
 
     locationWindowPoint.x = Math.round(locationWindowPoint.x);
     locationWindowPoint.y = Math.round(locationWindowPoint.y);
@@ -999,24 +1086,25 @@ function dumpGuiObject(obj)
         typeMouseUp = CPRightMouseUp;
     }
 
+    for (var i = 1; i < numberOfClick + 1; i++)
+    {
+        [self _dispatchMouseEventWithType:typeMouseDown location:currentLocation modifierFlags:flags clickCount:i window:currentWindow];
+        [self _dispatchMouseEventWithType:typeMouseUp location:currentLocation modifierFlags:flags clickCount:i window:currentWindow];
+    }
+}
+
+- (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)currentLocation modifierFlags:(CPArray)flags clickCount:(int)clickCount window:(CPWindow)aWindow
+{
+    var type = "",
+        button = 0,
+        modifierFlags = 0,
+        location = [aWindow convertBaseToPlatformWindow:currentLocation];
+
     for (var i = 0; i < [flags count]; i++)
     {
         var flag = flags[i];
         modifierFlags |= parseInt(flag);
     }
-
-    for (var i = 1; i < numberOfClick + 1; i++)
-    {
-        [self _dispatchMouseEventWithType:typeMouseDown location:currentLocation modifierFlags:modifierFlags clickCount:i window:currentWindow];
-        [self _dispatchMouseEventWithType:typeMouseUp location:currentLocation modifierFlags:modifierFlags clickCount:i window:currentWindow];
-    }
-}
-
-- (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)currentLocation modifierFlags:(unsigned)modifierFlags clickCount:(int)clickCount window:(CPWindow)aWindow
-{
-    var type = "",
-        button = 0,
-        location = [aWindow convertBaseToPlatformWindow:currentLocation];
 
     switch (aType)
     {
