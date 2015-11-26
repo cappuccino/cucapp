@@ -337,15 +337,12 @@ module Encumber
         step = 0.02
       end
 
+      current_location = [@global_x, @global_y]
+      destination_location = [x, y]
+
       while i <= 1 do
-
-        tmp_x = (1 - i) * @global_x + i * x
-        tmp_y = (1 - i) * @global_y + i * y
-
-        command('simulateMouseMovedOnPoint', tmp_x, tmp_y, [])
-
+        current_location = location_for_simulate_mouse_event(current_location, destination_location, i)
         i = i + step
-
       end
 
       command('simulateMouseMovedOnPoint', x, y, [])
@@ -353,6 +350,15 @@ module Encumber
       @global_x = x
       @global_y = y
 
+    end
+
+    def location_for_simulate_mouse_event(current_location, destination_location, i)
+        tmp_x = (1 - i) * @global_x + i * destination_location[0]
+        tmp_y = (1 - i) * @global_y + i * destination_location[1]
+
+        command('simulateMouseMovedOnPoint', tmp_x, tmp_y, [])
+
+        return [tmp_x, tmp_y]
     end
 
     def simulate_mouse_down(xpath, flags=[])
