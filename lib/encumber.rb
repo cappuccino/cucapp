@@ -374,6 +374,34 @@ module Encumber
 
     end
 
+    def simulate_mouse_down(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
+      result = command('simulateMouseDown', id_for_element(xpath), flags)
+      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
+    end
+
+    def simulate_mouse_down_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
+      result = command('simulateMouseDownOnPoint', x, y, flags)
+    end
+
+    def simulate_mouse_up(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
+      result = command('simulateMouseUp', id_for_element(xpath), flags)
+      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
+    end
+
+    def simulate_mouse_up_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
+
+      result = command('simulateMouseUpOnPoint', x, y, flags)
+    end
+
     def simulate_left_click(xpath, flags=[])
       points = points_for_element(xpath)
       move_mouse_to_point(points[0], points[1])
@@ -403,11 +431,8 @@ module Encumber
     end
 
     def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
-      points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
-      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result["result"] != 'OK'
+      simulate_mouse_down(xpath1, flags)
+      simulate_mouse_up(xpath2, flags)
 
       points = points_for_element(xpath2)
       @global_y = points[0]
@@ -415,19 +440,16 @@ module Encumber
     end
 
     def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
-      points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
-      raise "View/Point not found: #{xpath1} - #{result}" if result["result"] != 'OK'
+      simulate_mouse_down(xpath1, flags)
+      simulate_mouse_up_on_point(x, y, flags)
 
       @global_y = x
       @global_x = y
     end
 
     def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
-      move_mouse_to_point(x, y)
-      result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
+      simulate_mouse_down_on_point(x, y, flags)
+      simulate_mouse_up_on_point(x2, y2, flags)
 
       @global_y = x2
       @global_x = y2
@@ -445,6 +467,13 @@ module Encumber
       move_mouse_to_point(x, y)
 
       result = command('simulateRightClickOnPoint', x, y, flags)
+    end
+
+    def simulate_mouse_moved(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
+
+      result = command('simulateMouseMoved', id_for_element(xpath), flags)
     end
 
     def simulate_mouse_moved_on_point(x, y, flags=[])
