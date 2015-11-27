@@ -49,5 +49,5 @@ task ("install", ["clean"], function()
     OS.system(["cp", "-r", "lib/cucapp/Resources", SYSTEM.prefix + "/packages/cucapp/"]);
     OS.system(["cp", "-r", "package.json", SYSTEM.prefix + "/packages/cucapp/"]);
     OS.system(["ln", "-s", SYSTEM.prefix + "/packages/cucapp/bin/cucapp", SYSTEM.prefix + "/bin/cucapp"])
-    print("Installation done of cucapp! Have fun in testing now :)")
+    print("Cucapp installation done! Have fun in testing now :)")
 });
