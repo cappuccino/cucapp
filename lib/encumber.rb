@@ -223,10 +223,16 @@ module Encumber
           create_firefox_browser
         when /safari/
           create_safari_browser
+        when /phantomjs/
+          create_phantomjs_browser
         else
-          @browser = Watir::Browser.new browser
+          @browser = Watir::Browser.new :phantomjs
       end
 
+      browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
+      browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+
+      @browser.window.resize_to(browser_width, browser_height)
       @browser.goto(url)
     end
 
@@ -243,12 +249,25 @@ module Encumber
 
     end
 
+    def create_phantomjs_browser()
+      @browser = Watir::Browser.new :phantomjs
+    end
+
     def create_firefox_browser()
       @browser = Watir::Browser.new :firefox
     end
 
     def create_safari_browser()
       @browser = Watir::Browser.new :safari
+    end
+
+    def make_screenshot_with_name(aName)
+
+      if !aName
+        return
+      end
+
+      @browser.screenshot.save aName
     end
 
     def dump

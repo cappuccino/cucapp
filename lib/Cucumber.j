@@ -801,14 +801,14 @@ function dumpGuiObject(obj)
     // With no flag everything is handle in keypress
     if (modifierFlags)
     {
-        var event = window.crossBrowser_initKeyboardEvent("keydown", {keyCode : [self _keyCodeForCharacter:character], char : character, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask, altKey : modifierFlags & CPAlternateKeyMask, ctrlKey: modifierFlags & CPControlKeyMask});
+        event = [self _createKeyEventWithType:"keydown" target:[self _mainDOMDocument] character:character ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
         [self dispatchEvent:event];
     }
 
-    event = window.crossBrowser_initKeyboardEvent("keypress", {keyCode : [self _keyCodeForCharacter:character], char : character, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask, altKey : modifierFlags & CPAlternateKeyMask, ctrlKey: modifierFlags & CPControlKeyMask});
+    event = [self _createKeyEventWithType:"keypress" target:[self _mainDOMDocument] character:character ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
     [self dispatchEvent:event];
 
-    event = window.crossBrowser_initKeyboardEvent("keyup", {keyCode : [self _keyCodeForCharacter:character], char : character, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask, altKey : modifierFlags & CPAlternateKeyMask, ctrlKey: modifierFlags & CPControlKeyMask});
+    event = [self _createKeyEventWithType:"keyup" target:[self _mainDOMDocument] character:character ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
     [self dispatchEvent:event];
 }
 
@@ -908,8 +908,7 @@ function dumpGuiObject(obj)
         deltaX = params.shift(),
         deltaY = params.shift(),
         flags = params.shift(),
-        modifierFlags = 0,
-        window = [CPApp keyWindow];
+        modifierFlags = 0;
 
     for (var i = 0; i < [flags count]; i++)
     {
@@ -919,7 +918,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a scroll wheel on the point (" + locationWindowPoint.x + "," + locationWindowPoint.y + ") with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
 
-    var event = new MouseEvent("DOMMouseScroll", {relatedTarget:[self _mainDOMDocument], clientX : locationWindowPoint.x, clientY : locationWindowPoint.y, ctrlKey : modifierFlags & CPControlKeyMask, altKey : modifierFlags & CPAlternateKeyMask, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask});
+    var event = [self _createMouseEventWithType:@"DOMMouseScroll" target:[self _mainDOMDocument] button:button clientX:locationWindowPoint.x clientY:locationWindowPoint.y ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
     event["deltaX"] = deltaX;
     event["deltaY"] = deltaY;
 
@@ -955,7 +954,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a scroll wheel on the view : " + obj + " with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
 
-    var event = new MouseEvent("DOMMouseScroll", {relatedTarget:[self _mainDOMDocument], clientX : locationWindowPoint.x, clientY : locationWindowPoint.y, ctrlKey : modifierFlags & CPControlKeyMask, altKey : modifierFlags & CPAlternateKeyMask, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask});
+    var event = [self _createMouseEventWithType:@"DOMMouseScroll" target:[self _mainDOMDocument] button:button clientX:locationWindowPoint.x clientY:locationWindowPoint.y ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
     event["deltaX"] = deltaX;
     event["deltaY"] = deltaY;
 
@@ -1135,8 +1134,46 @@ function dumpGuiObject(obj)
 
     }
 
-    var event = new MouseEvent(type, {relatedTarget:[self _mainDOMDocument], button: button, clientX : location.x, clientY : location.y, ctrlKey : modifierFlags & CPControlKeyMask, altKey : modifierFlags & CPAlternateKeyMask, metaKey : modifierFlags & CPCommandKeyMask, shiftKey : modifierFlags & CPShiftKeyMask});
+    var event = [self _createMouseEventWithType:type target:[self _mainDOMDocument] button:button clientX:location.x clientY:location.y ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];
+
     [self dispatchEvent:event];
+}
+
+- (DOMEvent)_createKeyEventWithType:(CPString)aType target:(id)aTarget character:(CPString)character ctrlKey:(BOOL)ctrlKey shiftKey:(BOOL)shiftKey altKey:(BOOL)altKey metaKey:(BOOL)metaKey
+{
+    var event = new Event(aType);
+
+    event["relatedTarget"] = aTarget;
+    event["target"] = aTarget;
+    event["keyCode"] = [self _keyCodeForCharacter:character];
+    event["char"] = character;
+    event["ctrlKey"] = ctrlKey;
+    event["altKey"] = altKey;
+    event["metaKey"] = metaKey;
+    event["shiftKey"] = shiftKey;
+    event["type"] = aType;
+
+    return event;
+}
+
+- (DOMEvent)_createMouseEventWithType:(CPString)aType target:(id)aTarget button:(int)button clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey shiftKey:(BOOL)shiftKey altKey:(BOOL)altKey metaKey:(BOOL)metaKey
+{
+    var event = new Event(aType);
+
+    event["relatedTarget"] = aTarget;
+    event["target"] = aTarget;
+    event["button"] = button;
+    event["clientX"] = clientX;
+    event["clientY"] = clientY;
+    event["screenX"] = 0;
+    event["screenY"] = 0;
+    event["ctrlKey"] = ctrlKey;
+    event["altKey"] = altKey;
+    event["metaKey"] = metaKey;
+    event["shiftKey"] = shiftKey;
+    event["type"] = aType;
+
+    return event
 }
 
 @end
@@ -1313,162 +1350,3 @@ var install_msgSend_catcher = function()
 
 install_msgSend_catcher();
 [Cucumber startCucumber];
-
-
-// Found on this gist : https://gist.github.com/termi/4654819 (no licence)
-// Used to simulate key event
-// Modified for readeability...
-void function()
-{
-    var global = this,
-        _initKeyboardEvent_type = (function(e)
-    {
-		try
-        {
-			e.initKeyboardEvent("keyup", false, false, global, "+", 3, true, false, true, false, false);
-            return ((e["keyIdentifier"] || e["key"]) == "+" && (e["keyLocation"] || e["location"]) == 3) && (e.ctrlKey ? e.altKey ? 1 : 3 : e.shiftKey ? 2  : 4 ) || 9;
-		}
-		catch (__e__)
-        {
-            _initKeyboardEvent_type = 0;
-        }
-
-	})(document.createEvent("KeyboardEvent")),
-        _keyboardEvent_properties_dictionary = {
-		    "char": "",
-		    "key": "",
-		    "location": 0,
-		    "ctrlKey": false,
-		    "shiftKey": false,
-		    "altKey": false,
-		    "metaKey": false,
-		    "repeat": false,
-		    "locale": "",
-		    "detail": 0,
-		    "bubbles": false,
-		    "cancelable": false,
-		    "keyCode": 0,
-		    "charCode": 0,
-		    "which": 0
-	    },
-
-	    own = Function.prototype.call.bind(Object.prototype.hasOwnProperty),
-        _Object_defineProperty = Object.defineProperty || function(obj, prop, val)
-        {
-		    if ("value" in val)
-			    obj[prop] = val["value"];
-	    };
-
-    function crossBrowser_initKeyboardEvent(type, dict)
-    {
-    	var e,
-            _prop_name,
-            localDict = {};
-
-    	if (_initKeyboardEvent_type)
-    		e = document.createEvent( "KeyboardEvent" );
-    	else
-    		e = document.createEvent( "Event" );
-
-    	for (_prop_name in _keyboardEvent_properties_dictionary)
-        {
-            if (own(_keyboardEvent_properties_dictionary, _prop_name))
-                localDict[_prop_name] = (own(dict, _prop_name) && dict || _keyboardEvent_properties_dictionary)[_prop_name];
-        }
-
-    	var _ctrlKey = localDict["ctrlKey"],
-    		_shiftKey = localDict["shiftKey"],
-    		_altKey = localDict["altKey"],
-    		_metaKey = localDict["metaKey"],
-    		_altGraphKey = localDict["altGraphKey"],
-            _modifiersListArg = _initKeyboardEvent_type > 3 ? (
-    			(_ctrlKey ? "Control" : "")
-    				+ (_shiftKey ? " Shift" : "")
-    				+ (_altKey ? " Alt" : "")
-    				+ (_metaKey ? " Meta" : "")
-    				+ (_altGraphKey ? " AltGraph" : "")
-    			).trim() : null,
-    		_key = localDict["key"] + "",
-    		_char = localDict["char"] + "",
-    		_location = localDict["location"],
-    		_keyCode = localDict["keyCode"] || (localDict["keyCode"] = _key && _key.charCodeAt( 0 ) || 0),
-    		_charCode = localDict["charCode"] || (localDict["charCode"] = _char && _char.charCodeAt( 0 ) || 0),
-    		_bubbles = localDict["bubbles"],
-    		_cancelable = localDict["cancelable"],
-    		_repeat = localDict["repeat"],
-    		_locale = localDict["locale"],
-            _view = global;
-
-    	localDict["which"] || (localDict["which"] = localDict["keyCode"]);
-
-    	if ("initKeyEvent" in e)
-        {
-            // FF
-            //https://developer.mozilla.org/en/DOM/event.initKeyEvent
-    		e.initKeyEvent( type, _bubbles, _cancelable, _view, _ctrlKey, _altKey, _shiftKey, _metaKey, _keyCode, _charCode );
-    	}
-    	else if (_initKeyboardEvent_type && "initKeyboardEvent" in e)
-        {
-            //https://developer.mozilla.org/en/DOM/KeyboardEvent#initKeyboardEvent()
-    		if (_initKeyboardEvent_type == 1)
-            {
-                // webkit
-    			//http://stackoverflow.com/a/8490774/1437207
-    			//https://bugs.webkit.org/show_bug.cgi?id=13368
-    			e.initKeyboardEvent(type, _bubbles, _cancelable, _view, _key, _location, _ctrlKey, _shiftKey, _altKey, _metaKey, _altGraphKey );
-    		}
-    		else if (_initKeyboardEvent_type == 2)
-            {
-                // old webkit
-    			//http://code.google.com/p/chromium/issues/detail?id=52408
-    			e.initKeyboardEvent(type, _bubbles, _cancelable, _view, _ctrlKey, _altKey, _shiftKey, _metaKey, _keyCode, _charCode );
-    		}
-    		else if(_initKeyboardEvent_type == 3)
-            {
-                // webkit
-    			e.initKeyboardEvent(type, _bubbles, _cancelable, _view, _key, _location, _ctrlKey, _altKey, _shiftKey, _metaKey, _altGraphKey );
-    		}
-    		else if(_initKeyboardEvent_type == 4)
-            {
-                // IE9
-    			//http://msdn.microsoft.com/en-us/library/ie/ff975297(v=vs.85).aspx
-    			e.initKeyboardEvent(type, _bubbles, _cancelable, _view, _key, _location, _modifiersListArg, _repeat, _locale );
-    		}
-    		else
-            {
-                // FireFox|w3c
-    			//http://www.w3.org/TR/DOM-Level-3-Events/#events-KeyboardEvent-initKeyboardEvent
-    			//https://developer.mozilla.org/en/DOM/KeyboardEvent#initKeyboardEvent()
-    			e.initKeyboardEvent(type, _bubbles, _cancelable, _view, _char, _key, _location, _modifiersListArg, _repeat, _locale );
-    		}
-    	}
-    	else
-        {
-    		e.initEvent(type, _bubbles, _cancelable)
-    	}
-
-    	for (_prop_name in _keyboardEvent_properties_dictionary)
-        {
-            if (own( _keyboardEvent_properties_dictionary, _prop_name ))
-            {
-        		if (e[_prop_name] != localDict[_prop_name])
-                {
-        			try
-                    {
-        				delete e[_prop_name];
-        				_Object_defineProperty(e, _prop_name, { writable: true, "value": localDict[_prop_name] });
-        			}
-        			catch(e)
-                    {
-        				//Some properties is read-only
-        			}
-        		}
-        	}
-        }
-
-    	return e;
-    }
-
-global.crossBrowser_initKeyboardEvent = crossBrowser_initKeyboardEvent;
-
-}.call(this);

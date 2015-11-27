@@ -36,7 +36,7 @@ The command `cucapp` is now available in your system. This command allows you to
 
 Once you have installed everything, you need to use `jake cucumber-test` to launch the tests from the cappuccino application folder.
 
-By default, cucapp will launch firefox to perform your tests. If you want to to use Chrome or Safari you will need to install the following webdrivers : http://watirwebdriver.com/safari/ - http://watirwebdriver.com/chrome/
+By default, cucapp will launch phantomjs to perform your tests. If you want to to use Chrome or Safari you will need to install the following webdrivers : http://watirwebdriver.com/safari/ - http://watirwebdriver.com/chrome/. Cucapp supports firefox as well.
 
 ## Usage
 
@@ -50,7 +50,9 @@ Cucapp provides a set of environment variables :
 * `$CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
 * `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
 * `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
-* `BROWSER` the browser desired for the test suite.
+* `BROWSER_SIZE_WIDTH` the browser width size.
+* `BROWSER_SIZE_HEIGHT` the browser height size.
+* `BROWSER` the browser desired for the test suite. By default it will launch phantomjs (version >2.0)
 * `WATIR_CHROME_DRIVER` the path where Watir locates your ChromeDriver binary.
 * `WATIR_CHROME_SWITCHES` the switches for ChromeDriver to start with.
 
@@ -107,6 +109,12 @@ end
 ```
 
 The rest is pure Cucumber, don't hesitate to take a look at their website ;) (see: http://cukes.info)
+
+Cucapp provides a screenshot feature. When you want to take a screenshot, you need to perform this code :
+
+```ruby
+    app.gui.make_screenshot_with_name    "name_of_file"
+```
 
 #### CLI
 
