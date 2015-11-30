@@ -100,29 +100,12 @@ function _simulate_drag_event(event1, event2)
         locationInWindow1 = CGPointMake(event1["event"]["locationInWindow"]["x"], event1["event"]["locationInWindow"]["y"]);
         locationInWindow2 = CGPointMake(event2["event"]["locationInWindow"]["x"], event2["event"]["locationInWindow"]["y"]);
 
-    // Move cursor to start point and down
-    if (keyView1 && valueView1)
-    {
-        simulate_mouse_moved_on_view(keyView1, valueView1);
-        simulate_mouse_down_on_view(keyView1, valueView1);
-    }
-    else
-    {
-        simulate_mouse_moved_on_point(locationInWindow1.x, locationInWindow1.y);
-        simulate_mouse_down_on_point(locationInWindow1.x, locationInWindow1.y);
-    }
-
-    // Move cursor to destination point and up
-    if (keyView2 && valueView2)
-    {
-        simulate_mouse_moved_on_view(keyView2, valueView2);
-        simulate_mouse_up_on_view(keyView2, valueView2);
-    }
-    else
-    {
-        simulate_mouse_moved_on_point(locationInWindow2.x, locationInWindow2.y);
-        simulate_mouse_up_on_point(locationInWindow2.x, locationInWindow2.y);
-    }
+        if (keyView1 && valueView1 && keyView2 && valueView2)
+            simulate_dragged_click_view_to_view(keyView1, valueView1, keyView2, valueView2);
+        else if (keyView1 && valueView1)
+            simulate_dragged_click_view_to_point(keyView1, valueView1, locationInWindow1.x, locationInWindow1.y);
+        else
+            simulate_dragged_click_point_to_point(locationInWindow1.x, locationInWindow1.y, locationInWindow2.x, locationInWindow2.y);
 }
 
 function _simulate_event(event)

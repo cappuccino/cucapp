@@ -77,6 +77,27 @@ function _print_informations_of_view(aView)
     }
 }
 
+/*
+* CLI functions
+*
+* function simulate_keyboard_event(character, flags)
+* function simulate_keyboard_events(string, flags)
+* function simulate_left_click_on_view(aKey, aValue, flags)
+* function simulate_left_click_on_point(x, y, flags)
+* function simulate_right_click_on_view(aKey, aValue, flags)
+* function simulate_right_click_on_point(x, y, flags)
+* function simulate_double_click_on_view(aKey, aValue, flags)
+* function simulate_double_click_on_point(x, y, flags)
+* function simulate_mouse_moved_on_view(aKey, aValue, flags)
+* function simulate_mouse_moved_on_point(x, y, flags)
+* function simulate_dragged_click_view_to_view(aKey, aValue, aKey2, aValue2, flags)
+* function simulate_dragged_click_view_to_point(aKey, aValue, x, y, flags)
+* function simulate_dragged_click_point_to_point(x, y, x1, y2, flags)
+* function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
+* function find_control(aKey, aValue)
+*
+*/
+
 function simulate_keyboard_event(character, flags)
 {
     if (!flags)
@@ -91,9 +112,7 @@ function simulate_keyboard_events(string, flags)
         flags = [];
 
     for (var i = 0; i < string.length; i++)
-    {
         [cucumber_instance simulateKeyboardEvent:[string[i], flags]];
-    }
 }
 
 function simulate_left_click_on_view(aKey, aValue, flags)
@@ -103,7 +122,17 @@ function simulate_left_click_on_view(aKey, aValue, flags)
     if (!flags)
         flags = [];
 
-    [cucumber_instance simulateLeftClick:[objectID, flags]];
+    [cucumber_instance simulateMouseDown:[objectID, flags, CPLeftMouseDown]];
+    [cucumber_instance simulateMouseUp:[objectID, flags, CPLeftMouseUp]];
+}
+
+function simulate_left_click_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseDownOnPoint:[x, y, flags, CPLeftMouseDown]];
+    [cucumber_instance simulateMouseUpOnPoint:[x, y, flags, CPLeftMouseUp]];
 }
 
 function simulate_right_click_on_view(aKey, aValue, flags)
@@ -113,25 +142,8 @@ function simulate_right_click_on_view(aKey, aValue, flags)
     if (!flags)
         flags = [];
 
-    [cucumber_instance simulateRightClick:[objectID, flags]];
-}
-
-function simulate_double_click_on_view(aKey, aValue, flags)
-{
-    var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
-
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateDoubleClick:[objectID, flags]];
-}
-
-function simulate_left_click_on_point(x, y, flags)
-{
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateLeftClickOnPoint:[x, y, flags]];
+    [cucumber_instance simulateMouseDown:[objectID, flags, CPRightMouseDown]];
+    [cucumber_instance simulateMouseUp:[objectID, flags, CPRightMouseUp]];
 }
 
 function simulate_right_click_on_point(x, y, flags)
@@ -139,23 +151,20 @@ function simulate_right_click_on_point(x, y, flags)
     if (!flags)
         flags = [];
 
-    [cucumber_instance simulateRightClick:[x, y, flags]];
+    [cucumber_instance simulateMouseDownOnPoint:[x, y, flags, CPRightMouseDown]];
+    [cucumber_instance simulateMouseUpOnPoint:[x, y, flags, CPRightMouseUp]];
+}
+
+function simulate_double_click_on_view(aKey, aValue, flags)
+{
+    simulate_left_click_on_view(aKey, aValue, flags);
+    simulate_left_click_on_view(aKey, aValue, flags);
 }
 
 function simulate_double_click_on_point(x, y, flags)
 {
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateDoubleClick:[x, y, flags]];
-}
-
-function simulate_mouse_moved_on_point(x, y, flags)
-{
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateMouseMovedOnPoint:[x, y, flags]];
+    simulate_left_click_on_point(x, y, flags);
+    simulate_left_click_on_point(x, y, flags);
 }
 
 function simulate_mouse_moved_on_view(aKey, aValue, flags)
@@ -168,6 +177,41 @@ function simulate_mouse_moved_on_view(aKey, aValue, flags)
     [cucumber_instance simulateMouseMoved:[objectID, flags]];
 }
 
+function simulate_mouse_moved_on_point(x, y, flags)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseMovedOnPoint:[x, y, flags]];
+}
+
+function simulate_dragged_click_view_to_view(aKey, aValue, aKey2, aValue2, flags)
+{
+    simulate_mouse_moved_on_view(aKey, aValue, flags);
+    _simulate_mouse_down_on_view(aKey, aValue, flags, CPLeftMouseDown);
+
+    simulate_mouse_moved_on_view(aKey2, aValue2, flags);
+    _simulate_mouse_up_on_view(aKey2, aValue2, flags, CPLeftMouseUp);
+}
+
+function simulate_dragged_click_view_to_point(aKey, aValue, x, y, flags)
+{
+    simulate_mouse_moved_on_view(aKey, aValue, flags)
+    _simulate_mouse_down_on_view(aKey, aValue, flags, CPLeftMouseDown);
+
+    simulate_mouse_moved_on_point(x, y, flags);
+    _simulate_mouse_up_on_point(x, y, flags, CPLeftMouseUp);
+}
+
+function simulate_dragged_click_point_to_point(x, y, x2, y2, flags)
+{
+    simulate_mouse_moved_on_point(x, y, flags);
+    _simulate_mouse_down_on_point(x, y, flags, CPLeftMouseDown);
+
+    simulate_mouse_moved_on_point(x2, y2, flags);
+    _simulate_mouse_up_on_point(x2, y2, flags, CPLeftMouseUp);
+}
+
 function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
 {
     var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
@@ -178,40 +222,40 @@ function simulate_scroll_wheel_on_view(aKey, aValue, deltaX, deltaY, flags)
     [cucumber_instance simulateMouseMovedOnPoint:[aKey, aValue, deltaX, deltaY, flags]];
 }
 
-function simulate_mouse_up_on_point(x, y, flags)
-{
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateMouseUpOnPoint:[x, y, flags]];
-}
-
-function simulate_mouse_down_on_point(x, y, flags)
-{
-    if (!flags)
-        flags = [];
-
-    [cucumber_instance simulateMouseDownOnPoint:[x, y, flags]];
-}
-
-function simulate_mouse_up_on_view(aKey, aValue, flags)
+function _simulate_mouse_up_on_view(aKey, aValue, flags, mouseType)
 {
     var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
 
     if (!flags)
         flags = [];
 
-    [cucumber_instance simulateMouseUp:[objectID, flags]];
+    [cucumber_instance simulateMouseUp:[objectID, flags, mouseType]];
 }
 
-function simulate_mouse_down_on_view(aKey, aValue, flags)
+function _simulate_mouse_up_on_point(x, y, flags, mouseType)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseUpOnPoint:[x, y, flags, mouseType]];
+}
+
+function _simulate_mouse_down_on_view(aKey, aValue, flags, mouseType)
 {
     var objectID = _getObjectsWithKeyAndValue(aKey, aValue);
 
     if (!flags)
         flags = [];
 
-    [cucumber_instance simulateMouseDown:[objectID, flags]];
+    [cucumber_instance simulateMouseDown:[objectID, flags, mouseType]];
+}
+
+function _simulate_mouse_down_on_point(x, y, flags, mouseType)
+{
+    if (!flags)
+        flags = [];
+
+    [cucumber_instance simulateMouseDownOnPoint:[x, y, flags, mouseType]];
 }
 
 function find_control(aKey, aValue)
@@ -632,7 +676,6 @@ function dumpGuiObject(obj)
     return "NO";
 }
 
-
 - (void)applicationDidFinishLaunching:(CPNotification)note
 {
     launched = YES;
@@ -812,96 +855,6 @@ function dumpGuiObject(obj)
     [self dispatchEvent:event];
 }
 
-- (void)simulateLeftClickOnPoint:(CPArray)params
-{
-    var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp keyWindow];
-
-    CPLog.debug("Cucapp is about to simulate a left click on the point : " + point);
-
-    [self _perfomMouseEventOnPoint:point window:window eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
-}
-
-- (CPString)simulateLeftClick:(CPArray)params
-{
-    var obj = cucumber_objects[params.shift()],
-        locationWindowPoint;
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    if ([obj superview])
-        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
-    else
-        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
-
-    CPLog.debug("Cucapp is about to simulate a left click on the view : " + obj);
-
-    [self _perfomMouseEventOnPoint:locationWindowPoint window:[obj window] eventType:CPLeftMouseDown numberOfClick:1 modifierFlags:params[0]];
-
-    return '{"result" : "OK"}';
-}
-
-- (void)simulateRightClickOnPoint:(CPArray)params
-{
-    var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp keyWindow];
-
-    CPLog.debug("Cucapp is about to simulate a right click on the point : " + point);
-
-    [self _perfomMouseEventOnPoint:point window:window eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
-}
-
-- (CPString)simulateRightClick:(CPArray)params
-{
-    var obj = cucumber_objects[params.shift()],
-        locationWindowPoint;
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    if ([obj superview])
-        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
-    else
-        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
-
-    CPLog.debug("Cucapp is about to simulate a right click on the view : " + obj);
-
-    [self _perfomMouseEventOnPoint:locationWindowPoint window:[obj window] eventType:CPRightMouseDown numberOfClick:1 modifierFlags:params[0]];
-
-    return '{"result" : "OK"}';
-}
-
-- (void)simulateDoubleClickOnPoint:(CPArray)params
-{
-    var point = CGPointMake(params.shift(), params.shift()),
-        window = [CPApp keyWindow];
-
-    CPLog.debug("Cucapp is about to simulate a double click on the point : " + point);
-
-    [self _perfomMouseEventOnPoint:point window:window eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
-}
-
-- (CPString)simulateDoubleClick:(CPArray)params
-{
-    var obj = cucumber_objects[params.shift()],
-        locationWindowPoint;
-
-    if (!obj)
-        return '{"result" : "OBJECT NOT FOUND"}';
-
-    if ([obj superview])
-        locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
-    else
-        locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
-
-    CPLog.debug("Cucapp is about to simulate a double click on the view : " + obj);
-
-    [self _perfomMouseEventOnPoint:locationWindowPoint window:[obj window] eventType:CPLeftMouseDown numberOfClick:2 modifierFlags:params[0]];
-
-    return '{"result" : "OK"}';
-}
-
 - (CPString)simulateScrollWheelOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
@@ -968,11 +921,15 @@ function dumpGuiObject(obj)
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
         flags = params[0],
+        mouseType = params[1],
         window = [CPApp keyWindow];
+
+    if (mouseType != CPLeftMouseDown && mouseType != CPRightMouseDown)
+        return '{"result" : "INVALID MOUSE TYPE"}';
 
     CPLog.debug("Cucapp is about to simulate a mouse down to the point " + locationWindowPoint);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:mouseType location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -982,10 +939,14 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params.shift()],
         locationWindowPoint,
         flags = params[0],
+        mouseType = params[1],
         window = [CPApp keyWindow];
 
     if (!obj)
         return '{"result" : "OBJECT NOT FOUND"}';
+
+    if (mouseType != CPLeftMouseDown && mouseType != CPRightMouseDown)
+        return '{"result" : "INVALID MOUSE TYPE"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
@@ -994,7 +955,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseDown location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:mouseType location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -1005,9 +966,12 @@ function dumpGuiObject(obj)
         flags = params[0],
         window = [CPApp keyWindow];
 
+    if (mouseType != CPLeftMouseUp && mouseType != CPRightMouseUp)
+        return '{"result" : "INVALID MOUSE TYPE"}';
+
     CPLog.debug("Cucapp is about to simulate a mouse up to the point " + locationWindowPoint);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:mouseType location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -1017,10 +981,14 @@ function dumpGuiObject(obj)
     var obj = cucumber_objects[params.shift()],
         locationWindowPoint,
         flags = params[0],
+        mouseType = params[1],
         window = [CPApp keyWindow];
 
     if (!obj)
         return '{"result" : "OBJECT NOT FOUND"}';
+
+    if (mouseType != CPLeftMouseUp && mouseType != CPRightMouseUp)
+        return '{"result" : "INVALID MOUSE TYPE"}';
 
     if ([obj superview])
         locationWindowPoint = [[obj superview] convertPointToBase:CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]))];
@@ -1029,7 +997,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
 
-    [self _dispatchMouseEventWithType:CPLeftMouseUp location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
+    [self _dispatchMouseEventWithType:mouseType location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
 }
@@ -1043,8 +1011,6 @@ function dumpGuiObject(obj)
     CPLog.debug("Cucapp is about to simulate a mouse moved to the point " + locationWindowPoint);
 
     [self _dispatchMouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
-
-    return '{"result" : "OK"}';
 }
 
 - (void)simulateMouseMoved:(CPArray)params
@@ -1067,29 +1033,6 @@ function dumpGuiObject(obj)
     [self _dispatchMouseEventWithType:CPMouseMoved location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
     return '{"result" : "OK"}';
-}
-
-- (void)_perfomMouseEventOnPoint:(CGPoint)locationWindowPoint window:(CPWindow)currentWindow eventType:(unsigned)anEventType numberOfClick:(int)numberOfClick modifierFlags:(CPArray)flags
-{
-    var typeMouseDown = CPLeftMouseDown,
-        typeMouseUp = CPLeftMouseUp;
-
-    locationWindowPoint.x = Math.round(locationWindowPoint.x);
-    locationWindowPoint.y = Math.round(locationWindowPoint.y);
-
-    var currentLocation = CGPointMakeCopy(locationWindowPoint);
-
-    if (anEventType == CPRightMouseDown)
-    {
-        typeMouseDown = CPRightMouseDown;
-        typeMouseUp = CPRightMouseUp;
-    }
-
-    for (var i = 1; i < numberOfClick + 1; i++)
-    {
-        [self _dispatchMouseEventWithType:typeMouseDown location:currentLocation modifierFlags:flags clickCount:i window:currentWindow];
-        [self _dispatchMouseEventWithType:typeMouseUp location:currentLocation modifierFlags:flags clickCount:i window:currentWindow];
-    }
 }
 
 - (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)currentLocation modifierFlags:(CPArray)flags clickCount:(int)clickCount window:(CPWindow)aWindow
@@ -1131,7 +1074,6 @@ function dumpGuiObject(obj)
             type = "mousemove";
             button = -1;
             break;
-
     }
 
     var event = [self _createMouseEventWithType:type target:[self _mainDOMDocument] button:button clientX:location.x clientY:location.y ctrlKey:modifierFlags & CPControlKeyMask shiftKey:modifierFlags & CPShiftKeyMask altKey:modifierFlags & CPAlternateKeyMask metaKey:modifierFlags & CPCommandKeyMask];

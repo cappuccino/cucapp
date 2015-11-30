@@ -18,6 +18,11 @@ require 'nokogiri'
 require 'server'
 require 'watir-webdriver'
 
+$CPLeftMouseDown                         = 1;
+$CPLeftMouseUp                           = 2;
+$CPRightMouseDown                        = 3;
+$CPRightMouseUp                          = 4;
+
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
 $CPControlKeyMask                        = 1 << 18;
@@ -381,112 +386,103 @@ module Encumber
         return [tmp_x, tmp_y]
     end
 
-    def simulate_mouse_down(xpath, flags=[])
+    def simulate_left_click(xpath, flags=[], move_mouse=true)
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
+      move_mouse_to_point(points[0], points[1]) if move_mouse
 
-      result = command('simulateMouseDown', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
+      result = command('simulateMouseDown', id_for_element(xpath), flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUp', id_for_element(xpath), flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
-    def simulate_mouse_down_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
+    def simulate_left_click_on_point(x, y, flags=[], move_mouse=true)
+      move_mouse_to_point(x, y) if move_mouse
 
-      result = command('simulateMouseDownOnPoint', x, y, flags)
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUpOnPoint', x, y, flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
-    def simulate_mouse_up(xpath, flags=[])
+    def simulate_right_click(xpath, flags=[], move_mouse=true)
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
+      move_mouse_to_point(points[0], points[1]) if move_mouse
 
-      result = command('simulateMouseUp', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
+      result = command('simulateMouseDown', id_for_element(xpath), flags, $CPRightMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUp', id_for_element(xpath), flags, $CPRightMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
-    def simulate_mouse_up_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
+    def simulate_right_click_on_point(x, y, flags=[], move_mouse=true)
+      move_mouse_to_point(x, y) if move_mouse
 
-      result = command('simulateMouseUpOnPoint', x, y, flags)
-    end
-
-    def simulate_left_click(xpath, flags=[])
-      points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateLeftClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
-    end
-
-    def simulate_left_click_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
-
-      result = command('simulateLeftClickOnPoint', x, y, flags)
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPRightMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUpOnPoint', x, y, flags, $CPRightMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
     def simulate_double_click(xpath, flags=[])
-      points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDoubleClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
+      simulate_left_click(xpath, flags)
+      simulate_left_click(xpath, flags, false)
     end
 
     def simulate_double_click_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
-
-      result = command('simulateDoubleClick', x, y, flags)
+      simulate_left_click_on_point(x, y, flags)
+      simulate_left_click_on_point(x, y, flags, false)
     end
 
     def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
-      simulate_mouse_down(xpath1, flags)
-      simulate_mouse_up(xpath2, flags)
+      points = points_for_element(xpath1)
+      move_mouse_to_point(points[0], points[1])
+      result = command('simulateMouseDown', id_for_element(xpath1), flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
 
       points = points_for_element(xpath2)
+      move_mouse_to_point(points[0], points[1])
+      result = command('simulateMouseUp', id_for_element(xpath2), flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+
       @global_y = points[0]
       @global_x = points[1]
     end
 
     def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
-      simulate_mouse_down(xpath1, flags)
-      simulate_mouse_up_on_point(x, y, flags)
+      points = points_for_element(xpath1)
+      move_mouse_to_point(points[0], points[1])
+      result = command('simulateMouseDown', id_for_element(xpath1), flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+
+      move_mouse_to_point(x, y)
+      result = command('simulateMouseUpOnPoint', x, y, flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
 
       @global_y = x
       @global_x = y
     end
 
     def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
-      simulate_mouse_down_on_point(x, y, flags)
-      simulate_mouse_up_on_point(x2, y2, flags)
+      move_mouse_to_point(x, y)
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+
+      move_mouse_to_point(x2, y2)
+      result = command('simulateMouseUpOnPoint', x2, y2, flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
 
       @global_y = x2
       @global_x = y2
     end
 
-    def simulate_right_click(xpath, flags=[])
-      points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateRightClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
-    end
-
-    def simulate_right_click_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
-
-      result = command('simulateRightClickOnPoint', x, y, flags)
-    end
-
     def simulate_mouse_moved(xpath, flags=[])
       points = points_for_element(xpath)
       move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateMouseMoved', id_for_element(xpath), flags)
     end
 
     def simulate_mouse_moved_on_point(x, y, flags=[])
       move_mouse_to_point(x, y)
-
-      result = command('simulateMouseMovedOnPoint', x, y, flags)
     end
 
     def simulate_keyboard_event(charac, flags=[])
