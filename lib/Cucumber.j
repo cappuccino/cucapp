@@ -964,6 +964,7 @@ function dumpGuiObject(obj)
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
         flags = params[0],
+        mouseType = params[1],
         window = [CPApp keyWindow];
 
     if (mouseType != CPLeftMouseUp && mouseType != CPRightMouseUp)
