@@ -367,6 +367,7 @@ module Encumber
 
       while i <= 1 do
         current_location = location_for_simulate_mouse_event(original_location, current_location, destination_location, i)
+        command('simulateMouseMovedOnPoint', current_location[0], current_location[1], [])
         i = i + step
       end
 
@@ -380,8 +381,6 @@ module Encumber
     def location_for_simulate_mouse_event(original_location, current_location, destination_location, i)
         tmp_x = (1 - i) * @global_x + i * destination_location[0]
         tmp_y = (1 - i) * @global_y + i * destination_location[1]
-
-        command('simulateMouseMovedOnPoint', tmp_x, tmp_y, [])
 
         return [tmp_x, tmp_y]
     end
