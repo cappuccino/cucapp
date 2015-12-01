@@ -858,6 +858,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateScrollWheelOnPoint:(CPArray)params
 {
     var locationWindowPoint = CGPointMake(params.shift(), params.shift()),
+        button = -1,
         deltaX = params.shift(),
         deltaY = params.shift(),
         flags = params.shift(),
@@ -884,6 +885,7 @@ function dumpGuiObject(obj)
 - (CPString)simulateScrollWheel:(CPArray)params
 {
     var obj = cucumber_objects[params.shift()],
+        button = -1,
         locationWindowPoint;
 
     if (!obj)
@@ -996,7 +998,7 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
 
-    CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
+    CPLog.debug("Cucapp is about to simulate a mouse up on the view : " + obj);
 
     [self _dispatchMouseEventWithType:mouseType location:locationWindowPoint modifierFlags:flags clickCount:0 window:window];
 
