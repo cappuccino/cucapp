@@ -434,32 +434,13 @@ module Encumber
     end
 
     def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
-      points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-      result = command('simulateMouseDown', id_for_element(xpath1), flags, $CPLeftMouseDown)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-
       points = points_for_element(xpath2)
-      move_mouse_to_point(points[0], points[1])
-      result = command('simulateMouseUp', id_for_element(xpath2), flags, $CPLeftMouseUp)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-
-      @global_y = points[0]
-      @global_x = points[1]
+      simulate_dragged_click_view_to_point(xpath1, points[0], points[1], flags=[])
     end
 
     def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
       points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-      result = command('simulateMouseDown', id_for_element(xpath1), flags, $CPLeftMouseDown)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-
-      move_mouse_to_point(x, y)
-      result = command('simulateMouseUpOnPoint', x, y, flags, $CPLeftMouseUp)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-
-      @global_y = x
-      @global_x = y
+      simulate_dragged_click_point_to_point(points[0], points[1], x, y, flags=[])
     end
 
     def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
