@@ -366,7 +366,7 @@ module Encumber
       destination_location = [x, y]
 
       while i <= 1 do
-        current_location = location_for_simulate_mouse_event(original_location, current_location, destination_location, i)
+        current_location = points_for_next_mouse_event(original_location, current_location, destination_location, i)
         command('simulateMouseMovedOnPoint', current_location[0], current_location[1], [])
         i = i + step
       end
@@ -378,25 +378,20 @@ module Encumber
 
     end
 
-    def location_for_simulate_mouse_event(original_location, current_location, destination_location, i)
+    def points_for_next_mouse_event(original_location, current_location, destination_location, i)
         tmp_x = (1 - i) * @global_x + i * destination_location[0]
         tmp_y = (1 - i) * @global_y + i * destination_location[1]
 
         return [tmp_x, tmp_y]
     end
 
-    def simulate_left_click(xpath, flags=[], move_mouse=true)
+    def simulate_left_click(xpath, flags=[])
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1]) if move_mouse
-
-      result = command('simulateMouseDown', id_for_element(xpath), flags, $CPLeftMouseDown)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-      result = command('simulateMouseUp', id_for_element(xpath), flags, $CPLeftMouseUp)
-      raise "An error occured: #{result}" if result["result"] !='OK'
+      simulate_left_click_on_point(points[0], points[1], flags)
     end
 
-    def simulate_left_click_on_point(x, y, flags=[], move_mouse=true)
-      move_mouse_to_point(x, y) if move_mouse
+    def simulate_left_click_on_point(x, y, flags=[])
+      move_mouse_to_point(x, y)
 
       result = command('simulateMouseDownOnPoint', x, y, flags, $CPLeftMouseDown)
       raise "An error occured: #{result}" if result["result"] !='OK'
@@ -404,17 +399,12 @@ module Encumber
       raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
-    def simulate_right_click(xpath, flags=[], move_mouse=true)
+    def simulate_right_click(xpath, flags=[])
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1]) if move_mouse
-
-      result = command('simulateMouseDown', id_for_element(xpath), flags, $CPRightMouseDown)
-      raise "An error occured: #{result}" if result["result"] !='OK'
-      result = command('simulateMouseUp', id_for_element(xpath), flags, $CPRightMouseUp)
-      raise "An error occured: #{result}" if result["result"] !='OK'
+      simulate_right_click_on_point(points[0], points[1], flags)
     end
 
-    def simulate_right_click_on_point(x, y, flags=[], move_mouse=true)
+    def simulate_right_click_on_point(x, y, flags=[])
       move_mouse_to_point(x, y) if move_mouse
 
       result = command('simulateMouseDownOnPoint', x, y, flags, $CPRightMouseDown)
@@ -425,12 +415,12 @@ module Encumber
 
     def simulate_double_click(xpath, flags=[])
       simulate_left_click(xpath, flags)
-      simulate_left_click(xpath, flags, false)
+      simulate_left_click(xpath, flags)
     end
 
     def simulate_double_click_on_point(x, y, flags=[])
       simulate_left_click_on_point(x, y, flags)
-      simulate_left_click_on_point(x, y, flags, false)
+      simulate_left_click_on_point(x, y, flags)
     end
 
     def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
