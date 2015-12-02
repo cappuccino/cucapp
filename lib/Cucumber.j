@@ -383,8 +383,8 @@ function dumpGuiObject(obj)
         {
             var globalPoint = [obj superview] ? [[obj superview] convertPointToBase:frame.origin] : frame.origin;
 
-            globalPoint.x += [[obj window] frame].origin.x;
-            globalPoint.y += [[obj window] frame].origin.y;
+            globalPoint.x += [[obj window] frame].origin.x - [[CPApp mainWindow] frame].origin.x;
+            globalPoint.y += [[obj window] frame].origin.y - [[CPApp mainWindow] frame].origin.y;
 
             resultingXML += "<absoluteFrame>";
             resultingXML += "<x>" + globalPoint.x + "</x>";
