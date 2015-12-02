@@ -221,6 +221,7 @@ module Encumber
     end
 
     def start_browser(browser, url)
+
       case browser.downcase
         when /chrom/
           create_chrome_browser
@@ -234,11 +235,23 @@ module Encumber
           @browser = Watir::Browser.new :phantomjs
       end
 
-      browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
-      browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+      if ENV["BROWSER_FULL_SCREEN"] == "true"
+          full_screen_browser(browser.downcase.to_s)
+      else
+          browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
+          browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+          @browser.window.resize_to(browser_width, browser_height)
+      end
 
-      @browser.window.resize_to(browser_width, browser_height)
       @browser.goto(url)
+    end
+
+    def full_screen_browser(browser_name)
+      if browser_name.match(/firefox|chrom/)
+        @browser.element.send_keys [:command, :shift, 'f']
+      elsif browser_name.match(/safari/)
+        @browser.element.send_keys [:command, :control, 'f']
+      end
     end
 
     def create_chrome_browser()

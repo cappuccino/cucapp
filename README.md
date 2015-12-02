@@ -50,6 +50,7 @@ Cucapp provides a set of environment variables :
 * `$CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
 * `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
 * `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
+* `BROWSER_FULL_SCREEN` allows to put the browser in full screen (`true` or `false` which is the default value)
 * `BROWSER_SIZE_WIDTH` the browser width size.
 * `BROWSER_SIZE_HEIGHT` the browser height size.
 * `BROWSER` the browser desired for the test suite. By default it will launch phantomjs (version >2.0)
