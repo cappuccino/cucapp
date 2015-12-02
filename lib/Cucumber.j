@@ -900,7 +900,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a scroll wheel on the view : " + obj + " with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
 
-    [self simulateScrollWheelOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, deltaX, deltaY, flags]];
+    return [self simulateScrollWheelOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, deltaX, deltaY, flags]];
 }
 
 - (void)simulateMouseDownOnPoint:(CPArray)params
@@ -935,7 +935,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a mouse down on the view : " + obj);
 
-    [self simulateMouseDownOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0], params[1]]];
+    return [self simulateMouseDownOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0], params[1]]];
 }
 
 - (void)simulateMouseUpOnPoint:(CPArray)params
@@ -970,7 +970,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a mouse up on the view : " + obj);
 
-    [self simulateMouseUpOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0], params[1]]];
+    return [self simulateMouseUpOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0], params[1]]];
 }
 
 - (void)simulateMouseMovedOnPoint:(CPArray)params
@@ -999,7 +999,7 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a mouse moved on the view : " + obj);
 
-    [self simulateMouseMovedOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0]]];
+    return [self simulateMouseMovedOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0]]];
 }
 
 - (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)currentLocation modifierFlags:(CPArray)flags clickCount:(int)clickCount window:(CPWindow)aWindow
