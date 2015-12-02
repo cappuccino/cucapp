@@ -898,7 +898,7 @@ function dumpGuiObject(obj)
     else
         locationWindowPoint = CGPointMake(CGRectGetMidX([obj frame]), CGRectGetMidY([obj frame]));
 
-    CPLog.debug("Cucapp is about to simulate a scroll wheel on the view : " + obj + " with the deltas : " + deltaX + "," + deltaY + " and modifiers flags " + modifierFlags);
+    CPLog.debug("Cucapp is about to simulate a scroll wheel on the view : " + obj + " with the deltas : " + deltaX + "," + deltaY);
 
     return [self simulateScrollWheelOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, deltaX, deltaY, flags]];
 }

@@ -482,7 +482,7 @@ module Encumber
       points = points_for_element(xpath)
       move_mouse_to_point(points[0], points[1])
 
-      result = command('simulateScrollWheel',id_for_element(xpath), deltaX, deltaY, flags)
+      result = command('simulateScrollWheel', id_for_element(xpath), deltaX, deltaY, flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
