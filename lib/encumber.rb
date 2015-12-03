@@ -418,7 +418,7 @@ module Encumber
     end
 
     def simulate_right_click_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y) if move_mouse
+      move_mouse_to_point(x, y)
 
       result = command('simulateMouseDownOnPoint', x, y, flags, $CPRightMouseDown)
       raise "An error occured: #{result}" if result["result"] !='OK'
