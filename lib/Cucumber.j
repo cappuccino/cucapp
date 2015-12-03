@@ -383,8 +383,8 @@ function dumpGuiObject(obj)
         {
             var globalPoint = [obj superview] ? [[obj superview] convertPointToBase:frame.origin] : frame.origin;
 
-            globalPoint.x += [[obj window] frame].origin.x - [[CPApp mainWindow] frame].origin.x;
-            globalPoint.y += [[obj window] frame].origin.y - [[CPApp mainWindow] frame].origin.y;
+            globalPoint.x += [[obj window] frame].origin.x;
+            globalPoint.y += [[obj window] frame].origin.y;
 
             resultingXML += "<absoluteFrame>";
             resultingXML += "<x>" + globalPoint.x + "</x>";
@@ -1002,12 +1002,11 @@ function dumpGuiObject(obj)
     return [self simulateMouseMovedOnPoint:@[locationWindowPoint.x, locationWindowPoint.y, params[0]]];
 }
 
-- (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)currentLocation modifierFlags:(CPArray)flags clickCount:(int)clickCount window:(CPWindow)aWindow
+- (void)_dispatchMouseEventWithType:(int)aType location:(CGPoint)location modifierFlags:(CPArray)flags clickCount:(int)clickCount window:(CPWindow)aWindow
 {
     var type = "",
         button = 0,
-        modifierFlags = 0,
-        location = [aWindow convertBaseToPlatformWindow:currentLocation];
+        modifierFlags = 0;
 
     for (var i = 0; i < [flags count]; i++)
     {
