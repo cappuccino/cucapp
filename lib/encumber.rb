@@ -427,8 +427,8 @@ module Encumber
     end
 
     def simulate_double_click(xpath, flags=[])
-      simulate_left_click(xpath, flags)
-      simulate_left_click(xpath, flags)
+      points = points_for_element(xpath)
+      simulate_double_click_on_point(points[0], points[1], flags)
     end
 
     def simulate_double_click_on_point(x, y, flags=[])
