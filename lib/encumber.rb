@@ -18,6 +18,11 @@ require 'nokogiri'
 require 'server'
 require 'watir-webdriver'
 
+$CPLeftMouseDown                         = 1;
+$CPLeftMouseUp                           = 2;
+$CPRightMouseDown                        = 3;
+$CPRightMouseUp                          = 4;
+
 $CPAlphaShiftKeyMask                     = 1 << 16;
 $CPShiftKeyMask                          = 1 << 17;
 $CPControlKeyMask                        = 1 << 18;
@@ -216,6 +221,7 @@ module Encumber
     end
 
     def start_browser(browser, url)
+
       case browser.downcase
         when /chrom/
           create_chrome_browser
@@ -229,11 +235,23 @@ module Encumber
           @browser = Watir::Browser.new :phantomjs
       end
 
-      browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
-      browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+      if ENV["BROWSER_FULL_SCREEN"] == "true"
+          full_screen_browser(browser.downcase.to_s)
+      else
+          browser_width = ENV["BROWSER_SIZE_WIDTH"] || 1280
+          browser_height = ENV["BROWSER_SIZE_HEIGHT"] || 1024
+          @browser.window.resize_to(browser_width, browser_height)
+      end
 
-      @browser.window.resize_to(browser_width, browser_height)
       @browser.goto(url)
+    end
+
+    def full_screen_browser(browser_name)
+      if browser_name.match(/firefox|chrom/)
+        @browser.element.send_keys [:command, :shift, 'f']
+      elsif browser_name.match(/safari/)
+        @browser.element.send_keys [:command, :control, 'f']
+      end
     end
 
     def create_chrome_browser()
@@ -356,15 +374,14 @@ module Encumber
         step = 0.02
       end
 
+      original_location = [@global_x, @global_y]
+      current_location = [@global_x, @global_y]
+      destination_location = [x, y]
+
       while i <= 1 do
-
-        tmp_x = (1 - i) * @global_x + i * x
-        tmp_y = (1 - i) * @global_y + i * y
-
-        command('simulateMouseMovedOnPoint', tmp_x, tmp_y, [])
-
+        current_location = points_for_next_mouse_event(original_location, current_location, destination_location, i)
+        command('simulateMouseMovedOnPoint', current_location[0], current_location[1], [])
         i = i + step
-
       end
 
       command('simulateMouseMovedOnPoint', x, y, [])
@@ -374,83 +391,81 @@ module Encumber
 
     end
 
+    def points_for_next_mouse_event(original_location, current_location, destination_location, i)
+        tmp_x = (1 - i) * @global_x + i * destination_location[0]
+        tmp_y = (1 - i) * @global_y + i * destination_location[1]
+
+        return [tmp_x, tmp_y]
+    end
+
     def simulate_left_click(xpath, flags=[])
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateLeftClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] !='OK'
+      simulate_left_click_on_point(points[0], points[1], flags)
     end
 
     def simulate_left_click_on_point(x, y, flags=[])
       move_mouse_to_point(x, y)
 
-      result = command('simulateLeftClickOnPoint', x, y, flags)
-    end
-
-    def simulate_double_click(xpath, flags=[])
-      points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDoubleClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
-    end
-
-    def simulate_double_click_on_point(x, y, flags=[])
-      move_mouse_to_point(x, y)
-
-      result = command('simulateDoubleClick', x, y, flags)
-    end
-
-    def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
-      points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDraggedClickViewToView', id_for_element(xpath1), id_for_element(xpath2), flags)
-      raise "View not found: #{xpath1} or #{xpath2}- #{result}" if result["result"] != 'OK'
-
-      points = points_for_element(xpath2)
-      @global_y = points[0]
-      @global_x = points[1]
-    end
-
-    def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
-      points = points_for_element(xpath1)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateDraggedClickViewToPoint', id_for_element(xpath1), x, y, flags)
-      raise "View/Point not found: #{xpath1} - #{result}" if result["result"] != 'OK'
-
-      @global_y = x
-      @global_x = y
-    end
-
-    def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
-      move_mouse_to_point(x, y)
-      result = command('simulateDraggedClickPointToPoint', x, y, x2, y2, flags)
-
-      @global_y = x2
-      @global_x = y2
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUpOnPoint', x, y, flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
     end
 
     def simulate_right_click(xpath, flags=[])
       points = points_for_element(xpath)
-      move_mouse_to_point(points[0], points[1])
-
-      result = command('simulateRightClick', id_for_element(xpath), flags)
-      raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
+      simulate_right_click_on_point(points[0], points[1], flags)
     end
 
     def simulate_right_click_on_point(x, y, flags=[])
       move_mouse_to_point(x, y)
 
-      result = command('simulateRightClickOnPoint', x, y, flags)
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPRightMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+      result = command('simulateMouseUpOnPoint', x, y, flags, $CPRightMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+    end
+
+    def simulate_double_click(xpath, flags=[])
+      points = points_for_element(xpath)
+      simulate_double_click_on_point(points[0], points[1], flags)
+    end
+
+    def simulate_double_click_on_point(x, y, flags=[])
+      simulate_left_click_on_point(x, y, flags)
+      simulate_left_click_on_point(x, y, flags)
+    end
+
+    def simulate_dragged_click_view_to_view(xpath1, xpath2, flags=[])
+      points = points_for_element(xpath2)
+      simulate_dragged_click_view_to_point(xpath1, points[0], points[1], flags=[])
+    end
+
+    def simulate_dragged_click_view_to_point(xpath1, x, y, flags=[])
+      points = points_for_element(xpath1)
+      simulate_dragged_click_point_to_point(points[0], points[1], x, y, flags=[])
+    end
+
+    def simulate_dragged_click_point_to_point(x, y, x2, y2, flags=[])
+      move_mouse_to_point(x, y)
+      result = command('simulateMouseDownOnPoint', x, y, flags, $CPLeftMouseDown)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+
+      move_mouse_to_point(x2, y2)
+      result = command('simulateMouseUpOnPoint', x2, y2, flags, $CPLeftMouseUp)
+      raise "An error occured: #{result}" if result["result"] !='OK'
+
+      @global_y = x2
+      @global_x = y2
+    end
+
+    def simulate_mouse_moved(xpath, flags=[])
+      points = points_for_element(xpath)
+      move_mouse_to_point(points[0], points[1])
     end
 
     def simulate_mouse_moved_on_point(x, y, flags=[])
       move_mouse_to_point(x, y)
-
-      result = command('simulateMouseMovedOnPoint', x, y, flags)
     end
 
     def simulate_keyboard_event(charac, flags=[])
@@ -467,7 +482,7 @@ module Encumber
       points = points_for_element(xpath)
       move_mouse_to_point(points[0], points[1])
 
-      result = command('simulateScrollWheel',id_for_element(xpath), deltaX, deltaY, flags)
+      result = command('simulateScrollWheel', id_for_element(xpath), deltaX, deltaY, flags)
       raise "View not found: #{xpath} - #{result}" if result["result"] != 'OK'
     end
 
