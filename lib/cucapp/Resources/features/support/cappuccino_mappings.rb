@@ -34,15 +34,15 @@ $cappuccino_control_mappings = {
 
 $property_mappings = {
   "cucapp-identifier" => "cucappIdentifier",
-  "id" => "id",
-  "identifier" => "identifier",
-  "label" => "label",
-  "object-value" => "objectValue",
-  "placeholder" => "placeholderString",
-  "tag" => "tag",
-  "title" => "title",
-  "text" => "text",
-  "none"        => nil
+  "id"                => "id",
+  "identifier"        => "identifier",
+  "label"             => "label",
+  "object-value"      => "objectValue",
+  "placeholder"       => "placeholderString",
+  "tag"               => "tag",
+  "title"             => "title",
+  "text"              => "text",
+  "none"              => nil
 }
 
 $key_mappings = {
