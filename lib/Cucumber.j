@@ -839,6 +839,8 @@ function dumpGuiObject(obj)
 
     CPLog.debug("Cucapp is about to simulate a keyboard event with the character " + character + " with the keyboard flags " + modifierFlags);
 
+    var event;
+
     // Seems weird right ?
     // Cappuccino handle the flagsChanged in keyDown and then prevent the keypress
     // With no flag everything is handle in keypress

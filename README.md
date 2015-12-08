@@ -113,6 +113,35 @@ Cucapp provides a screenshot feature. When you want to take a screenshot, you ne
     app.gui.make_screenshot_with_name    "name_of_file"
 ```
 
+### Default steps
+
+Cucuapp provides a set of default steps :
+
+```ruby
+Given the application is lauched
+When I close the popover
+When I hit the key c
+When I hit the mask shif and the key c
+When I hit the keys cucapp
+When I hit the mask shif and the keys cucapp
+When I select all
+When I save the document
+When I (click|right click|double click) on the field with the value cucapp
+When I click on the field with the property cucapp-identifier and the property-value cucapp-identifier-button-add
+When I click with the mask shift on the field with the property cucapp-identifier and the property-value cucapp-identifier-button-add
+When I do a drag and drop from the field with the value cucapp to the field with the value cappuccino
+When I do a drag and drop from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
+When I do a drag and drop with the key mask shift from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
+When I vertically|horizontally scroll on the field with the value cappuccino
+When I (vertically|horizontally) scroll 10 times on the field with the value cappuccino
+When I (vertically|horizontally) scroll 10 times on the field with the property title and the property-value cappuccino
+When I (vertically|horizontally) scroll 10 times on the field with the property title and the property-value cappuccino
+Then the field should not have a value
+Then the field with the property cucapp-identifier and the property-value cucapp-identifier-textfield-description should not have a value
+Then the field should have the value cucapp
+Then the field with the property cucapp-identifier and the property-value cucapp-identifier-textfield-description should have the value cucapp
+```
+
 #### CLI
 
 Cucapp contains a CLI mode. To use it, make sure your application import the category `CPResponder+CuCapp.j` and open the javascript console of your browser.

@@ -143,6 +143,10 @@ $CPDeleteCharacter                       = "\u007f";
 $url_params                              = {};
 $mouse_moved_activated                   = "yes"
 
+$mouse_double_click = "mouse_double_click"
+$mouse_right_click  = "$mouse_right_click"
+$mouse_left_click   = "$mouse_left_click"
+
 module Encumber
 
   class GUI
