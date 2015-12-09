@@ -203,7 +203,7 @@ module Encumber
     end
 
     def launch
-      port = ENV['CUCAPP_PORT'] || 3000
+      port = ENV['CUCAPP_PORT'] || "3000"
       browser = ENV["BROWSER"] || :firefox
       start_browser(browser, "http://localhost:"+ port +"/cucumber.html"+ self.make_url_params)
       startTime = Time.now
