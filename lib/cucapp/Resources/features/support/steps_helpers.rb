@@ -49,6 +49,28 @@ def simulate_scroll(element, property, property_value, times, mask, horizontal, 
   end
 end
 
+def select_pop_up_button_item(item_name, property, property_value)
+  simulate_click($mouse_left_click, "pop-up-button", property, property_value, [])
+
+  pop_up_button_xpath = create_xpath("pop-up-button", property, property_value)
+
+  pop_up_button_item_xpath = create_xpath("image-view-text", "text", item_name)
+
+  while !app.gui.wait_for_element(pop_up_button_item_xpath, 0.05) && app.gui.pop_up_button_can_scroll_up(pop_up_button_xpath)
+    simulate_keyboard_event("up-arrow", [])
+  end
+
+  while !app.gui.wait_for_element(pop_up_button_item_xpath, 0.05) && app.gui.pop_up_button_can_scroll_down(pop_up_button_xpath)
+    simulate_keyboard_event("down-arrow", [])
+  end
+
+  if not app.gui.wait_for(pop_up_button_item_xpath)
+    raise "Menu item #{item_name} not found !"
+  end
+
+  simulate_click($mouse_left_click, "image-view-text", "text", item_name, [])
+end
+
 def cappuccino_key(key)
   if $key_mappings.has_key?(key)
     key = $key_mappings[key]

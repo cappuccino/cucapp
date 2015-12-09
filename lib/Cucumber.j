@@ -1062,6 +1062,7 @@ function dumpGuiObject(obj)
     event["metaKey"] = metaKey;
     event["shiftKey"] = shiftKey;
     event["type"] = aType;
+    event["which"] = 0;
 
     return event;
 }

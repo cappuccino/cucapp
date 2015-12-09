@@ -203,7 +203,7 @@ module Encumber
     end
 
     def launch
-      port = ENV['CUCAPP_PORT']||3000
+      port = ENV['CUCAPP_PORT'] || 3000
       browser = ENV["BROWSER"] || :firefox
       start_browser(browser, "http://localhost:"+ port +"/cucumber.html"+ self.make_url_params)
       startTime = Time.now
@@ -338,7 +338,7 @@ module Encumber
       wait_for_element xpath
     end
 
-    def wait_for_element xpath
+    def wait_for_element(xpath, timeout=@timeout)
       start_time_for_wait = Time.now
 
       loop do
@@ -350,7 +350,7 @@ module Encumber
         # evaluating the xpath.
         elapsed_time_in_seconds = Time.now - start_time_for_wait
 
-        return nil if elapsed_time_in_seconds >= @timeout
+        return nil if elapsed_time_in_seconds >= timeout
       end
     end
 

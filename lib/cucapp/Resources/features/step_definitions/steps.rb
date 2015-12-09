@@ -26,7 +26,7 @@ When /^I hit the mask (.*) and the key (.*)$/ do |mask, key|
 end
 
 
-# When I hit the keys cucapp
+# When the keys cucapp
 When /^I hit the keys (.*)$/ do |keys|
   step "I hit the mask none and keys #{keys}"
 end
@@ -52,18 +52,18 @@ end
 
 # When I (click|right click|double click) on the field with the value cucapp
 When /^I (click|right click|double click) on the (\w*\-*\w*) with the value (.*)$/ do |click_type, element, value|
-  step "I #{click_type} on the #{element} with the property object-value and the property-value #{value}"
+  step "I #{click_type} on the #{element} with the property object-value set to #{value}"
 end
 
 
-# When I click on the field with the property cucapp-identifier and the property-value cucapp-identifier-button-add
-When /^I (click|right click|double click) on the (\w*\-*\w*) with the property (\w*\-*\w*) and the property-value (.*)$/ do |click_type, element, property, property_value|
-  step "I #{click_type} with the key mask none on the #{element} with the property #{property} and the property-value #{property_value}"
+# When I click on the field with the property cucapp-identifier set to cucapp-identifier-button-add
+When /^I (click|right click|double click) on the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |click_type, element, property, property_value|
+  step "I #{click_type} with the key mask none on the #{element} with the property #{property} set to #{property_value}"
 end
 
 
-# When I click with the mask shift on the field with the property cucapp-identifier and the property-value cucapp-identifier-button-add
-When /^I (click|right click|double click) with the key mask (.*) on the (\w*\-*\w*) with the property (\w*\-*\w*) and the property-value (.*)$/ do |click_type, mask, element,  property, property_value|
+# When I click with the mask shift on the field with the property cucapp-identifier set to cucapp-identifier-button-add
+When /^I (click|right click|double click) with the key mask (.*) on the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |click_type, mask, element,  property, property_value|
 
   type = $mouse_left_click
 
@@ -97,26 +97,26 @@ When /^I do a drag and drop with the key mask (.*) from the (\w*\-*\w*) with the
 end
 
 
-# When I (vertically|horizontally) scroll on the field with the value cappuccino
+# When I vertically|horizontally scroll on the field with the value cappuccino
 When /^I (vertically|horizontally) scroll on the (\w*\-*\w*) with the value (.*)$/ do |direction, element, value|
   step "When I #{direction} scroll 10 times on the #{element} with the value #{value}"
 end
 
 
-# When I (vertically|horizontally) scroll 10 times on the field with the value cappuccino
+# When I vertically|horizontally scroll 10 times on the field with the value cappuccino
 When /^I (vertically|horizontally) scroll ([0-9]*) times on the (\w*\-*\w*) with the value (.*)$/ do |direction, times, element, value|
-  step "I #{direction} scroll #{times} times on the #{element} with the property object-value and the property-value #{value}"
+  step "I #{direction} scroll #{times} times on the #{element} with the property object-value set to #{value}"
 end
 
 
-# When I (vertically|horizontally) scroll 10 times on the field with the property title and the property-value cappuccino
-When /^I (vertically|horizontally) scroll ([0-9]*) times on the (\w*\-*\w*) with the property (\w*\-*\w*) and the property-value (.*)$/ do |direction, times, element, property, property_value|
-  step "I #{direction} scroll #{times} times with the key mask none on the #{element} with the property #{property} and the property-value #{property_value}"
+# When I vertically|horizontally scroll 10 times on the field with the property title set to cappuccino
+When /^I (vertically|horizontally) scroll ([0-9]*) times on the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |direction, times, element, property, property_value|
+  step "I #{direction} scroll #{times} times with the key mask none on the #{element} with the property #{property} set to #{property_value}"
 end
 
 
-# When I (vertically|horizontally) scroll 10 times on the field with the property title and the property-value cappuccino
-When /^I (vertically|horizontally) scroll ([0-9]*) times with the key mask (.*) on the (\w*\-*\w*) with the property (\w*\-*\w*) and the property-value (.*)$/ do |direction, times, mask, element, property, property_value|
+# When I vertically|horizontally scroll 10 times on the field with the property title set to cappuccino
+When /^I (vertically|horizontally) scroll ([0-9]*) times with the key mask (.*) on the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |direction, times, mask, element, property, property_value|
 
   vertically = false
   horizontally = false
@@ -133,13 +133,19 @@ When /^I (vertically|horizontally) scroll ([0-9]*) times with the key mask (.*) 
 end
 
 
+# When I select the item name of the pop-up-button with the property cucapp-identifier set to cucappIdentifierPopUpButton
+When /^I select the item (.*) of the pop-up-button with the property (\w*\-*\w*) set to (.*)$/ do |item_name, property, property_value|
+  select_pop_up_button_item(item_name, property, property_value)
+end
+
+
 # Then the field should not have a value
 Then /^the (\w*\-*\w*) should not have a value$/ do |element|
   step "the #{element} with the property object-value and property-value #{value} should have the value #{value}"
 end
 
 
-# Then the field with the property cucapp-identifier and the property-value cucapp-identifier-textfield-description should not have a value
+# Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should not have a value
 Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) should not have a value$/ do |element, property, property_value|
   check_value_control(element, property, property_value, nil)
 end
@@ -151,7 +157,7 @@ Then /^the (\w*\-*\w*) should have the value (.*)$/ do |element, value|
 end
 
 
-# Then the field with the property cucapp-identifier and the property-value cucapp-identifier-textfield-description should have the value cucapp
+# Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should have the value cucapp
 Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) should have the value (.*)$/ do |element, property, property_value, value|
   check_value_control(element, property, property_value, value)
 end
