@@ -1062,7 +1062,9 @@ function dumpGuiObject(obj)
     event["metaKey"] = metaKey;
     event["shiftKey"] = shiftKey;
     event["type"] = aType;
-    event["which"] = 0;
+
+    if (event["keyCode"] >= 37 && event["keyCode"] <= 40)
+        event["which"] = 0;
 
     return event;
 }
