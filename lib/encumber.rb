@@ -329,6 +329,33 @@ module Encumber
       result['result']
     end
 
+    def pop_up_button_can_scroll_up(xpath)
+      result = command 'popUpButtonMenuCanScrollUp', id_for_element(xpath)
+
+      if result["result"] != "OK"
+        return false
+      end
+
+      return true
+    end
+
+    def pop_up_button_can_scroll_down(xpath)
+      result = command 'popUpButtonMenuCanScrollDown', id_for_element(xpath)
+
+      if result["result"] != "OK"
+        return true
+      end
+
+      return false
+    end
+
+    def is_control_focused(xpath)
+      result = command "isControlFirstResponder", id_for_element(xpath)
+      raise "Could not find control for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
+      raise "Control #{xpath} is not focused" if result['result'] == "NOT FOCUSED"
+      return result['result'].to_s
+    end
+
     # Nokogiri XML DOM for the current Brominet XML representation of the GUI
     def dom_for_gui
       @dom = Nokogiri::XML self.dump
@@ -402,6 +429,8 @@ module Encumber
 
         return [tmp_x, tmp_y]
     end
+
+
 
     def simulate_left_click(xpath, flags=[])
       points = points_for_element(xpath)

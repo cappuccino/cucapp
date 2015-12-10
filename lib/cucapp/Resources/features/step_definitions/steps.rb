@@ -139,6 +139,12 @@ When /^I select the item (.*) of the pop-up-button with the property (\w*\-*\w*)
 end
 
 
+# Then the field with the property title set to name should be focused
+Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) should be focused$/ do |element, property, property_value|
+  app.gui.is_control_focused(create_xpath(element, property, property_value))
+end
+
+
 # Then the field should not have a value
 Then /^the (\w*\-*\w*) should not have a value$/ do |element|
   step "the #{element} with the property object-value and property-value #{value} should have the value #{value}"

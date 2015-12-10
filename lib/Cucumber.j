@@ -758,6 +758,55 @@ function dumpGuiObject(obj)
     return '{"result" : "OK"}';
 }
 
+- (CPString)popUpButtonMenuCanScrollUp:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    if ([[obj menu]._menuWindow canScrollUp])
+        return '{"result" : "OK"}';
+    else
+        return '{"result" : "NOT OK"}';
+}
+
+- (CPString)popUpButtonMenuCanScrollDown:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    if (![[obj menu]._menuWindow canScrollDown])
+        return '{"result" : "OK"}';
+    else
+        return '{"result" : "NOT OK"}';
+}
+
+- (id)isControlFirstResponder:(CPArray)params
+{
+    var obj = cucumber_objects[params[0]];
+
+    if (!obj)
+        return '{"result" : "__CUKE_ERROR__"}';
+
+    var window = [obj window],
+        firstResponder = [window firstResponder];
+
+    if ([obj isKindOfClass:[NUNetworkTextField class]])
+    {
+        if ([firstResponder isKindOfClass:[_NUNetworkElementTextField class]] && [firstResponder delegate] == obj)
+            return '{"result" : "OK"}';
+        else
+            return '{"result" : "NOT FOCUSED"}';
+    }
+
+    if (firstResponder == obj)
+        return '{"result" : "OK"}';
+
+    return '{"result" : "NOT FOCUSED"}';
+}
 
 #pragma mark -
 #pragma mark Events methods
