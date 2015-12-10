@@ -139,6 +139,7 @@ When I (vertically|horizontally) scroll 10 times on the field with the property 
 Then the field should not have a value
 Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should not have a value
 Then the field should have the value cucapp
+Then the field with the property title set to name should be focused
 Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should have the value cucapp
 ```
 
