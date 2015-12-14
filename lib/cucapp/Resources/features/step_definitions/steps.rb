@@ -81,18 +81,18 @@ end
 
 # When I do a drag and drop from the field with the value cucapp to the field with the value cappuccino
 When /^I do a drag and drop from the (\w*\-*\w*) with the value (.*) to the (\w*\-*\w*) with the value (.*)$/ do |element, value, second_element, second_value|
-  step "I do a drag and drop from the #{element} with the property object-value and property-value #{value} to the #{second_element} with the property object-value and property-value #{second_value}"
+  step "I do a drag and drop from the #{element} with the property object-value set to #{value} to the #{second_element} with the property object-value set to #{second_value}"
 end
 
 
-# When I do a drag and drop from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
-When /^I do a drag and drop from the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) to the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*)$/ do |element, property, property_value, second_element, second_property, second_property_value|
-  step "I do a drag and drop with the key mask none from the #{element} with the property #{property} and property-value #{property_value} to the #{second_element} with the property #{second_property} and property-value #{second_property_value}"
+# When I do a drag and drop from the field with the property title set to cucapp to the field with the property title set to cappuccino
+When /^I do a drag and drop from the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) to the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |element, property, property_value, second_element, second_property, second_property_value|
+  step "I do a drag and drop with the key mask none from the #{element} with the property #{property} set to #{property_value} to the #{second_element} with the property #{second_property} set to #{second_property_value}"
 end
 
 
-# When I do a drag and drop with the key mask shift from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
-When /^I do a drag and drop with the key mask (.*) from the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) to the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*)$/ do |mask, element, property, property_value, second_element, second_property, second_property_value|
+# When I do a drag and drop with the key mask shift from the field with the property title set to cucapp to the field with the property title set to cappuccino
+When /^I do a drag and drop with the key mask (.*) from the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) to the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*)$/ do |mask, element, property, property_value, second_element, second_property, second_property_value|
   simulate_drag_and_drop(element, property, property_value, second_element, second_property, second_property_value, mask)
 end
 
@@ -147,23 +147,23 @@ end
 
 # Then the field should not have a value
 Then /^the (\w*\-*\w*) should not have a value$/ do |element|
-  step "the #{element} with the property object-value and property-value #{value} should have the value #{value}"
+  step "the #{element} with the property object-value set to #{value} should have the value #{value}"
 end
 
 
 # Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should not have a value
-Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) should not have a value$/ do |element, property, property_value|
+Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) should not have a value$/ do |element, property, property_value|
   check_value_control(element, property, property_value, nil)
 end
 
 
 # Then the field should have the value cucapp
 Then /^the (\w*\-*\w*) should have the value (.*)$/ do |element, value|
-  step "the #{element} with the property object-value and property-value #{value} should have the value #{value}"
+  step "the #{element} with the property object-value set to #{value} should have the value #{value}"
 end
 
 
 # Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should have the value cucapp
-Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) and property-value (.*) should have the value (.*)$/ do |element, property, property_value, value|
+Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) should have the value (.*)$/ do |element, property, property_value, value|
   check_value_control(element, property, property_value, value)
 end
