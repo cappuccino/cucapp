@@ -143,6 +143,10 @@ $CPDeleteCharacter                       = "\u007f";
 $url_params                              = {};
 $mouse_moved_activated                   = "yes"
 
+$mouse_double_click = "mouse_double_click"
+$mouse_right_click  = "$mouse_right_click"
+$mouse_left_click   = "$mouse_left_click"
+
 module Encumber
 
   class GUI
@@ -199,8 +203,9 @@ module Encumber
     end
 
     def launch
+      port = ENV['CUCAPP_PORT'] || "3000"
       browser = ENV["BROWSER"] || :firefox
-      start_browser(browser, "http://localhost:3000/cucumber.html"+ self.make_url_params)
+      start_browser(browser, "http://localhost:"+ port +"/cucumber.html"+ self.make_url_params)
       startTime = Time.now
 
       while command('launched') == "NO" && (Time.now - startTime < @timeout) do
@@ -324,6 +329,33 @@ module Encumber
       result['result']
     end
 
+    def pop_up_button_can_scroll_up(xpath)
+      result = command 'popUpButtonMenuCanScrollUp', id_for_element(xpath)
+
+      if result["result"] != "OK"
+        return false
+      end
+
+      return true
+    end
+
+    def pop_up_button_can_scroll_down(xpath)
+      result = command 'popUpButtonMenuCanScrollDown', id_for_element(xpath)
+
+      if result["result"] != "OK"
+        return true
+      end
+
+      return false
+    end
+
+    def is_control_focused(xpath)
+      result = command "isControlFirstResponder", id_for_element(xpath)
+      raise "Could not find control for element #{xpath}" if result['result'] == "__CUKE_ERROR__"
+      raise "Control #{xpath} is not focused" if result['result'] == "NOT FOCUSED"
+      return result['result'].to_s
+    end
+
     # Nokogiri XML DOM for the current Brominet XML representation of the GUI
     def dom_for_gui
       @dom = Nokogiri::XML self.dump
@@ -333,7 +365,7 @@ module Encumber
       wait_for_element xpath
     end
 
-    def wait_for_element xpath
+    def wait_for_element(xpath, timeout=@timeout)
       start_time_for_wait = Time.now
 
       loop do
@@ -345,7 +377,7 @@ module Encumber
         # evaluating the xpath.
         elapsed_time_in_seconds = Time.now - start_time_for_wait
 
-        return nil if elapsed_time_in_seconds >= @timeout
+        return nil if elapsed_time_in_seconds >= timeout
       end
     end
 
@@ -397,6 +429,8 @@ module Encumber
 
         return [tmp_x, tmp_y]
     end
+
+
 
     def simulate_left_click(xpath, flags=[])
       points = points_for_element(xpath)
