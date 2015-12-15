@@ -34,20 +34,24 @@ function printResults(configuration)
 
 task ("clean", function()
 {
-    OS.system(["rm", "-f", SYSTEM.prefix + "/bin/cucapp"])
-    OS.system(["rm", "-rf", SYSTEM.prefix + "/packages/cucapp/"])
+    var narwhal = ENV["CAPP_INSTALL_DIR"] || SYSTEM.prefix;
+
+    OS.system(["rm", "-f", narwhal + "/bin/cucapp"])
+    OS.system(["rm", "-rf", narwhal + "/packages/cucapp/"])
 });
 
 task ("install", ["clean"], function()
 {
+    var narwhal = ENV["CAPP_INSTALL_DIR"] || SYSTEM.prefix;
+
     OS.system(["gem", "build", "cucapp.gemspec"]);
     OS.system(["gem", "install", "cucapp"]);
 
-    OS.system(["mkdir", "-p", SYSTEM.prefix + "/packages/cucapp/"])
-    OS.system(["cp", "-r", "lib/cucapp/bin", SYSTEM.prefix + "/packages/cucapp/bin"]);
-    OS.system(["cp", "-r", ".", SYSTEM.prefix + "/packages/cucapp/Cucapp"]);
-    OS.system(["cp", "-r", "lib/cucapp/Resources", SYSTEM.prefix + "/packages/cucapp/"]);
-    OS.system(["cp", "-r", "package.json", SYSTEM.prefix + "/packages/cucapp/"]);
-    OS.system(["ln", "-s", SYSTEM.prefix + "/packages/cucapp/bin/cucapp", SYSTEM.prefix + "/bin/cucapp"])
+    OS.system(["mkdir", "-p", narwhal + "/packages/cucapp/"])
+    OS.system(["cp", "-r", "lib/cucapp/bin", narwhal + "/packages/cucapp/bin"]);
+    OS.system(["cp", "-r", ".", narwhal + "/packages/cucapp/Cucapp"]);
+    OS.system(["cp", "-r", "lib/cucapp/Resources", narwhal + "/packages/cucapp/"]);
+    OS.system(["cp", "-r", "package.json", narwhal + "/packages/cucapp/"]);
+    OS.system(["ln", "-s", narwhal + "/packages/cucapp/bin/cucapp", narwhal + "/bin/cucapp"])
     print("Cucapp installation done! Have fun in testing now :)")
 });
