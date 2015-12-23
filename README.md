@@ -46,14 +46,14 @@ You can set different env variables to configure Cucapp :
 
 Cucapp provides a set of environment variables :
 
-* `$CUCAPP_PORT` allows you to specify the port used by the Thin server.
-* `$CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
-* `$CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
-* `$CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
+* `CUCAPP_PORT` allows you to specify the port used by the Thin server.
+* `CUCAPP_APPDIRECTORY` allows you to specify where the Cappuccino application is located.
+* `CUCAPP_BUNDLE` allows you to specify if you want to use the compiled version of Cucapp.
+* `CUCAPP_APPLOADINGMODE` allows you to specify which version (`build` or `debug`) of your Cappuccino application you want to test.
 * `BROWSER_FULL_SCREEN` allows to put the browser in full screen (`true` or `false` which is the default value)
 * `BROWSER_SIZE_WIDTH` the browser width size.
 * `BROWSER_SIZE_HEIGHT` the browser height size.
-* `BROWSER` the browser desired for the test suite. By default it will launch phantomjs (version >2.0)
+* `BROWSER` the browser desired for the test suite. By default it will use firefox.
 * `WATIR_CHROME_DRIVER` the path where Watir locates your ChromeDriver binary.
 * `WATIR_CHROME_SWITCHES` the switches for ChromeDriver to start with.
 
@@ -118,30 +118,31 @@ Cucapp provides a screenshot feature. When you want to take a screenshot, you ne
 Cucuapp provides a set of default steps :
 
 ```ruby
-Given the application is lauched
+Given the application is launched
 When I close the popover
-When I hit the key c
-When I hit the mask shif and the key c
-When I hit the keys cucapp
-When I hit the mask shif and the keys cucapp
+When I hit the key (a character)
+When I hit the mask (shift|alt|command|control) and the key (a character)
+When I hit the keys (characters)
+When I hit the mask (shift|alt|command|control) and the keys (characters)
 When I select all
 When I save the document
-When I (click|right click|double click) on the field with the value cucapp
-When I click on the field with the property cucapp-identifier set to cucapp-identifier-button-add
-When I click with the mask shift on the field with the property cucapp-identifier set to cucapp-identifier-button-add
-When I do a drag and drop from the field with the value cucapp to the field with the value cappuccino
-When I do a drag and drop from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
-When I do a drag and drop with the key mask shift from the field with the property title and property-value cucapp to the field with the property title and property-value cappuccino
-When I vertically|horizontally scroll on the field with the value cappuccino
-When I (vertically|horizontally) scroll 10 times on the field with the value cappuccino
-When I (vertically|horizontally) scroll 10 times on the field with the property title set to cappuccino
-When I (vertically|horizontally) scroll 10 times on the field with the property title set to cappuccino
-Then the field should not have a value
-Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should not have a value
-Then the field should have the value cucapp
-Then the field with the property title set to name should be focused
-Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should have the value cucapp
+When I (click|right click|double click) on the (field|button etc.) with the value (a value)
+When I click on the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier)
+When I click with the mask (shift|alt|command|control) on the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier)
+When I do a drag and drop from the (field|button etc.) with the value (a value) to the (field|button etc.) with the value (a value)
+When I do a drag and drop from the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier) to the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier)
+When I do a drag and drop with the key mask (shift|alt|command|control) from the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier) to the (field|button etc.) with the property (cucapp-identifier|identifier|tag)set to (an identifier)
+When I (vertically|horizontally) scroll on the (field|button etc.) with the value (a value)
+When I (vertically|horizontally) scroll 10 times on the (field|button etc.) with the value (a value)
+When I (vertically|horizontally) scroll 10 times on the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to cappuccino
+When I (vertically|horizontally) scroll 10 times on the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to cappuccino
+Then the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier) should not have a value
+Then the (field|button etc.) should have the value (a value)
+Then the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier) should be focused
+Then the (field|button etc.) with the property (cucapp-identifier|identifier|tag) set to (an identifier) should have the value (a value)
 ```
+
+The file `cappuccino_mappings` in the folder feature/support allows you to map word as field or button to Cappuccino keyword as CPTextField or CPButton. You will probably need to update this file to add the controls created for your application.
 
 #### CLI
 
