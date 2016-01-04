@@ -504,11 +504,14 @@ module Encumber
 
     def simulate_keyboard_event(charac, flags=[])
       result = command('simulateKeyboardEvent', charac, flags)
+
+      #Cappuccino has an internal timer of 0.04 when using CPTextField...
+      sleep(0.05)
     end
 
     def simulate_keyboard_events(string, flags=[])
       string.to_s.split("").each do |c|
-        result = command('simulateKeyboardEvent', c, flags)
+        result = simulate_keyboard_event(c, flags)
       end
     end
 
