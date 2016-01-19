@@ -813,12 +813,11 @@ function dumpGuiObject(obj)
 
 - (id)_mainDOMDocument
 {
-    return [[CPApp keyWindow] platformWindow]._DOMWindow.document  || document;
+    return [self _mainDOMWindow].document || document;
 }
-
 - (id)_mainDOMWindow
 {
-    return [[CPApp mainWindow] platformWindow]._DOMWindow;
+    return [[CPApp keyWindow] platformWindow]._DOMWindow || window;
 }
 
 - (void)dispatchEvent:(DOMEvent)anEvent
