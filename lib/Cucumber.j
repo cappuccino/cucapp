@@ -813,7 +813,7 @@ function dumpGuiObject(obj)
 
 - (id)_mainDOMDocument
 {
-    return [[CPApp mainWindow] platformWindow]._DOMWindow.document;
+    return [[CPApp keyWindow] platformWindow]._DOMWindow.document  || document;
 }
 
 - (id)_mainDOMWindow
