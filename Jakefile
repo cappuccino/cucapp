@@ -45,7 +45,12 @@ task ("install", ["clean"], function()
     var narwhal = ENV["CAPP_INSTALL_DIR"] || SYSTEM.prefix;
 
     OS.system(["gem", "build", "cucapp.gemspec"]);
-    OS.system(["gem", "install", "cucapp"]);
+    
+    if (OS.system(["gem", "install", "cucapp"]))
+    {
+        print("Unable to install gems with current user. Trying again with sudo (you may need to enter your password)...");
+        OS.system(["sudo", "gem", "install", "cucapp"])
+    }
 
     OS.system(["mkdir", "-p", narwhal + "/packages/cucapp/"])
     OS.system(["cp", "-r", "lib/cucapp/bin", narwhal + "/packages/cucapp/bin"]);
