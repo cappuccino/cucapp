@@ -38,6 +38,9 @@ Once you have installed everything, you need to use `jake cucumber-test` to laun
 
 By default, cucapp will launch phantomjs to perform your tests. If you want to to use Chrome or Safari you will need to install the following webdrivers : http://watirwebdriver.com/safari/ - http://watirwebdriver.com/chrome/. Cucapp supports firefox as well.
 
+### Important Note
+As of begining of 2016, the distributed version of phantomjs doesn't work well with El Capitan. The workaround is to grab phantomjs from here https://github.com/eugene1g/phantomjs/releases. Then install the binary into `/usr/local/bin`, or in any folder that is declared in your path.
+
 ## Usage
 
 #### Environement Variables
