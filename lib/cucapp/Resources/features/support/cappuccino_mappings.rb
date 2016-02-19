@@ -25,7 +25,7 @@ $cappuccino_control_mappings = {
   "slider"              => "CPSlider",
   "stepper"             => "CPStepper",
   "tab-view"            => "CPTabView",
-  "table"          => "CPTableView",
+  "table"               => "CPTableView",
   "field"               => "CPTextField",
   "token-field"         => "CPTokenField",
   "view"                => "CPView",
@@ -34,15 +34,15 @@ $cappuccino_control_mappings = {
 
 $property_mappings = {
   "cucapp-identifier" => "cucappIdentifier",
-  "id" => "id",
-  "identifier" => "identifier",
-  "label" => "label",
-  "object-value" => "objectValue",
-  "placeholder" => "placeholderString",
-  "tag" => "tag",
-  "title" => "title",
-  "text" => "text",
-  "none"        => nil
+  "id"                => "id",
+  "identifier"        => "identifier",
+  "label"             => "label",
+  "object-value"      => "objectValue",
+  "placeholder"       => "placeholderString",
+  "tag"               => "tag",
+  "title"             => "title",
+  "text"              => "text",
+  "none"              => nil
 }
 
 $key_mappings = {
