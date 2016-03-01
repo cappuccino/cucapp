@@ -164,7 +164,7 @@ END_OF_JS
         '/' => Rack::Directory.new(APP_DIRECTORY)
       )
 
-      Thin::Server.start('0.0.0.0', port) {
+      Thin::Server.start('127.0.0.1', port) {
 	      puts "Starting server"
         run(cucumber)
         puts "RESTARTING main thread"
