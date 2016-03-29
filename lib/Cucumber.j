@@ -794,14 +794,6 @@ function dumpGuiObject(obj)
     var window = [obj window],
         firstResponder = [window firstResponder];
 
-    if ([obj isKindOfClass:[NUNetworkTextField class]])
-    {
-        if ([firstResponder isKindOfClass:[_NUNetworkElementTextField class]] && [firstResponder delegate] == obj)
-            return '{"result" : "OK"}';
-        else
-            return '{"result" : "NOT FOCUSED"}';
-    }
-
     if (firstResponder == obj)
         return '{"result" : "OK"}';
 
