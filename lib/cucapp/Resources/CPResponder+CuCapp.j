@@ -60,7 +60,7 @@
 function load_cucapp_CLI(path)
 {
     if (!path)
-        path = "../Cucapp/lib/Cucumber.j"
+        path = "Cucapp/lib/Cucumber.j"
 
     try {
         objj_importFile(path, true, function() {
