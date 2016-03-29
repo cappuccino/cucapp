@@ -805,11 +805,11 @@ function dumpGuiObject(obj)
 
 - (id)_mainDOMDocument
 {
-    return [self _mainDOMWindow].document || document;
+    return document;
 }
 - (id)_mainDOMWindow
 {
-    return [[CPApp keyWindow] platformWindow]._DOMWindow || window;
+    return [[CPApp mainWindow] platformWindow]._DOMWindow || window;
 }
 
 - (void)dispatchEvent:(DOMEvent)anEvent
