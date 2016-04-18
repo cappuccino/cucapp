@@ -469,7 +469,9 @@ function dumpGuiObject(obj)
         }
     }
 
-    if ([obj respondsToSelector: @selector(contentView)])
+    // Both CPScrollView and CPBox are responding to the 2 selectors: subviews and contentView
+    // To avoid traversing the same object twice, we let these 2 classes calling `dumpGuiObject` on their subviews.
+    if ([obj respondsToSelector: @selector(contentView)] && ![obj isKindOfClass:CPScrollView] && ![obj isKindOfClass:CPBox])
     {
         resultingXML += "<contentView>";
         resultingXML += dumpGuiObject([obj contentView]);
