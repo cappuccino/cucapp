@@ -5,6 +5,10 @@ def check_value_control(element, property, property_value, value)
   app.gui.value_is_equal  xpath, value
 end
 
+def check_delegate_property(property, value)
+    app.gui.delegate_property_is_equal  property, value
+end
+
 def simulate_keyboard_event(keys, mask)
   app.gui.simulate_keyboard_events    cappuccino_key(keys), [cappuccino_key(mask)]
 end

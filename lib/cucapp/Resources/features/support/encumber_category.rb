@@ -10,5 +10,11 @@ module Encumber
       result = command 'valueIsEqual', id_for_element(xpath), value
       raise "Value #{value} not found" if result["result"] != "OK"
     end
+
+    def delegate_property_is_equal(property, value)
+      result = command 'delegatePropertyIsEqual', property, value
+      error = result["error"]
+      raise "#{error}" if error != "__NO_ERROR__"
+    end
   end
 end

@@ -7,6 +7,10 @@ Given /^the application is launched$/ do
   end
 end
 
+# Given I wait for n seconds
+Given /^I wait for (\d+) seconds?$/ do |n|
+  sleep(eval("#{n.to_i}"))
+end
 
 # When I close the popover
 When /^I close the popover$/ do
@@ -166,4 +170,8 @@ end
 # Then the field with the property cucapp-identifier set to cucapp-identifier-textfield-description should have the value cucapp
 Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) should have the value (.*)$/ do |element, property, property_value, value|
   check_value_control(element, property, property_value, value)
+end
+
+Then /^the application delegate should have the property (\w*) set to (.*)$/ do |property, value|
+  check_delegate_property(property, value)
 end
