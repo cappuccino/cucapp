@@ -171,3 +171,7 @@ end
 Then /^the (\w*\-*\w*) with the property (\w*\-*\w*) set to (.*) should have the value (.*)$/ do |element, property, property_value, value|
   check_value_control(element, property, property_value, value)
 end
+
+Then /^the application delegate should have the property (\w*) set to (.*)$/ do |property, value|
+  check_delegate_property(property, value)
+end
