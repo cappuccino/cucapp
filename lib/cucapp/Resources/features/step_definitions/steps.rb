@@ -7,6 +7,10 @@ Given /^the application is launched$/ do
   end
 end
 
+# Given I wait for n seconds
+Given /^I wait for (\d+) seconds?$/ do |n|
+  sleep(eval("#{n.to_i}"))
+end
 
 # When I close the popover
 When /^I close the popover$/ do
